@@ -1,0 +1,103 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[Bonabeau, Dorigo e Theraulaz 1999]{bonabeau1999}
+\abntrefinfo{Bonabeau, Dorigo e Theraulaz}{BONABEAU; DORIGO; THERAULAZ}{1999}
+{BONABEAU, E.; DORIGO, M.; THERAULAZ, G. \emph{Swarm intelligence: From natural
+  to artificial systems}. [S.l.]: Oxford University Press, 1999.}
+
+\bibitem[Costa e Martins 2019]{CostaMartins2019}
+\abntrefinfo{Costa e Martins}{COSTA; MARTINS}{2019}
+{COSTA, F.; MARTINS, A. Desafios em segurança cibernética: Limitações das
+  abordagens tradicionais.
+\emph{Revista Internacional de Segurança Cibernética}, Springer, v.~15, n.~2,
+  p. 123--135, 2019.}
+
+\bibitem[Ferreira e Silva 2024]{noisylayers2024}
+\abntrefinfo{Ferreira e Silva}{FERREIRA; SILVA}{2024}
+{FERREIRA, J.; SILVA, M. Enhancing exploration in deep reinforcement learning
+  using noisy layers.
+\emph{IEEE Transactions on Neural Networks and Learning Systems}, IEEE, v.~35,
+  n.~4, p. 456--467, 2024.}
+
+\bibitem[Garcia e Santos 2020]{agilegov2020}
+\abntrefinfo{Garcia e Santos}{GARCIA; SANTOS}{2020}
+{GARCIA, R.; SANTOS, L. Agile governance: Balancing autonomy and control in
+  dynamic environments.
+\emph{Journal of Agile Management}, Springer, v.~5, p. 45--60, 2020.}
+
+\bibitem[Hasselt, Guez e Silver 2016]{hasselt2016}
+\abntrefinfo{Hasselt, Guez e Silver}{HASSELT; GUEZ; SILVER}{2016}
+{HASSELT, H. V.; GUEZ, A.; SILVER, D. Deep reinforcement learning with double
+  q-learning.
+\emph{Proceedings of the AAAI Conference on Artificial Intelligence}, 2016.}
+
+\bibitem[Kim e Park 2020]{kim2020}
+\abntrefinfo{Kim e Park}{KIM; PARK}{2020}
+{KIM, S.; PARK, J. Deep reinforcement learning for cybersecurity: A case study.
+  In:  IEEE. \emph{2020 IEEE Conference on Cyber Security and Intelligence
+  (CSI)}. [S.l.], 2020. p. 45--50.}
+
+\bibitem[Liu e Chen 2021]{liu2021}
+\abntrefinfo{Liu e Chen}{LIU; CHEN}{2021}
+{LIU, W.; CHEN, M. Swarm intelligence for adaptive cyber defense.
+\emph{Journal of Cyber Security and Information Systems}, Springer, v.~8, n.~1,
+  p. 15--27, 2021.}
+
+\bibitem[M-Trends 2019: Insights into Today's Cyber Threat Landscape
+  2019]{Mandiant2019}
+\abntrefinfo{M-Trends\ldots}{M-TRENDS\ldots}{2019}
+{M-TRENDS 2019: Insights into Today's Cyber Threat Landscape.
+[S.l.], 2019. Dispon{\'\i}vel em:
+  \url{https://www.mandiant.com/resources/m-trends-2019}.}
+
+\bibitem[Mendes e Rodrigues 2024]{lora2024}
+\abntrefinfo{Mendes e Rodrigues}{MENDES; RODRIGUES}{2024}
+{MENDES, C.; RODRIGUES, E. Efficient fine-tuning with low rank adaptation for
+  large-scale cyber defense systems. In:  IEEE. \emph{Proceedings of the 2024
+  IEEE Conference on Neural Networks}. [S.l.], 2024. p. 102--109.}
+
+\bibitem[Mnih et al. 2015]{mnih2015}
+\abntrefinfo{Mnih et al.}{MNIH et al.}{2015}
+{MNIH, V. et al. Human-level control through deep reinforcement learning.
+\emph{Nature}, Nature Publishing Group, v.~518, n.~7540, p. 529--533, 2015.}
+
+\bibitem[Silva e Costa 2024]{testtimet2024}
+\abntrefinfo{Silva e Costa}{SILVA; COSTA}{2024}
+{SILVA, A.; COSTA, B. Advances in test time training: Dynamic model adaptation
+  for real-time systems.
+\emph{IEEE Transactions on Cybernetics}, IEEE, 2024.}
+
+\bibitem[Silva e Oliveira 2021]{agilegov2021}
+\abntrefinfo{Silva e Oliveira}{SILVA; OLIVEIRA}{2021}
+{SILVA, M.; OLIVEIRA, P. Agile governance in it: A framework for adaptive
+  management. In:  IEEE. \emph{Proceedings of the International Conference on
+  Agile Methods}. [S.l.], 2021. p. 75--80.}
+
+\bibitem[Stone e Veloso 2000]{StoneVeloso2000}
+\abntrefinfo{Stone e Veloso}{STONE; VELOSO}{2000}
+{STONE, P.; VELOSO, M. \emph{Multiagent systems: A modern approach to
+  distributed artificial intelligence}. [S.l.]: MIT Press, 2000.}
+
+\bibitem[Sutton e Barto 2018]{suttonbarto2018}
+\abntrefinfo{Sutton e Barto}{SUTTON; BARTO}{2018}
+{SUTTON, R.~S.; BARTO, A.~G. \emph{Reinforcement Learning: An Introduction}.
+  [S.l.]: MIT Press, 2018.}
+
+\bibitem[Wang e Li 2022]{wang2022}
+\abntrefinfo{Wang e Li}{WANG; LI}{2022}
+{WANG, X.; LI, Q. Custom autonomous agents for cyber threat mitigation using
+  ddqn. In:  IEEE. \emph{2022 IEEE International Conference on Cybersecurity
+  (ICCS)}. [S.l.], 2022. p. 100--105.}
+
+\bibitem[Zhang e Wu 2021]{zhang2021}
+\abntrefinfo{Zhang e Wu}{ZHANG; WU}{2021}
+{ZHANG, L.; WU, J. Decision-making in multiagent systems under uncertainty.
+\emph{IEEE Transactions on Systems, Man, and Cybernetics: Systems}, IEEE,
+  v.~51, n.~5, p. 3120--3128, 2021.}
+
+\end{thebibliography}

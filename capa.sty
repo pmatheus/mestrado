@@ -1,0 +1,33 @@
+\ProvidesPackage{capa}[2025/02/13 Criacao desta customizacao do abnTeX2]
+
+% alterando a capa
+\renewcommand{\imprimircapa}{%
+  \begin{capa}%
+    \center
+    \includegraphics[width=70mm]{bandeira.png}\\[0.2cm]
+    {\ABNTEXchapterfont\huge Universidade de Brasília - UNB}\\
+    \ABNTEXchapterfont\large Faculdade de Tecnologia - FT\\
+    \ABNTEXchapterfont\large Departamento de Engenharia Elétrica - ENE\\
+    \ABNTEXchapterfont\large Programa de Pos-Graduação em Engenharia Elétrica - PPEE\\[2cm]
+    
+    \vspace*{1cm}
+    {\ABNTEXchapterfont\bfseries\LARGE\imprimirtitulo}\\[2cm]
+    
+
+    \vfill
+    \begin{center}
+    \ABNTEXchapterfont\large\imprimirautor\\[0.5cm]
+    \ABNTEXchapterfont\large \textbf{Área de concentração:} Segurança Cibernética\\%area de concentracao
+    \ABNTEXchapterfont\large \textbf{Linha de pesquisa:} Ciência e engenharia de dados, e concepção e desenvolvimento de materiais estratégicos e críticos para seguran cibernética.\\%linha de pesquisa
+    \ABNTEXchapterfont\large \textbf{Tema:} Arquitetura Colaborativa de Agentes Autônomos para Varredura Cibernética Contínua\\[2cm]%tema
+    \end{center}
+    \vfill
+  
+    \large\imprimirlocal \vspace*{1cm} \large\imprimirdata
+    
+    \vspace*{1cm}
+  \end{capa}
+}
+% ---
+% FIM DAS CUSTOMIZACOES PARA A UNIVERSIDADE BRASILIA
+% ---

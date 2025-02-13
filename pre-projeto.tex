@@ -1,0 +1,167 @@
+%%%%% Classe do documento %%%%%
+\documentclass[article,12pt,a4paper]{abntex2}
+
+
+%%%%%%% Pacotes %%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}          % Codificação da fonte
+\usepackage[utf8]{inputenc}       % Codificação do arquivo
+\usepackage{lmodern}              % Fonte Latin Modern
+\usepackage[brazil]{babel}        % Idioma do documento
+\usepackage{graphicx}             % Inclusão de gráficos
+\usepackage[table]{xcolor}        % Cores para tabelas
+\usepackage{float}                % Controle de posicionamento de figuras e tabelas
+\usepackage[num]{abntex2cite}     % Citações ABNT
+\citebrackets[]                  % Formatação de citações
+\usepackage{indentfirst}          % Indenta o primeiro parágrafo de cada seção
+\usepackage{microtype}            % Melhoria da tipografia
+\usepackage{hyperref}             % Hiperlinks
+
+% Load your custom capa style
+\usepackage{capa}
+
+%%%%%%%%%%%%%%%%% Configuração dos hiperlinks %%%%%%%%%%%%%%%%%
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    urlcolor=blue
+}
+
+%%%%%%%%%%%%% Dados da Capa %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titulo{Pré-Projeto de Dissertação para Processo de Seleção ao Mestrado Profissional}
+\autor{Paulo Matheus Nicolau Silva}
+\local{Brasília}
+\data{2025}
+
+\setboolean{@twoside}{false}
+
+\begin{document}
+
+\imprimircapa
+
+\textual
+\section{Introdução}
+A segurança cibernética enfrenta desafios cada vez maiores com a complexidade e sofisticação dos ataques, os quais exigem respostas ágeis e adaptativas. Em vez de soluções centralizadas ou estáticas, este projeto propõe uma abordagem híbrida que integra:
+\begin{itemize}
+    \item Modelos de linguagem de grande porte (LLMs) para análise contextual;
+    \item Redes neurais baseadas em transformers utilizadas como encoders e decoders; e
+    \item Agentes autônomos customizados, treinados por Deep Reinforcement Learning (DDQN), para tomada de decisão em tempo real.
+\end{itemize}
+Embora os LLMs sejam úteis para análise e geração de insights a partir de grandes volumes de dados textuais, as arquiteturas transformer podem ser adaptadas para extração de características e geração de representações contextuais. Por sua vez, os agentes DDQN são desenvolvidos para atuar em cenários de alta incerteza, aprendendo por meio de recompensas derivadas de suas ações para mitigar ameaças cibernéticas de forma coordenada. 
+
+\subsection{Governança Ágil e Orquestração de Enxames de Agentes}
+A aplicação de Governança Ágil oferece uma abordagem flexível e iterativa para a gestão de sistemas complexos. Nesse contexto, princípios ágeis permitem:
+\begin{itemize}
+  \item Iteração contínua e feedback rápido, possibilitando ajustes em tempo real;
+  \item Equilíbrio entre autonomia dos agentes e controle centralizado, assegurando uma resposta coordenada; e
+  \item Adaptação dinâmica às mudanças no ambiente, com ciclos de monitoramento, avaliação e melhoria.
+\end{itemize}
+Ao orquestrar enxames de agentes, a implementação de um framework de Governança Ágil permite que o sistema integre diferentes modelos – LLMs para insights, transformers para processamento de dados e agentes DDQN para decisões – garantindo que a cooperação entre os agentes seja gerenciada de forma adaptativa e alinhada aos objetivos organizacionais \cite{agilegov2020,agilegov2021}.
+
+\section{Justificativa}
+A crescente complexidade dos ataques cibernéticos e a rápida evolução das infraestruturas tecnológicas tornam o problema de segurança cibernética extremamente relevante e atual. As abordagens tradicionais centralizadas de detecção e mitigação têm se mostrado insuficientes para enfrentar a sofisticação dos ataques modernos, como os Advanced Persistent Threats (APTs) e ransomware, que exploram vulnerabilidades de forma distribuída \cite{CostaMartins2019,Mandiant2019}.
+
+Diversos estudos apontam que a utilização de sistemas multiagentes e técnicas de aprendizado por reforço, como o Deep Double Q-Network (DDQN), possibilita uma resposta mais ágil e adaptativa em cenários de alta incerteza \cite{hasselt2016, suttonbarto2018}. Além disso, a aplicação de redes neurais baseadas em transformers na forma de encoders e decoders tem potencial para extrair representações contextuais complexas, contribuindo para a geração de insights que complementam a tomada de decisão dos agentes autônomos.
+
+A integração desses métodos em um sistema distribuído, orquestrado por princípios de governaça ágil, se justifica pela necessidade de um framework que promova ciclos iterativos de monitoramento, avaliação e ajuste, equilibrando a autonomia dos agentes com o controle estratégico centralizado. Estudos recentes demonstram que a Governaça Ágil favorece a adaptação contínua e a descentralização, essenciais para gerenciar ambientes dinâmicos e complexos \cite{agilegov2020, agilegov2021}.
+
+A escolha da área de concentração do PPEE e do tema proposto está em consonância com as demandas do edital [1] e suas retificações [2], os quais enfatizam a necessidade de inovações que integrem inteligência artificial e segurança cibernética para mitigar riscos em infraestruturas críticas. Assim, este projeto não apenas contribui para o avanço do conhecimento na área, mas também oferece soluções práticas e escaláveis para problemas reais enfrentados pelo setor de TI.
+
+Em resumo, a relevância do problema justifica a adoção de uma abordagem híbrida que combine LLMs, redes transformer e agentes DDQN, integrados por uma governança ágil capaz de orquestrar a cooperação entre os agentes de forma eficiente e adaptativa.
+
+\section{Objetivos}
+
+\subsection{Objetivo Geral}
+Desenvolver e validar uma arquitetura colaborativa de enxame de agentes autônomos que combine LLMs, redes neurais transformer (encoders/decoders) e agentes DDQN, aplicando princípios de Governança Ágil para monitoramento contínuo e mitigação de ameaças cibernéticas, com integração de processos automatizados e interface para deliberação humana.
+
+\subsection{Objetivos Específicos}
+\begin{enumerate}
+    \item Projetar um fluxo integrado que inclua a definição de regras de segurança, coleta de dados e formulação de hipóteses para identificação de anomalias.
+    \item Desenvolver agentes autônomos customizados utilizando DDQN, capacitando-os a tomar decisões com base no contexto.
+    \item Integrar LLMs e redes transformer para complementar a análise e gerar insights contextuais.
+    \item Orquestrar a cooperação entre os agentes por meio de um framework de Governança Ágil, que permita a iteração contínua e a adaptação dinâmica.
+    \item Estabelecer interfaces para integrar o sistema automatizado com especialistas humanos, permitindo deliberação em situações de alto risco.
+    \item Validar a eficácia da arquitetura proposta em ambientes críticos, comparando os resultados com métodos tradicionais.
+\end{enumerate}
+
+\section{Revisão da Literatura}
+A literatura em segurança cibernética enfatiza a importância de sistemas adaptativos e distribuídos para responder a ameaças emergentes. Modelos de linguagem de grande porte (LLMs) têm sido amplamente aplicados para análise de grandes volumes de dados textuais, enquanto redes neurais baseadas em transformers (utilizadas como encoders e decoders) facilitam a extração de características complexas \cite{mnih2015,suttonbarto2018}.
+
+Algoritmos de Deep Reinforcement Learning, como o DDQN, melhoraram a estabilidade e a eficiência de sistemas autônomos para tomada de decisão \cite{hasselt2016}. Além disso, a aplicação de enxames de agentes colaborativos tem se mostrado promissora para a mitigação de ameaças em ambientes distribuídos \cite{bonabeau1999,StoneVeloso2000}. 
+
+Recentemente, estudos têm abordado a integração de técnicas de aprendizado profundo e a cooperação multiagente para aprimorar a segurança cibernética \cite{kim2020,liu2021,wang2022,zhang2021}. Paralelamente, Governança Ágil tem emergido como um paradigma que favorece a flexibilidade e a rápida adaptação, elementos essenciais para orquestrar agentes autônomos em ambientes dinâmicos \cite{agilegov2020,agilegov2021}.
+
+Novas abordagens tambémtêm ampliado as fronteiras da adaptação de modelos e da exploração em ambientes dinâmicos. Técnicas de Test Time Training têm demonstrado eficácia ao permitir a adaptação dos parâmetros do modelo durante a fase de teste, possibilitando respostas mais robustas a mudanças no domínio operacional \cite{testtimet2024}. Paralelamente, métodos de Low Rank Adaptation (LoRA) têm sido empregados para realizar fine-tuning de grandes modelos com menor custo computacional, mantendo desempenho de ponta \cite{lora2024}. Adicionalmente, a introdução de noisy layers em redes neurais tem se mostrado promissora para melhorar a capacidade de exploração em algoritmos de aprendizado por reforço, aumentando a diversidade de estratégias adotadas pelos agentes \cite{noisylayers2024}.
+
+\section{Metodologia}
+A pesquisa será estruturada em etapas que incluem:
+\begin{enumerate}
+  \item Revisão bibliográfica para fundamentar as técnicas de Deep Reinforcement Learning, redes transformer e Governança Ágil aplicados à segurança cibernética.
+  \item Levantamento de requisitos e definição da arquitetura híbrida, que integrará:
+    \begin{itemize}
+      \item LLMs para análise contextual;
+      \item Redes transformer (encoders/decoders) para extração de características; e
+      \item Agentes autônomos DDQN para tomada de decisão.
+    \end{itemize}
+  \item Desenvolvimento dos agentes e implementação do framework de governança ágil, permitindo ciclos iterativos de monitoramento, avaliação e ajuste para orquestrar a cooperação do enxame.
+  \item Validação experimental em ambiente controlado, com testes comparativos entre a abordagem proposta e métodos tradicionais.
+\end{enumerate}
+
+\section{Plano de Trabalho}
+O plano de trabalho está organizado em cinco etapas:
+\begin{enumerate}
+    \item \textbf{Revisão Bibliográfica e Levantamento de Requisitos:} Pesquisa em bases acadêmicas sobre Deep Reinforcement Learning, redes de transformers, enxames de agentes e governança ágil.
+    \item \textbf{Definição e Projeto da Arquitetura:} Elaboração do fluxo integrado de monitoramento e mitigação, com definição dos processos de coleta de dados, formulação de hipóteses e mecanismos de cooperação.
+    \item \textbf{Desenvolvimento e Implementação:} Codificação dos agentes (utilizando DDQN), integração dos modelos (LLMs e transformers) e implementação do framework de governança ágil para orquestração do enxame.
+    \item \textbf{Testes e Validação:} Realização de experimentos em ambiente controlado com foco em sistemas críticos, comparando a abordagem proposta com métodos tradicionais.
+    \item \textbf{Redação e Finalização da Dissertação:} Consolidação dos resultados, discussão de contribuições e limitações, e redação do documento final.
+\end{enumerate}
+
+\section{Cronograma}
+A seguir, apresenta-se o cronograma de execução das atividades, considerando as disciplinas obrigatórias e eletivas do Mestrado Profissional em Engenharia Elétrica com habilitação em Segurança Cibernética:
+
+\begin{table}[H]
+	\centering
+	\label{tab:cronograma}
+	\begin{tabular}{|p{6cm}|c|c|c|c|}
+		\hline
+		\textbf{Atividade / Disciplina} & \textbf{1$^o$ Sem.} & \textbf{2$^o$ Sem.} & \textbf{3$^o$ Sem.} & \textbf{4$^o$ Sem.} \\
+		\hline
+		% Disciplinas obrigatórias (300h total)
+		PPEE2004 - Metodologia de Pesquisa Científica 1 (30h/a) & \cellcolor{gray!20} X &  &  &  \\
+		\hline
+		PPEE3353 - Segurança Cibernéca (60h/a) & \cellcolor{gray!20} X &  &  &  \\
+		\hline
+		PPEE2010 - Inteligência Cibernéca (60h/a) & \cellcolor{gray!20} X &  &  &  \\
+		\hline
+    Revisão Bibliográfica e Levantamento de Requisitos & \cellcolor{gray!20} X &  &  &  \\
+		\hline
+		PPEE2005 - Metodologia de Pesquisa Científica 2 (30h/a) &  & \cellcolor{gray!20} X &  &  \\
+		\hline
+		PPEE2006 - Aplicações de Ciências de Dados em Segurança Cibernéca (60h/a) &  & \cellcolor{gray!20} X &  &  \\
+		\hline
+		PPEE2008 - Fatores Humanos em Segurança Cibernéca (60h/a) &  & \cellcolor{gray!20} X &  &  \\
+		\hline
+		Definição e Projeto da Arquitetura &  & \cellcolor{gray!20} X &  &  \\
+		\hline
+		Desenvolvimento e Implementação &  &  & \cellcolor{gray!20} X &  \\
+		\hline
+		Testes e Validação &  &  & \cellcolor{gray!20} X &  \\
+		\hline
+    PPEE1996 - Estudo Orientado 1 (30h/a) &  &  & \cellcolor{gray!20} X &  \\
+		\hline
+		PPEE1997 - Estudo Orientado 2 (30h/a) &  &  &  & \cellcolor{gray!20} X \\
+		\hline
+    Redação e Finalização da Dissertação &  &  &  & \cellcolor{gray!20} X \\
+		\hline
+	\end{tabular}
+	\caption{Cronograma de Execução de Atividades e Disciplinas}
+\end{table}
+
+
+\newpage
+\bibliographystyle{abntex2-alf}
+\bibliography{bibliografia}
+
+\end{document}
