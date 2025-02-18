@@ -1,8 +1,7 @@
-%%%%% Classe do documento %%%%%
 \documentclass[article,12pt,a4paper]{abntex2}
 
-
 %%%%%%% Pacotes %%%%%%%%%%%%%%
+\usepackage{ifthen}
 \usepackage[T1]{fontenc}          % Codificação da fonte
 \usepackage[utf8]{inputenc}       % Codificação do arquivo
 \usepackage{lmodern}              % Fonte Latin Modern
@@ -15,6 +14,7 @@
 \usepackage{indentfirst}          % Indenta o primeiro parágrafo de cada seção
 \usepackage{microtype}            % Melhoria da tipografia
 \usepackage{hyperref}             % Hiperlinks
+\usepackage{setspace}             % Pacote para controle do espaçamento
 
 % Load your custom capa style
 \usepackage{capa}
@@ -37,85 +37,76 @@
 \setboolean{@twoside}{false}
 
 \begin{document}
+\renewcommand{\baselinestretch}{1.2}\normalsize
 
 \imprimircapa
 
 \textual
 \section{Introdução}
-A segurança cibernética enfrenta desafios cada vez maiores com a complexidade e sofisticação dos ataques, os quais exigem respostas ágeis e adaptativas. Em vez de soluções centralizadas ou estáticas, este projeto propõe uma abordagem híbrida que integra:
-\begin{itemize}
-    \item Modelos de linguagem de grande porte (LLMs) para análise contextual;
-    \item Redes neurais baseadas em transformers utilizadas como encoders e decoders; e
-    \item Agentes autônomos customizados, treinados por Deep Reinforcement Learning (DDQN), para tomada de decisão em tempo real.
-\end{itemize}
-Embora os LLMs sejam úteis para análise e geração de insights a partir de grandes volumes de dados textuais, as arquiteturas transformer podem ser adaptadas para extração de características e geração de representações contextuais. Por sua vez, os agentes DDQN são desenvolvidos para atuar em cenários de alta incerteza, aprendendo por meio de recompensas derivadas de suas ações para mitigar ameaças cibernéticas de forma coordenada. 
+O meio cibernético configura-se como um campo de batalha digital, onde a evolução constante das ameaças, aliada à transformação tecnológica, exige respostas cada vez mais sofisticadas. Ataques de ransomware, invasões por phishing e explorações de vulnerabilidades estão se tornando mais frequentes e complexos; por isso, as organizações são obrigadas a repensar suas estratégias de defesa \cite{academia20}.
 
-\subsection{Governança Ágil e Orquestração de Enxames de Agentes}
-A aplicação de Governança Ágil oferece uma abordagem flexível e iterativa para a gestão de sistemas complexos. Nesse contexto, princípios ágeis permitem:
-\begin{itemize}
-  \item Iteração contínua e feedback rápido, possibilitando ajustes em tempo real;
-  \item Equilíbrio entre autonomia dos agentes e controle centralizado, assegurando uma resposta coordenada; e
-  \item Adaptação dinâmica às mudanças no ambiente, com ciclos de monitoramento, avaliação e melhoria.
-\end{itemize}
-Ao orquestrar enxames de agentes, a implementação de um framework de Governança Ágil permite que o sistema integre diferentes modelos – LLMs para insights, transformers para processamento de dados e agentes DDQN para decisões – garantindo que a cooperação entre os agentes seja gerenciada de forma adaptativa e alinhada aos objetivos organizacionais \cite{agilegov2020,agilegov2021}.
+A busca proativa por ameaças, ou threat hunting, é uma prática que vai além da reatividade dos sistemas tradicionais. Em vez de aguardar que um alerta seja gerado, os profissionais de segurança adotam técnicas de investigação forense para examinar redes, sistemas e computadores em busca de sinais de comprometimento \cite{academia22}. Essa abordagem ativa permite que vulnerabilidades sejam identificadas e neutralizadas antes que sejam exploradas por atacantes.
+
+Agentes de inteligência artificial são estruturas de software que ampliam as capacidades dos grandes modelos de linguagem (LLMs — Large Language Models), permitindo que estes interajam com diversas ferramentas e executem ações no sistema. Ao utilizar técnicas de reinforcement learning, é possível fazer com que esses agentes evoluam com base em recompensas, aprimorando sua capacidade de identificar atividades suspeitas e reduzir falsos positivos \cite{academia20}.
+
+Da mesma forma, a governança em segurança cibernética é um pilar fundamental para alinhar as estratégias de defesa com os objetivos e necessidades do negócio. Portanto, faz-se necessário um processo robusto de governança que atue como orquestrador de toda a operação, coordenando os esforços dos agentes de inteligência artificial, definindo políticas de segurança e garantindo a conformidade \cite{academia21}.
+
+Dado que os outputs das redes neurais são, por definição, estocásticos, é essencial a implementação de um mecanismo de feedback, no qual os relatórios de atividades suspeitas sejam submetidos à análise de especialistas. Esse canal de comunicação possibilita que os achados sejam validados e ajustados com base no conhecimento prático dos profissionais, promovendo o aprimoramento contínuo dos agentes de inteligência artificial e a redução de falsos positivos \cite{academia22}.
+
+Além disso, um recente estudo de McIntosh et al. \cite{McIntosh2024} avaliou a prontidão de frameworks de governança de segurança cibernética — como COBIT, NIST CSF, ISO 27001 e o novo ISO 42001 — fornecendo uma análise comparativa sobre oportunidades, riscos e conformidade regulatória na comercialização de grandes modelos de linguagem. Os autores destacam que os frameworks existentes precisam evoluir para acompanhar os riscos específicos gerados pela integração de tecnologias de IA.
+
+Em síntese, este trabalho propõe a pesquisa e a análise de modelos de governança capazes de sustentar a criação de uma solução de busca proativa por ameaças cibernéticas em ambientes Windows, utilizando agentes de inteligência artificial especializados. Ao explorar frameworks de governança e integrar técnicas avançadas de threat hunting com mecanismos de feedback contínuo, busca-se estabelecer diretrizes que alinhem as estratégias de segurança aos objetivos da organização, promovendo uma atitude proativa e eficaz frente à complexidade das ameaças atuais. Dessa forma, a proposta visa contribuir para o desenvolvimento de sistemas de defesa cibernética mais resilientes e conformes com as exigências regulatórias, reforçando o papel da governança na proteção dos ativos digitais.
 
 \section{Justificativa}
-A crescente complexidade dos ataques cibernéticos e a rápida evolução das infraestruturas tecnológicas tornam o problema de segurança cibernética extremamente relevante e atual. As abordagens tradicionais centralizadas de detecção e mitigação têm se mostrado insuficientes para enfrentar a sofisticação dos ataques modernos, como os Advanced Persistent Threats (APTs) e ransomware, que exploram vulnerabilidades de forma distribuída \cite{CostaMartins2019,Mandiant2019}.
+Em um cenário marcado por ataques de ransomware, invasões por phishing e exploração de vulnerabilidades, torna-se imperativo desenvolver soluções que não apenas respondam reativamente a incidentes, mas que também antecipem ameaças cibernéticas.
 
-Diversos estudos apontam que a utilização de sistemas multiagentes e técnicas de aprendizado por reforço, como o Deep Double Q-Network (DDQN), possibilita uma resposta mais ágil e adaptativa em cenários de alta incerteza \cite{hasselt2016, suttonbarto2018}. Além disso, a aplicação de redes neurais baseadas em transformers na forma de encoders e decoders tem potencial para extrair representações contextuais complexas, contribuindo para a geração de insights que complementam a tomada de decisão dos agentes autônomos.
+A integração de agentes inteligentes e técnicas de reinforcement learning possibilita a criação de sistemas de defesa adaptáveis, capazes de identificar padrões maliciosos e reduzir significativamente a incidência de falsos positivos \cite{academia20}. Além disso, conforme discutido por Oesch et al. \cite{academia21}, a construção de um framework robusto de governança em segurança cibernética é essencial para coordenar as ações dos agentes de IA e assegurar a conformidade com as normas regulatórias. McIntosh et al. \cite{McIntosh2024} complementam esse argumento ao enfatizar que os modelos tradicionais de governança necessitam evoluir para incorporar as especificidades e os riscos associados à integração de tecnologias de inteligência artificial, reforçando a urgência de investir em soluções inovadoras.
 
-A integração desses métodos em um sistema distribuído, orquestrado por princípios de governaça ágil, se justifica pela necessidade de um framework que promova ciclos iterativos de monitoramento, avaliação e ajuste, equilibrando a autonomia dos agentes com o controle estratégico centralizado. Estudos recentes demonstram que a Governaça Ágil favorece a adaptação contínua e a descentralização, essenciais para gerenciar ambientes dinâmicos e complexos \cite{agilegov2020, agilegov2021}.
-
-A escolha da área de concentração do PPEE e do tema proposto está em consonância com as demandas do edital [1] e suas retificações [2], os quais enfatizam a necessidade de inovações que integrem inteligência artificial e segurança cibernética para mitigar riscos em infraestruturas críticas. Assim, este projeto não apenas contribui para o avanço do conhecimento na área, mas também oferece soluções práticas e escaláveis para problemas reais enfrentados pelo setor de TI.
-
-Em resumo, a relevância do problema justifica a adoção de uma abordagem híbrida que combine LLMs, redes transformer e agentes DDQN, integrados por uma governança ágil capaz de orquestrar a cooperação entre os agentes de forma eficiente e adaptativa.
+A escolha da área de concentração “Segurança e Inteligência Cibernética”, dentre as opções previstas no edital, reflete a necessidade de aprofundar o estudo e o desenvolvimento de tecnologias que permitam a antecipação de ameaças cibernéticas. Ao optar por essa linha de pesquisa, o presente projeto visa não apenas contribuir para o avanço teórico na área, mas também oferecer respostas práticas aos desafios enfrentados por ambientes operacionais críticos, como os sistemas baseados em Windows. Essa escolha justifica-se pela alta demanda por soluções que integrem aspectos tecnológicos, humanos e regulatórios, combinando métodos de threat hunting com frameworks de governança capazes de validar e aprimorar as respostas automatizadas. Dessa forma, o projeto alinha-se com os objetivos estratégicos estabelecidos no PPEE, promovendo uma abordagem interdisciplinar que une inteligência artificial, engenharia de sistemas e governança corporativa para fortalecer a segurança cibernética contemporânea.
 
 \section{Objetivos}
-
 \subsection{Objetivo Geral}
-Desenvolver e validar uma arquitetura colaborativa de enxame de agentes autônomos que combine LLMs, redes neurais transformer (encoders/decoders) e agentes DDQN, aplicando princípios de Governança Ágil para monitoramento contínuo e mitigação de ameaças cibernéticas, com integração de processos automatizados e interface para deliberação humana.
+O objetivo geral do projeto é criar uma solução que integre agentes de inteligência artificial e técnicas avançadas de threat hunting para a busca proativa de ameaças cibernéticas em ambientes Windows, fundamentada em modelos de governança.
 
 \subsection{Objetivos Específicos}
+Para atingir o objetivo geral, os seguintes objetivos específicos foram estabelecidos:
 \begin{enumerate}
-    \item Projetar um fluxo integrado que inclua a definição de regras de segurança, coleta de dados e formulação de hipóteses para identificação de anomalias.
-    \item Desenvolver agentes autônomos customizados utilizando DDQN, capacitando-os a tomar decisões com base no contexto.
-    \item Integrar LLMs e redes transformer para complementar a análise e gerar insights contextuais.
-    \item Orquestrar a cooperação entre os agentes por meio de um framework de Governança Ágil, que permita a iteração contínua e a adaptação dinâmica.
-    \item Estabelecer interfaces para integrar o sistema automatizado com especialistas humanos, permitindo deliberação em situações de alto risco.
-    \item Validar a eficácia da arquitetura proposta em ambientes críticos, comparando os resultados com métodos tradicionais.
+	\item Realizar uma revisão bibliográfica sobre governança em segurança cibernética, agentes de inteligência artificial e técnicas de busca proativa de ameaças em ambientes Windows.
+    \item Desenvolver agentes de inteligência artificial customizados, capacitando-os a executar ações especializadas no processo de threat hunting.
+    \item Desenvolver um modelo de governança capaz de orquestrar a cooperação entre os agentes.
+    \item Integrar interfaces com especialistas humanos ao processo de busca proativa por ameaças cibernéticas.
+    \item Validar a eficácia da solução proposta na detecção proativa em ambientes Windows, comparando os resultados com outros métodos.
 \end{enumerate}
 
 \section{Revisão da Literatura}
-A literatura em segurança cibernética enfatiza a importância de sistemas adaptativos e distribuídos para responder a ameaças emergentes. Modelos de linguagem de grande porte (LLMs) têm sido amplamente aplicados para análise de grandes volumes de dados textuais, enquanto redes neurais baseadas em transformers (utilizadas como encoders e decoders) facilitam a extração de características complexas \cite{mnih2015,suttonbarto2018}.
+O marco teórico que revolucionou o processamento de sequências em redes neurais foi estabelecido por Vaswani et al. \cite{vaswani2017attention}, ao introduzirem o mecanismo de atenção que, ao dispensar estruturas recorrentes, possibilitou o desenvolvimento de grandes modelos de linguagem (LLMs). Em continuidade a essa abordagem, Geiping et al. \cite{arxiv250205171} propuseram métodos para escalonar o uso de recursos computacionais em tempo de inferência por meio de raciocínio latente, ampliando a eficiência dos grandes modelos de linguagem na resolução de problemas complexos.
 
-Algoritmos de Deep Reinforcement Learning, como o DDQN, melhoraram a estabilidade e a eficiência de sistemas autônomos para tomada de decisão \cite{hasselt2016}. Além disso, a aplicação de enxames de agentes colaborativos tem se mostrado promissora para a mitigação de ameaças em ambientes distribuídos \cite{bonabeau1999,StoneVeloso2000}. 
+No mesmo âmbito, a contribuição de Agashe et al. \cite{agashe2023llmcoordination} avalia as habilidades de coordenação entre grandes modelos de linguagem, demonstrando o potencial desses modelos para realizar cooperação e tomada de decisão conjunta. Complementarmente, o trabalho de Kirshteyn \cite{kirshteyn2024aif} discute frameworks para agentes de IA, enfatizando tanto os aspectos técnicos quanto as aplicações práticas em cenários multiagente.
 
-Recentemente, estudos têm abordado a integração de técnicas de aprendizado profundo e a cooperação multiagente para aprimorar a segurança cibernética \cite{kim2020,liu2021,wang2022,zhang2021}. Paralelamente, Governança Ágil tem emergido como um paradigma que favorece a flexibilidade e a rápida adaptação, elementos essenciais para orquestrar agentes autônomos em ambientes dinâmicos \cite{agilegov2020,agilegov2021}.
+Paralelamente, a segurança cibernética tem se beneficiado de abordagens avançadas de threat hunting, que visam a identificação proativa e a mitigação de ataques. Hillier \& Karroubi \cite{hillier2022turninghuntedhunterthreat} discutem o conceito de transformar a postura defensiva, convertendo sistemas de “caça” em sistemas de “caçadores” proativos, abordando o ciclo de vida e os desafios de um ecossistema ameaçador. Ali \& Kostakos \cite{ali2023huntgptintegratingmachinelearningbased} ampliam essa discussão ao integrar técnicas de machine learning e modelos explicáveis, exemplificados pelo HuntGPT, que combina a detecção de anomalias com a inteligência explicável dos grandes modelos de linguagem.
 
-Novas abordagens tambémtêm ampliado as fronteiras da adaptação de modelos e da exploração em ambientes dinâmicos. Técnicas de Test Time Training têm demonstrado eficácia ao permitir a adaptação dos parâmetros do modelo durante a fase de teste, possibilitando respostas mais robustas a mudanças no domínio operacional \cite{testtimet2024}. Paralelamente, métodos de Low Rank Adaptation (LoRA) têm sido empregados para realizar fine-tuning de grandes modelos com menor custo computacional, mantendo desempenho de ponta \cite{lora2024}. Adicionalmente, a introdução de noisy layers em redes neurais tem se mostrado promissora para melhorar a capacidade de exploração em algoritmos de aprendizado por reforço, aumentando a diversidade de estratégias adotadas pelos agentes \cite{noisylayers2024}.
+Trabalhos como o de Yi \& Kim \cite{10713082} propõem modelos baseados na geração de hipóteses para o threat hunting, evidenciando uma mudança paradigmática em relação às abordagens tradicionais de detecção de ameaças. O modelo proposto por esses autores enfatiza a construção de hipóteses fundamentadas em dados de inteligência de ameaças, o que permite identificar, de maneira proativa, atividades suspeitas que, de outra forma, poderiam passar despercebidas.
+
+Outros estudos, como o da ISACA \cite{isaca2025leveraging} sobre governança de sistemas de IA, ressaltam a necessidade de frameworks que unam as melhores práticas de gestão com os avanços técnicos apresentados nos modelos colaborativos e na segurança cibernética. Assim, a integração de mecanismos de atenção e coordenação, juntamente com estratégias robustas de detecção e mitigação de ameaças, configura uma proposta inovadora e multidisciplinar.
+
+Ao compilar essas referências, o presente pré-projeto propõe a exploração de novas abordagens que possibilitem a sinergia entre a coordenação inteligente dos agentes e a eficiência na busca proativa por ameaças cibernéticas.
 
 \section{Metodologia}
-A pesquisa será estruturada em etapas que incluem:
-\begin{enumerate}
-  \item Revisão bibliográfica para fundamentar as técnicas de Deep Reinforcement Learning, redes transformer e Governança Ágil aplicados à segurança cibernética.
-  \item Levantamento de requisitos e definição da arquitetura híbrida, que integrará:
-    \begin{itemize}
-      \item LLMs para análise contextual;
-      \item Redes transformer (encoders/decoders) para extração de características; e
-      \item Agentes autônomos DDQN para tomada de decisão.
-    \end{itemize}
-  \item Desenvolvimento dos agentes e implementação do framework de governança ágil, permitindo ciclos iterativos de monitoramento, avaliação e ajuste para orquestrar a cooperação do enxame.
-  \item Validação experimental em ambiente controlado, com testes comparativos entre a abordagem proposta e métodos tradicionais.
-\end{enumerate}
+Este projeto de pesquisa adotará uma abordagem metodológica estruturada e sistemática, iniciando com uma revisão bibliográfica exaustiva que abordará os fundamentos teóricos da governança em segurança cibernética, as arquiteturas de agentes de inteligência artificial e as técnicas de busca proativa de ameaças em ambientes Windows. Essa revisão será fundamentada em fontes acadêmicas de alto rigor e publicações de referência, permitindo a identificação de lacunas na literatura e uma compreensão aprofundada dos desafios e avanços atuais na área.
+
+Posteriormente, a pesquisa adotará uma abordagem mista, combinando métodos quantitativos e qualitativos para a coleta e análise de dados. Na vertente quantitativa, serão realizadas simulações em ambientes laboratoriais controlados, onde as arquiteturas de agentes de IA serão submetidas a cenários diversos de ameaças cibernéticas, possibilitando a avaliação estatística e a mensuração do desempenho por meio de indicadores precisos. Simultaneamente, a vertente qualitativa incluirá estudos de caso e entrevistas com especialistas da área de segurança cibernética, os quais contribuirão para a compreensão das implicações práticas das soluções propostas e para a identificação de oportunidades de aprimoramento das abordagens teóricas.
+
+Os dados obtidos serão submetidos a análises comparativas com outras abordagens, buscando demonstrar a relevância e a adaptabilidade da solução proposta. Dessa forma, a integração dos resultados quantitativos e qualitativos fornecerá uma visão abrangente e robusta sobre a eficácia das arquiteturas, contribuindo de maneira significativa para o avanço do conhecimento na área de segurança cibernética.
 
 \section{Plano de Trabalho}
-O plano de trabalho está organizado em cinco etapas:
+O plano de trabalho está organizado em seis etapas:
 \begin{enumerate}
-    \item \textbf{Revisão Bibliográfica e Levantamento de Requisitos:} Pesquisa em bases acadêmicas sobre Deep Reinforcement Learning, redes de transformers, enxames de agentes e governança ágil.
-    \item \textbf{Definição e Projeto da Arquitetura:} Elaboração do fluxo integrado de monitoramento e mitigação, com definição dos processos de coleta de dados, formulação de hipóteses e mecanismos de cooperação.
-    \item \textbf{Desenvolvimento e Implementação:} Codificação dos agentes (utilizando DDQN), integração dos modelos (LLMs e transformers) e implementação do framework de governança ágil para orquestração do enxame.
-    \item \textbf{Testes e Validação:} Realização de experimentos em ambiente controlado com foco em sistemas críticos, comparando a abordagem proposta com métodos tradicionais.
-    \item \textbf{Redação e Finalização da Dissertação:} Consolidação dos resultados, discussão de contribuições e limitações, e redação do documento final.
+	\item \textbf{Cursar Disciplinas Obrigatórias e Eletivas:} Realizar os cursos das disciplinas obrigatórias e eletivas do Mestrado Profissional em Engenharia Elétrica com habilitação em Segurança Cibernética.
+    \item \textbf{Revisão Bibliográfica e Levantamento de Requisitos:} Pesquisar em bases acadêmicas sobre Deep Reinforcement Learning, redes de transformers, enxames de agentes e governança ágil.
+    \item \textbf{Definição e Projeto da Arquitetura:} Elaborar o fluxo integrado de monitoramento e mitigação, definindo os processos de coleta de dados, formulação de hipóteses e mecanismos de cooperação.
+    \item \textbf{Desenvolvimento e Integração:} Codificar e integrar a arquitetura proposta.
+    \item \textbf{Testes e Validação:} Realizar experimentos em ambiente controlado para testes e validação.
+    \item \textbf{Redação e Finalização da Dissertação:} Consolidar os resultados, discutir as contribuições e limitações, e redigir o documento final.
 \end{enumerate}
 
 \section{Cronograma}
@@ -128,40 +119,24 @@ A seguir, apresenta-se o cronograma de execução das atividades, considerando a
 		\hline
 		\textbf{Atividade / Disciplina} & \textbf{1$^o$ Sem.} & \textbf{2$^o$ Sem.} & \textbf{3$^o$ Sem.} & \textbf{4$^o$ Sem.} \\
 		\hline
-		% Disciplinas obrigatórias (300h total)
-		PPEE2004 - Metodologia de Pesquisa Científica 1 (30h/a) & \cellcolor{gray!20} X &  &  &  \\
+		Cursar Disciplinas Obrigatórias e Eletivas & \cellcolor{gray!20} X & \cellcolor{gray!20} X & \cellcolor{gray!20} X &  \\
 		\hline
-		PPEE3353 - Segurança Cibernéca (60h/a) & \cellcolor{gray!20} X &  &  &  \\
+		Revisão Bibliográfica e Levantamento de Requisitos & \cellcolor{gray!20} X &  &  &  \\
 		\hline
-		PPEE2010 - Inteligência Cibernéca (60h/a) & \cellcolor{gray!20} X &  &  &  \\
+		Definição e Projeto da Arquitetura &  & \cellcolor{gray!20} X  &  &  \\
 		\hline
-    Revisão Bibliográfica e Levantamento de Requisitos & \cellcolor{gray!20} X &  &  &  \\
+   		Desenvolvimento e Integração &  & \cellcolor{gray!20} X & \cellcolor{gray!20} X &  \\
 		\hline
-		PPEE2005 - Metodologia de Pesquisa Científica 2 (30h/a) &  & \cellcolor{gray!20} X &  &  \\
+		Testes e Validação &  & \cellcolor{gray!20} X & \cellcolor{gray!20} X &  \\
 		\hline
-		PPEE2006 - Aplicações de Ciências de Dados em Segurança Cibernéca (60h/a) &  & \cellcolor{gray!20} X &  &  \\
-		\hline
-		PPEE2008 - Fatores Humanos em Segurança Cibernéca (60h/a) &  & \cellcolor{gray!20} X &  &  \\
-		\hline
-		Definição e Projeto da Arquitetura &  & \cellcolor{gray!20} X &  &  \\
-		\hline
-		Desenvolvimento e Implementação &  &  & \cellcolor{gray!20} X &  \\
-		\hline
-		Testes e Validação &  &  & \cellcolor{gray!20} X &  \\
-		\hline
-    PPEE1996 - Estudo Orientado 1 (30h/a) &  &  & \cellcolor{gray!20} X &  \\
-		\hline
-		PPEE1997 - Estudo Orientado 2 (30h/a) &  &  &  & \cellcolor{gray!20} X \\
-		\hline
-    Redação e Finalização da Dissertação &  &  &  & \cellcolor{gray!20} X \\
+		Redação e Finalização da Dissertação &  & \cellcolor{gray!20} X & \cellcolor{gray!20} X  & \cellcolor{gray!20} X  \\
 		\hline
 	\end{tabular}
 	\caption{Cronograma de Execução de Atividades e Disciplinas}
 \end{table}
-
-
-\newpage
 \bibliographystyle{abntex2-alf}
+\newboolean{exibirdoi}
+\setboolean{exibirdoi}{true}
 \bibliography{bibliografia}
 
 \end{document}
