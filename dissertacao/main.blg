@@ -26,9 +26,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
-Warning--campo year vazio ou faltando em MarcoCivil2014
-Warning--campo year vazio ou faltando em LGPD2018
-Warning--campo year vazio ou faltando em Dieckmann2012
 +---------------------------------------------------------+
 | Estilo bibliográfico abntex2-alf.bst versão v-1.9.7           |
 | Em caso de dúvidas ou problemas com este estilo procure |
@@ -36,43 +33,42 @@ Warning--campo year vazio ou faltando em Dieckmann2012
 +---------------------------------------------------------+
 You've used 43 entries,
             6714 wiz_defined-function locations,
-            1447 strings with 19735 characters,
-and the built_in function-call counts, 68379 in all, are:
-= -- 8119
-> -- 1332
-< -- 1842
-+ -- 2382
-- -- 398
-* -- 4314
-:= -- 8392
-add.period$ -- 172
+            1453 strings with 20300 characters,
+and the built_in function-call counts, 54909 in all, are:
+= -- 5604
+> -- 1473
+< -- 871
++ -- 1410
+- -- 436
+* -- 3744
+:= -- 6815
+add.period$ -- 188
 call.type$ -- 43
-change.case$ -- 476
-chr.to.int$ -- 73
-cite$ -- 45
-duplicate$ -- 6854
-empty$ -- 2400
-format.name$ -- 1954
-if$ -- 13603
+change.case$ -- 504
+chr.to.int$ -- 88
+cite$ -- 42
+duplicate$ -- 4197
+empty$ -- 3010
+format.name$ -- 2148
+if$ -- 12070
 int.to.chr$ -- 3
 int.to.str$ -- 0
-missing$ -- 736
-newline$ -- 241
-num.names$ -- 197
-pop$ -- 1038
+missing$ -- 755
+newline$ -- 204
+num.names$ -- 210
+pop$ -- 989
 preamble$ -- 1
-purify$ -- 179
+purify$ -- 188
 quote$ -- 0
-skip$ -- 7228
+skip$ -- 4509
 stack$ -- 1
-substring$ -- 2916
-swap$ -- 2416
-text.length$ -- 57
+substring$ -- 2523
+swap$ -- 1774
+text.length$ -- 62
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 15
-warning$ -- 3
-while$ -- 297
+type$ -- 19
+warning$ -- 0
+while$ -- 342
 width$ -- 0
-write$ -- 652
-(There were 3 warnings)
+write$ -- 686

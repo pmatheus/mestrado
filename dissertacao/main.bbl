@@ -7,294 +7,290 @@
 
 \bibitem[A et al. 2024]{10616474}
 \abntrefinfo{A et al.}{A et al.}{2024}
-{A, P. J. et al. Threat hunting in system using log analysis.
-2024.
-Dispon{\'\i}vel em: $<$https://doi.org/10.1109/ICKECS61492.2024.10616474$>$.}
+{A, P. J. et al. Threat hunting in system using log analysis. In:  \emph{2024
+  International Conference on Knowledge Engineering and Communication Systems
+  (ICKECS)}. [S.l.]: IEEE, 2024. p.~1--6.}
 
-\bibitem[Agashe et al. 2023]{agashe2023llmcoordination}
-\abntrefinfo{Agashe et al.}{AGASHE et al.}{2023}
-{AGASHE, S. et al. Llm-coordination: Evaluating and analyzing multi-agent
-  coordination abilities in large language models.
-\emph{arXiv preprint arXiv:2310.03903}, Oct 2023.
-Version 2, revised Apr 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2310.03903}.}
+\bibitem[Agashe et al. 2025]{agashe2023llmcoordination}
+\abntrefinfo{Agashe et al.}{AGASHE et al.}{2025}
+{AGASHE, S. et al. {LLM-Coordination}: Evaluating and analyzing multi-agent
+  coordination abilities in large language models. In:  \emph{Findings of the
+  Association for Computational Linguistics: NAACL 2025}. [S.l.]: Association
+  for Computational Linguistics, 2025. p. 8038--8057.}
 
 \bibitem[Aldauiji, Batarfi e Bayousef 2022]{9791234}
 \abntrefinfo{Aldauiji, Batarfi e Bayousef}{ALDAUIJI; BATARFI; BAYOUSEF}{2022}
 {ALDAUIJI, F.; BATARFI, O.; BAYOUSEF, M. Utilizing cyber threat hunting
   techniques to find ransomware attacks: A survey of the state of the art.
-\emph{IEEE Access}, v.~10, p. 61695--61706, 2022.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1109/ACCESS.2022.3181278}.}
+\emph{IEEE Access}, v.~10, p. 61695--61706, 2022.}
 
 \bibitem[Ali e Kostakos 2023]{ali2023huntgptintegratingmachinelearningbased}
 \abntrefinfo{Ali e Kostakos}{ALI; KOSTAKOS}{2023}
-{ALI, T.; KOSTAKOS, P. \emph{HuntGPT: Integrating Machine Learning-Based
-  Anomaly Detection and Explainable AI with Large Language Models (LLMs)}.
-  2023.
-Dispon{\'\i}vel em: \url{https://arxiv.org/abs/2309.16021}.}
+{ALI, T.; KOSTAKOS, P. \emph{{HuntGPT}: Integrating Machine Learning-Based
+  Anomaly Detection and Explainable {AI} with Large Language Models ({LLMs})}.
+  2023.}
 
 \bibitem[Bai e Sugawara 2024]{bai2024reducingredundantcomputationmultiagent}
 \abntrefinfo{Bai e Sugawara}{BAI; SUGAWARA}{2024}
-{BAI, Y.; SUGAWARA, T. \emph{Reducing Redundant Computation in Multi-Agent
-  Coordination through Locally Centralized Execution}. 2024.
-Dispon{\'\i}vel em: \url{https://arxiv.org/abs/2404.13096}.}
+{BAI, Y.; SUGAWARA, T. Reducing redundant computation in multi-agent
+  coordination through locally centralized execution. In:  \emph{2024 16th IIAI
+  International Congress on Advanced Applied Informatics (IIAI-AAI)}. [S.l.]:
+  IEEE, 2024. p. 363--368.}
 
-\bibitem[Chen et al. 2023]{doe2023emergent}
-\abntrefinfo{Chen et al.}{CHEN et al.}{2023}
-{CHEN, B. et al. \emph{BlockAgents: Towards Byzantine-Robust LLM-Based
-  Multi-Agent Coordination via Blockchain}. New York, NY, USA: [s.n.], 2023.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1145/3674399.3674445}.}
+\bibitem[{Brasil} 2012]{Dieckmann2012}
+\abntrefinfo{{Brasil}}{{Brasil}}{2012}
+{{Brasil}. \emph{Lei n. 12.737, de 30 de novembro de 2012 (Lei Carolina
+  Dieckmann)}. 2012.
+[Acesso em 12 fev. 2025].
+Dispon{\'\i}vel em:
+  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2011-2014/2012/lei/l12737.htm}.}
+
+\bibitem[{Brasil} 2014]{MarcoCivil2014}
+\abntrefinfo{{Brasil}}{{Brasil}}{2014}
+{{Brasil}. \emph{Lei n. 12.965, de 23 de abril de 2014 (Marco Civil da
+  Internet)}. 2014.
+[Acesso em 12 fev. 2025].
+Dispon{\'\i}vel em:
+  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2011-2014/2014/lei/l12965.htm}.}
+
+\bibitem[{Brasil} 2018]{LGPD2018}
+\abntrefinfo{{Brasil}}{{Brasil}}{2018}
+{{Brasil}. \emph{Lei n. 13.709, de 14 de agosto de 2018 (Lei Geral de Prote{\c
+  c}{\~a}o de Dados Pessoais)}. 2018.
+[Acesso em 12 fev. 2025].
+Dispon{\'\i}vel em:
+  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2015-2018/2018/lei/l13709.htm}.}
+
+\bibitem[Chen et al. 2024]{doe2023emergent}
+\abntrefinfo{Chen et al.}{CHEN et al.}{2024a}
+{CHEN, B. et al. {BlockAgents}: Towards byzantine-robust {LLM}-based
+  multi-agent coordination via blockchain. In:  \emph{Proceedings of the ACM
+  Turing Award Celebration Conference - China 2024 (ACM-TURC '24)}. Changsha,
+  China: Association for Computing Machinery, 2024. p. 187--192.}
 
 \bibitem[Chen et al. 2024]{NEURIPS2024_eb113910}
-\abntrefinfo{Chen et al.}{CHEN et al.}{2024}
-{CHEN, Z. et al. Agentpoison: Red-teaming llm agents via poisoning memory or
-  knowledge bases. In:  GLOBERSON, A. et al. (Ed.). \emph{Advances in Neural
-  Information Processing Systems}. Curran Associates, Inc., 2024. v.~37, p.
-  130185--130213. Dispon{\'\i}vel em:
-  \url{https://proceedings.neurips.cc/paper\_files/paper/2024/file/eb113910e9c3f6242541c1652e30dfd6-Paper-Conference.pdf}.}
+\abntrefinfo{Chen et al.}{CHEN et al.}{2024b}
+{CHEN, Z. et al. {AgentPoison}: Red-teaming {LLM} agents via poisoning memory
+  or knowledge bases. In:  \emph{Advances in Neural Information Processing
+  Systems}. [S.l.]: Curran Associates, Inc., 2024. v.~37, p. 130185--130213.}
 
 \bibitem[Dolan-Gavitt 2025]{dolan-gavitt2025}
 \abntrefinfo{Dolan-Gavitt}{DOLAN-GAVITT}{2025}
-{DOLAN-GAVITT, B. \emph{AI agents for offsec with zero false positives}. 2025.
-  Black Hat USA 2025 Briefings.
+{DOLAN-GAVITT, B. \emph{{AI} Agents for Offsec with Zero False Positives}.
+  2025. Black Hat USA 2025 Briefings, Las Vegas, NV.
 Dispon{\'\i}vel em:
-  \url{https://cdn.prod.website-files.com/686c11d5bee0151a3f8021bf/689cb0e9212bdf4ed0efe44c\_US-25-Dolan-Gavitt-AI-Agents-for-Offsec-with-Zero-False-Positives.pdf}.}
+  \url{https://i.blackhat.com/BH-USA-25/Presentations/US-25-Dolan-Gavitt-AI-Agents-for-Offsec-with-Zero-False-Positives-Thursday.pdf}.}
 
 \bibitem[Durfee 1993]{durfee1993organizations}
 \abntrefinfo{Durfee}{DURFEE}{1993}
 {DURFEE, E.~H. Organizations, plans and schedules: An interdisciplinary
   perspective on coordinating ai agents.
-\emph{Journal of Intelligent Systems}, Walter de Gruyter GmbH \& Co., v.~3,
-  n.~2-4, p. 157--188, 1993.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1515/JISYS.1993.3.2-4.157}.}
+\emph{Journal of Intelligent Systems}, Walter de Gruyter, v.~3, n.~2-4, p.
+  157--188, 1993.}
 
 \bibitem[Geiping et al. 2025]{arxiv250205171}
 \abntrefinfo{Geiping et al.}{GEIPING et al.}{2025}
 {GEIPING, J. et al. Scaling up test-time compute with latent reasoning: A
-  recurrent depth approach.
-\emph{arXiv preprint arXiv:2502.05171v1}, 2025.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2502.05171}.}
+  recurrent depth approach. In:  \emph{Advances in Neural Information
+  Processing Systems 38 (NeurIPS 2025)}. [s.n.], 2025. Spotlight.
+  Dispon{\'\i}vel em: \url{https://openreview.net/forum?id=S3GhJooWIC}.}
+
+\bibitem[Goldoni, Rodrigues e Medeiros 2024]{FGV2023}
+\abntrefinfo{Goldoni, Rodrigues e Medeiros}{GOLDONI; RODRIGUES; MEDEIROS}{2024}
+{GOLDONI, L. R.~F.; RODRIGUES, K.~F.; MEDEIROS, B.~P. Qual {\'e} o futuro da
+  governan{\c c}a de ciberseguran{\c c}a no brasil?
+\emph{Cadernos Gest{\~a}o P{\'u}blica e Cidadania}, Funda{\c c}{\~a}o
+  Get{\'u}lio Vargas, v.~29, p. e90972, 2024.
+Dispon{\'\i}vel em: \url{https://periodicos.fgv.br/cgpc/article/view/90972}.}
 
 \bibitem[Gu et al. 2024]{gu2024agent}
 \abntrefinfo{Gu et al.}{GU et al.}{2024}
-{GU, X. et al. {Agent Smith: A Single Image Can Jailbreak One Million
-  Multimodal LLM Agents Exponentially Fast}.
-\emph{arXiv preprint arXiv:2402.08567}, 2024.}
+{GU, X. et al. Agent smith: A single image can jailbreak one million multimodal
+  {LLM} agents exponentially fast. In:  \emph{Proceedings of the 41st
+  International Conference on Machine Learning (ICML)}. PMLR, 2024.
+  (Proceedings of Machine Learning Research, v.~235), p. 16647--16672.
+  Dispon{\'\i}vel em: \url{https://proceedings.mlr.press/v235/gu24e.html}.}
+
+\bibitem[Guo et al. 2024]{guo2024survey}
+\abntrefinfo{Guo et al.}{GUO et al.}{2024}
+{GUO, T. et al. Large language model based multi-agents: A survey of progress
+  and challenges. In:  \emph{Proceedings of the Thirty-Third International
+  Joint Conference on Artificial Intelligence (IJCAI)}. [S.l.]: International
+  Joint Conferences on Artificial Intelligence Organization, 2024. p.
+  8048--8057.}
 
 \bibitem[HaddadPajouh et al. 2018]{HADDADPAJOUH201888}
 \abntrefinfo{HaddadPajouh et al.}{HADDADPAJOUH et al.}{2018}
 {HADDADPAJOUH, H. et al. A deep recurrent neural network based approach for
   internet of things malware threat hunting.
-\emph{Future Generation Computer Systems}, v.~85, p. 88--96, 2018.
-ISSN 0167-739X.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1016/j.future.2018.03.007}.}
+\emph{Future Generation Computer Systems}, Elsevier, v.~85, p. 88--96, 2018.
+ISSN 0167-739X.}
 
 \bibitem[Hillier e Karroubi 2022]{hillier2022turninghuntedhunterthreat}
 \abntrefinfo{Hillier e Karroubi}{HILLIER; KARROUBI}{2022}
 {HILLIER, C.; KARROUBI, T. \emph{Turning the Hunted into the Hunter via Threat
-  Hunting: Life Cycle, Ecosystem, Challenges and the Great Promise of AI}.
-  2022.
-Dispon{\'\i}vel em: \url{https://arxiv.org/abs/2204.11076}.}
+  Hunting: Life Cycle, Ecosystem, Challenges and the Great Promise of {AI}}.
+  2022.}
 
-\bibitem[Huang et al. 2024]{huang2024resilience}
-\abntrefinfo{Huang et al.}{HUANG et al.}{2024}
-{HUANG, J.-t. et al. On the resilience of llm-based multi-agent collaboration
-  with faulty agents.
-\emph{arXiv preprint arXiv:2408.00989}, 2024.}
+\bibitem[Huang et al. 2025]{huang2024resilience}
+\abntrefinfo{Huang et al.}{HUANG et al.}{2025}
+{HUANG, J.-T. et al. On the resilience of {LLM}-based multi-agent collaboration
+  with faulty agents. In:  \emph{Proceedings of the 42nd International
+  Conference on Machine Learning (ICML)}. PMLR, 2025.  (Proceedings of Machine
+  Learning Research, v.~267), p. 26202--26226. Dispon{\'\i}vel em:
+  \url{https://proceedings.mlr.press/v267/huang25ay.html}.}
 
-\bibitem[ISACA 2025]{isaca2025leveraging}
-\abntrefinfo{ISACA}{ISACA}{2025}
-{ISACA. \emph{Leveraging COBIT for Effective AI System Governance}. 2025.
-White Paper, ISACA. Accessed on February 14, 2025.
+\bibitem[{ISACA} 2025]{isaca2025leveraging}
+\abntrefinfo{{ISACA}}{{ISACA}}{2025}
+{{ISACA}. \emph{Leveraging COBIT for Effective AI System Governance}. 2025.
+White Paper, ISACA.
 Dispon{\'\i}vel em:
   \url{https://www.isaca.org/resources/white-papers/2025/leveraging-cobit-for-effective-ai-system-governance}.}
-
-\bibitem[Kirshteyn 2024]{kirshteyn2024aif}
-\abntrefinfo{Kirshteyn}{KIRSHTEYN}{2024}
-{KIRSHTEYN, P. M.~E. \emph{AI Agent Frameworks: Technical Insights and
-  Practical Applications}. [S.l.]: Independently Published, 2024. Hardcover,
-  288 pages.
-ISBN 979-8332582653.}
-
-\bibitem[Lei n12.965, de 23 de abril de 2014]{MarcoCivil2014}
-\abntrefinfo{Lei\ldots}{LEI\ldots}{a}
-{LEI n12.965, de 23 de abril de 2014.
-[Acesso em 12 fev. 2025].
-Dispon{\'\i}vel em:
-  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2011-2014/2014/lei/l12965.htm}.}
-
-\bibitem[Lei n13.709, de 14 de agosto de 2018]{LGPD2018}
-\abntrefinfo{Lei\ldots}{LEI\ldots}{b}
-{LEI n13.709, de 14 de agosto de 2018.
-[Acesso em 12 fev. 2025].
-Dispon{\'\i}vel em:
-  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2015-2018/2018/lei/l13709.htm}.}
-
-\bibitem[Lei nº 12.737, de 30 de novembro de 2012]{Dieckmann2012}
-\abntrefinfo{Lei\ldots}{LEI\ldots}{c}
-{LEI nº 12.737, de 30 de novembro de 2012.
-[Acesso em 12 fev. 2025].
-Dispon{\'\i}vel em:
-  \url{http://www.planalto.gov.br/ccivil\_03/\_ato2011-2014/2012/lei/l12737.htm}.}
 
 \bibitem[Li et al. 2023]{pmlr-v202-li23au}
 \abntrefinfo{Li et al.}{LI et al.}{2023}
 {LI, Y. et al. Cooperative open-ended learning framework for zero-shot
-  coordination. In:  KRAUSE, A. et al. (Ed.). \emph{Proceedings of the 40th
-  International Conference on Machine Learning}. PMLR, 2023.  (Proceedings of
-  Machine Learning Research, v.~202), p. 20470--20484. Dispon{\'\i}vel em:
+  coordination. In:  \emph{Proceedings of the 40th International Conference on
+  Machine Learning (ICML)}. PMLR, 2023.  (Proceedings of Machine Learning
+  Research, v.~202), p. 20470--20484. Dispon{\'\i}vel em:
   \url{https://proceedings.mlr.press/v202/li23au.html}.}
 
-\bibitem[Liu et al. 2023]{liu2023llm}
-\abntrefinfo{Liu et al.}{LIU et al.}{2023}
-{LIU, J. et al. Llm-powered hierarchical language agent for real-time human-ai
-  coordination.
-\emph{arXiv preprint arXiv:2312.15224}, Dec 2023.
-Revised version (v2) submitted on Jan 9, 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2312.15224}.}
+\bibitem[Liu et al. 2024]{liu2023llm}
+\abntrefinfo{Liu et al.}{LIU et al.}{2024a}
+{LIU, J. et al. {LLM-Powered} hierarchical language agent for real-time
+  human-{AI} coordination. In:  \emph{Proceedings of the 23rd International
+  Conference on Autonomous Agents and Multiagent Systems (AAMAS)}. [S.l.]:
+  International Foundation for Autonomous Agents and Multiagent Systems, 2024.
+  p. 1219--1228.}
 
 \bibitem[Liu et al. 2024]{liu2024crda}
-\abntrefinfo{Liu et al.}{LIU et al.}{2024}
-{LIU, Z. et al. Crda: Content risk drift assessment of large language models
-  through adversarial multi-agent interaction.
-\emph{2024 International Joint Conference on Neural Networks (IJCNN)}, 2024.}
+\abntrefinfo{Liu et al.}{LIU et al.}{2024b}
+{LIU, Z. et al. {CRDA}: Content risk drift assessment of large language models
+  through adversarial multi-agent interaction. In:  \emph{2024 International
+  Joint Conference on Neural Networks (IJCNN)}. [S.l.]: IEEE, 2024. p.~1--8.}
 
 \bibitem[Mahmud, Goldfajn e Zilberstein
   2025]{mahmud2025distributedmultiagentcoordinationusing}
 \abntrefinfo{Mahmud, Goldfajn e Zilberstein}{MAHMUD; GOLDFAJN;
   ZILBERSTEIN}{2025}
-{MAHMUD, S.; GOLDFAJN, D.~B.; ZILBERSTEIN, S. \emph{Distributed Multi-Agent
-  Coordination Using Multi-Modal Foundation Models}. 2025.
-Dispon{\'\i}vel em: \url{https://arxiv.org/abs/2501.14189}.}
+{MAHMUD, S.; GOLDFAJN, D. B.; ZILBERSTEIN, S. \emph{Distributed Multi-Agent
+  Coordination Using Multi-Modal Foundation Models}. 2025.}
 
 \bibitem[{Mandiant} 2025]{mandiant2025mtrends}
 \abntrefinfo{{Mandiant}}{{Mandiant}}{2025}
-{{Mandiant}. {M-Trends 2025 Report}.
-\emph{Google Cloud Security}, 2025.
-Dispon{\'\i}vel em: \url{https://cloud.google.com/security/m-trends}.}
+{{Mandiant}. \emph{{M-Trends 2025}: Data, Insights, and Recommendations From
+  the Frontlines}.
+[S.l.], 2025. 16th edition. Dispon{\'\i}vel em:
+  \url{https://cloud.google.com/blog/topics/threat-intelligence/m-trends-2025}.}
 
 \bibitem[McIntosh et al. 2024]{McIntosh2024}
 \abntrefinfo{McIntosh et al.}{MCINTOSH et al.}{2024a}
-{MCINTOSH, T.~R. et al. From cobit to iso 42001: Evaluating cybersecurity
+{MCINTOSH, T.~R. et al. From {COBIT} to {ISO} 42001: Evaluating cybersecurity
   frameworks for opportunities, risks, and regulatory compliance in
   commercializing large language models.
-\emph{arXiv preprint}, 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2402.15770}.}
+\emph{Computers \& Security}, Elsevier, v.~144, p. 103964, 2024.
+ISSN 0167-4048.}
 
 \bibitem[McIntosh et al. 2024]{mcintosh2024cobit}
 \abntrefinfo{McIntosh et al.}{MCINTOSH et al.}{2024b}
-{MCINTOSH, T.~R. et al. From cobit to iso 42001: Evaluating cybersecurity
+{MCINTOSH, T.~R. et al. From {COBIT} to {ISO} 42001: Evaluating cybersecurity
   frameworks for opportunities, risks, and regulatory compliance in
   commercializing large language models.
-\emph{Computers and Security}, v.~144, p. 103964, 2024.
-ISSN 0167-4048.
-Dispon{\'\i}vel em:
-  \url{https://www.sciencedirect.com/science/article/pii/S0167404824002694}.}
+\emph{Computers \& Security}, Elsevier, v.~144, p. 103964, 2024.
+ISSN 0167-4048.}
 
 \bibitem[Moreno et al. 2025]{moreno2025analysis}
 \abntrefinfo{Moreno et al.}{MORENO et al.}{2025}
-{MORENO, A.~C. et al. {Analysis of Autonomous Penetration Testing Through
-  Reinforcement Learning and Recommender Systems}.
-\emph{Sensors}, v.~25, n.~1, p.~211, 2025.}
+{MORENO, A.~C. et al. Analysis of autonomous penetration testing through
+  reinforcement learning and recommender systems.
+\emph{Sensors}, MDPI, v.~25, n.~1, p.~211, 2025.
+ISSN 1424-8220.}
 
-\bibitem[Oesch et al. 2024]{academia21}
-\abntrefinfo{Oesch et al.}{OESCH et al.}{2024}
-{OESCH, S. et al. The path to autonomous cyber defense.
-\emph{arXiv preprint}, 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2404.10788}.}
+\bibitem[Oesch et al. 2025]{academia21}
+\abntrefinfo{Oesch et al.}{OESCH et al.}{2025}
+{OESCH, S. et al. The path to autonomous cyberdefense.
+\emph{IEEE Security \& Privacy}, v.~23, n.~1, p. 38--46, 2025.
+ISSN 1540-7993.}
 
 \bibitem[Qiu et al.
   2024]{qiu2024collaborativeintelligencepropagatingintentions}
 \abntrefinfo{Qiu et al.}{QIU et al.}{2024}
 {QIU, X. et al. \emph{Towards Collaborative Intelligence: Propagating
   Intentions and Reasoning for Multi-Agent Coordination with Large Language
-  Models}. 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2407.12532}.}
+  Models}. 2024.}
 
-\bibitem[Silva João e~Pereira 2023]{FGV2023}
-\abntrefinfo{Silva João e~Pereira}{SILVA JOãO E~PEREIRA}{2023}
-{SILVA JOãO E~PEREIRA, A. Qual é o futuro da governança de cibersegurança
-  no brasil?
-\emph{Revista CGPC – FGV}, 2023.
-Dispon{\'\i}vel em:
-  \url{https://periodicos.fgv.br/cgpc/article/view/90972/86959}.}
-
-\bibitem[Sindiramutty 2023]{academia22}
-\abntrefinfo{Sindiramutty}{SINDIRAMUTTY}{2023}
-{SINDIRAMUTTY, S.~R. Autonomous threat hunting: A future paradigm for ai-driven
-  threat intelligence.
-\emph{arXiv preprint}, 2023.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2401.00286}.}
+\bibitem[Sindiramutty 2024]{academia22}
+\abntrefinfo{Sindiramutty}{SINDIRAMUTTY}{2024}
+{SINDIRAMUTTY, S.~R. \emph{Autonomous Threat Hunting: A Future Paradigm for
+  AI-Driven Threat Intelligence}. 2024.}
 
 \bibitem[Thi et al. 2022]{9931222}
 \abntrefinfo{Thi et al.}{THI et al.}{2022}
 {THI, H.~T. et al. Federated learning-based cyber threat hunting for apt attack
   detection in sdn-enabled networks. In:  \emph{2022 21st International
-  Symposium on Communications and Information Technologies (ISCIT)}. [s.n.],
-  2022. p.~1--6. Dispon{\'\i}vel em:
-  \url{https://doi.org/10.1109/ISCIT55906.2022.9931222}.}
+  Symposium on Communications and Information Technologies (ISCIT)}. [S.l.]:
+  IEEE, 2022. p.~1--6.}
 
 \bibitem[Ucci, Aniello e Baldoni 2019]{ucci2019}
 \abntrefinfo{Ucci, Aniello e Baldoni}{UCCI; ANIELLO; BALDONI}{2019}
 {UCCI, D.; ANIELLO, L.; BALDONI, R. Survey of machine learning techniques for
   malware analysis.
-\emph{Computers \& Security}, v.~81, p. 123--147, 2019.}
+\emph{Computers \& Security}, Elsevier, v.~81, p. 123--147, 2019.
+ISSN 0167-4048.}
 
 \bibitem[Valencia 2024]{academia20}
 \abntrefinfo{Valencia}{VALENCIA}{2024}
-{VALENCIA, L.~J. Artificial intelligence as the new hacker: Developing agents
-  for offensive security.
-\emph{arXiv preprint}, 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2406.07561}.}
+{VALENCIA, L.~J. \emph{Artificial Intelligence as the New Hacker: Developing
+  Agents for Offensive Security}. 2024.}
 
 \bibitem[Vaswani et al. 2017]{vaswani2017attention}
 \abntrefinfo{Vaswani et al.}{VASWANI et al.}{2017}
-{VASWANI, A. et al. Attention is all you need.
-\emph{arXiv preprint arXiv:1706.03762}, 2017.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.1706.03762}.}
+{VASWANI, A. et al. Attention is all you need. In:  \emph{Advances in Neural
+  Information Processing Systems 30 (NIPS 2017)}. [S.l.]: Curran Associates,
+  Inc., 2017. p. 5998--6008.}
 
-\bibitem[{Verizon} 2025]{verizon2025dbir}
-\abntrefinfo{{Verizon}}{{Verizon}}{2025}
-{{Verizon}. \emph{{2025 Data Breach Investigations Report}}.
-Basking Ridge, NJ, 2025. Dispon{\'\i}vel em:
-  \url{https://www.verizon.com/business/resources/Tcdb/reports/2025-dbir-data-breach-investigations-report.pdf}.}
+\bibitem[{Verizon Business} 2025]{verizon2025dbir}
+\abntrefinfo{{Verizon Business}}{{Verizon Business}}{2025}
+{{Verizon Business}. \emph{2025 Data Breach Investigations Report}.
+[S.l.], 2025. Dispon{\'\i}vel em:
+  \url{https://www.verizon.com/business/resources/reports/dbir/}.}
 
 \bibitem[Yi e Kim 2024]{10713082}
 \abntrefinfo{Yi e Kim}{YI; KIM}{2024}
 {YI, C.-G.; KIM, Y.-G. Hypothesis generation model for cyber threat hunting.
-\emph{IEEE Communications Magazine}, v.~62, n.~10, p. 110--116, 2024.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1109/MCOM.001.2300224}.}
+\emph{IEEE Communications Magazine}, v.~62, n.~10, p. 110--116, 2024.}
 
 \bibitem[Yuan et al. 2023]{Yuan_Zhang_Xue_Yin_Chen_Guan_Li_Qian_Yu_2023}
 \abntrefinfo{Yuan et al.}{YUAN et al.}{2023}
 {YUAN, L. et al. Robust multi-agent coordination via evolutionary generation of
-  auxiliary adversarial attackers.
-v.~37, p. 11753--11762, 2023.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1609/aaai.v37i10.26388}.}
+  auxiliary adversarial attackers. In:  \emph{Proceedings of the AAAI
+  Conference on Artificial Intelligence}. [S.l.]: AAAI Press, 2023. v.~37,
+  n.~10, p. 11753--11762.}
 
-\bibitem[Yulianto e Ngo]{10750987}
-\abntrefinfo{Yulianto e Ngo}{YULIANTO; NGO}{}
+\bibitem[Yulianto e Ngo 2024]{10750987}
+\abntrefinfo{Yulianto e Ngo}{YULIANTO; NGO}{2024}
 {YULIANTO, S.; NGO, G. N.~C. Automated threat hunting, detection, and threat
-  actor profiling using tira.
-Dispon{\'\i}vel em: \url{https://doi.org/10.1109/ICISS62896.2024.10750987}.}
+  actor profiling using tira. In:  \emph{2024 International Conference on ICT
+  for Smart Society (ICISS)}. [S.l.]: IEEE, 2024. p.~1--7.}
 
 \bibitem[Zhan et al. 2024]{zhan2024injecagent}
 \abntrefinfo{Zhan et al.}{ZHAN et al.}{2024}
-{ZHAN, Q. et al. {InjecAgent: Benchmarking Indirect Prompt Injections in
-  Tool-Integrated Large Language Model Agents}.
-\emph{arXiv preprint arXiv:2403.02691}, 2024.}
+{ZHAN, Q. et al. {InjecAgent}: Benchmarking indirect prompt injections in
+  tool-integrated large language model agents. In:  \emph{Findings of the
+  Association for Computational Linguistics: ACL 2024}. Bangkok, Thailand:
+  Association for Computational Linguistics, 2024. p. 10471--10506.}
 
-\bibitem[Zhang et al. 2024]{zhang2024breaking}
+\bibitem[Zhang et al. 2025]{zhang2024breaking}
+\abntrefinfo{Zhang et al.}{ZHANG et al.}{2025}
+{ZHANG, B. et al. Breaking agents: Compromising autonomous {LLM} agents through
+  malfunction amplification. In:  \emph{Proceedings of the 2025 Conference on
+  Empirical Methods in Natural Language Processing (EMNLP)}. Suzhou, China:
+  Association for Computational Linguistics, 2025. p. 34964--34976.}
+
+\bibitem[Zhang et al. 2024]{DBLP:journals/corr/abs-2308-11339}
 \abntrefinfo{Zhang et al.}{ZHANG et al.}{2024}
-{ZHANG, B. et al. {Breaking Agents: Compromising Autonomous LLM Agents Through
-  Malfunction Amplification}.
-\emph{arXiv preprint arXiv:2407.20859}, 2024.}
-
-\bibitem[Zhang et al. 2023]{DBLP:journals/corr/abs-2308-11339}
-\abntrefinfo{Zhang et al.}{ZHANG et al.}{2023}
-{ZHANG, C. et al. Proagent: Building proactive cooperative ai with large
-  language models.
-\emph{CoRR}, abs/2308.11339, 2023.
-Dispon{\'\i}vel em: \url{https://doi.org/10.48550/arXiv.2308.11339}.}
+{ZHANG, C. et al. {ProAgent}: Building proactive cooperative agents with large
+  language models. In:  \emph{Proceedings of the AAAI Conference on Artificial
+  Intelligence}. [S.l.]: AAAI Press, 2024. v.~38, n.~16, p. 17591--17599.}
 
 \end{thebibliography}
