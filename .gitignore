@@ -1,0 +1,27 @@
+# --- Security: never commit credentials (this repo is PUBLIC) ---
+*.ovpn
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+
+# --- Privacy: personal academic documents ---
+historico_*.pdf
+Termo*.pdf
+Sistema Integrado*.pdf
+
+# --- IEEE paper: manuscript kept private pending submission ---
+# Keep references.bib so the (public) dissertation still compiles.
+mashunt/*
+!mashunt/references.bib
+.orchestration/paper-fragments/
+
+# --- Third-party copyrighted material (public repo; not authored work) ---
+# Course reading list: copyrighted textbooks + other people's theses (~130 MB).
+inteligencia-cibernetica/
+2025-01-18-pdf-1-TechAI-Goolge-whitepaper_Prompt Engineering_v4-*.pdf
+
+# --- OS noise ---
+.DS_Store
+**/.DS_Store

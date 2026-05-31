@@ -1,0 +1,270 @@
+\chapter{Introdução}
+\label{cap:introducao}
+
+\section{Contextualização}
+\label{sec:contexto}
+
+O cenário contemporâneo da segurança cibernética é definido pela velocidade e
+pela sofisticação crescentes das operações adversárias. Ataques de
+\emph{ransomware}, campanhas de \emph{phishing} e a exploração de
+vulnerabilidades tornaram-se mais frequentes e complexos, obrigando as
+organizações a repensar continuamente suas estratégias de defesa
+\cite{academia20}. A proliferação de fornecedores comerciais de vigilância e de
+mercados clandestinos de credenciais válidas amplia o acesso a capacidades
+ofensivas avançadas, de modo que atacantes alcançam, com regularidade, os
+ambientes corporativos antes que qualquer alerta seja gerado.
+
+Nesse contexto, a busca proativa por ameaças, ou \emph{threat hunting},
+consolidou-se como uma prática que transcende a reatividade dos sistemas
+tradicionais. Em vez de aguardar que um alerta seja disparado, os profissionais
+de segurança adotam técnicas de investigação forense para examinar redes,
+sistemas e estações de trabalho à procura de sinais de comprometimento
+\cite{academia22}. Essa abordagem ativa permite identificar e neutralizar
+indicadores de atividade maliciosa antes que sejam plenamente explorados pelos
+atacantes, reduzindo a janela de oportunidade do adversário. A literatura
+descreve essa inversão de postura como a transformação do alvo em caçador, com
+ênfase no ciclo de vida da caça e no papel emergente da inteligência artificial
+\cite{hillier2022turninghuntedhunterthreat}.
+
+Um traço distintivo das ameaças modernas é a adoção sistemática de técnicas de
+\emph{living-off-the-land} (LOLBins), nas quais o atacante abusa de binários,
+\emph{scripts} e utilitários legítimos já presentes no sistema operacional — a
+exemplo de \texttt{PowerShell}, \texttt{wmic}, \texttt{certutil},
+\texttt{rundll32} e \texttt{mshta} — para executar suas ações. Por se valerem de
+ferramentas confiáveis e assinadas pelo próprio fornecedor do sistema, essas
+técnicas produzem telemetria que, isoladamente, é praticamente
+indistinguível da atividade administrativa benigna. O resultado é uma evasão
+eficaz das defesas baseadas em assinaturas e listas de bloqueio, deslocando o
+ônus da detecção para a análise comportamental e contextual dos eventos.
+Ambientes Windows, predominantes em redes corporativas e sustentados por uma
+rica superfície de utilitários nativos, são especialmente suscetíveis a esse
+padrão de abuso.
+
+A esse desafio técnico soma-se um desafio humano e operacional. As soluções de
+detecção contemporâneas, mesmo quando dotadas de modelos estatísticos acurados,
+estão sujeitas à falácia da taxa-base: em ambientes nos quais a atividade
+maliciosa é rara, mesmo classificadores de elevada acurácia geram um volume
+desproporcional de falsos positivos, tornando-se operacionalmente ineficazes. O
+analista de segurança, por sua vez, é submetido a uma sobrecarga cognitiva
+permanente, dividido entre o triagem de alertas de baixa qualidade e a
+investigação aprofundada de hipóteses relevantes. Essa sobrecarga compromete a
+capacidade de resposta da organização e favorece a fadiga de alertas, na qual
+eventos genuinamente críticos podem ser negligenciados em meio ao ruído.
+
+Os agentes de inteligência artificial apresentam-se como uma resposta promissora
+a esse cenário. Tais agentes são estruturas de \emph{software} que ampliam as
+capacidades dos grandes modelos de linguagem (LLMs — \emph{Large Language
+Models}), permitindo que estes raciocinem sobre evidências, interajam com
+ferramentas externas e executem ações no sistema \cite{academia20}. O mecanismo
+de atenção introduzido por Vaswani et al. \cite{vaswani2017attention} pavimentou
+o caminho para esses modelos, e trabalhos subsequentes demonstraram seu potencial
+de coordenação e tomada de decisão conjunta em arranjos multiagente
+\cite{agashe2023llmcoordination}. Na segurança cibernética, propostas como o
+HuntGPT \cite{ali2023huntgptintegratingmachinelearningbased} e modelos de geração
+de hipóteses para a caça a ameaças \cite{10713082} ilustram a viabilidade de
+aplicar LLMs à detecção proativa, conjugando explicabilidade e raciocínio
+investigativo.
+
+Essa autonomia, contudo, é uma faca de dois gumes. A mesma flexibilidade que
+torna os agentes poderosos os expõe a uma classe de ataques que tem por alvo o
+próprio agente, e não apenas o sistema defendido. Pesquisas recentes documentam o
+envenenamento de memória e de bases de recuperação aumentada (RAG), a injeção
+indireta de \emph{prompt} dissimulada em conteúdo externo e a amplificação de mau
+funcionamento, na qual um erro inicial desencadeia um ciclo de ações inúteis que
+degrada o desempenho do agente. Demonstrou-se, ainda, a possibilidade de
+\emph{jailbreaks} infecciosos, em que uma única entrada adversarial se propaga
+por uma população de agentes. Diante disso, qualquer arquitetura defensiva que
+não modele um adversário igualmente capaz de atacar a camada de raciocínio é,
+por construção, incompleta.
+
+A governança em segurança cibernética emerge, portanto, como pilar para alinhar
+as estratégias de defesa às necessidades do negócio e para coordenar, de forma
+segura, o trabalho dos agentes \cite{academia21}. Frameworks consolidados — como
+COBIT, NIST CSF, ISO 27001 e o recente ISO 42001 — precisam evoluir para
+incorporar os riscos específicos introduzidos pela integração de tecnologias de
+IA \cite{McIntosh2024,isaca2025leveraging}. A presente dissertação situa-se
+nessa interseção: propõe a governança multiagente não como camada burocrática
+acessória, mas como mecanismo técnico de resiliência, capaz de conter a
+propagação de comprometimentos e de validar achados antes que se convertam em
+decisões.
+
+\section{Definição do Problema}
+\label{sec:problema}
+
+O problema de pesquisa pode ser enunciado pela tensão entre duas exigências
+aparentemente conflitantes. De um lado, demanda-se um sistema de caça a ameaças
+\emph{eficaz}, capaz de operar sobre a telemetria viva de um ambiente corporativo
+Windows, detectar técnicas evasivas de \emph{living-off-the-land} e reduzir o
+volume de falsos positivos que sobrecarrega os analistas. De outro, exige-se que
+esse mesmo sistema seja \emph{resiliente}: como os agentes que o compõem são
+suscetíveis a envenenamento de memória, injeção de \emph{prompt} e amplificação
+de mau funcionamento, a automação introduz uma nova superfície de ataque que, se
+explorada, pode subverter justamente a função de defesa que o sistema deveria
+exercer.
+
+Formula-se, assim, a questão central de pesquisa: \emph{como projetar uma
+arquitetura multiagente para caça a ameaças que opere de forma eficaz sobre a
+telemetria corporativa real e, simultaneamente, demonstre resiliência diante de
+ataques adversariais dirigidos aos próprios agentes?} A resposta a essa questão
+não se esgota na escolha de um modelo de linguagem mais capaz; ela depende,
+sobretudo, da arquitetura de coordenação e dos mecanismos de governança que
+regulam o fluxo de informação e a tomada de decisão entre os agentes.
+
+\section{Lacuna de Pesquisa}
+\label{sec:lacuna}
+
+A revisão da literatura revela que, embora os agentes de IA tenham avançado de
+tarefas supervisionadas e específicas para sistemas de raciocínio autônomo, as
+arquiteturas atuais apresentam lacunas críticas quando confrontadas com um
+adversário inteligente. Identificam-se, em particular, três lacunas que esta
+dissertação se propõe a endereçar:
+
+\begin{enumerate}
+  \item \textbf{Ausência de orquestração multiagente robusta.} Faltam
+  \emph{frameworks} que impeçam que o comprometimento de um único agente se
+  propague sistemicamente, contendo a falha em vez de amplificá-la. A maioria das
+  propostas concentra-se no desempenho de detecção e negligencia a contenção de
+  comprometimentos internos.
+
+  \item \textbf{Ausência de validação de integridade em tempo de execução.} Os
+  mecanismos de memória e as bases de conhecimento dos agentes carecem de
+  validação contínua contra envenenamento furtivo de dados, deixando o
+  raciocínio do agente vulnerável a manipulações que persistem entre interações.
+
+  \item \textbf{Autocorreção ineficaz frente à degradação comportamental.} Os
+  agentes não dispõem de mecanismos confiáveis para detectar e reverter sua
+  própria degradação, permanecendo expostos à amplificação de mau funcionamento e
+  a ataques de negação de serviço sobre o ciclo de raciocínio.
+\end{enumerate}
+
+Soma-se a essas lacunas a escassez de avaliações conduzidas em condições
+realistas — sobre telemetria viva, com instrumentação de produção e contra
+adversários que atacam a camada de agentes — e a ausência de uma comparação
+sistemática entre arquiteturas governadas e linhas de base sem governança. É
+precisamente nessa interseção entre resiliência adversarial, validação de
+integridade e operação realista que o MAS-Hunt se posiciona.
+
+\section{Objetivos}
+\label{sec:objetivos}
+
+\subsection{Objetivo Geral}
+\label{subsec:objetivo-geral}
+
+Projetar, implementar e avaliar o MAS-Hunt, uma arquitetura de governança
+multiagente para a busca proativa por ameaças cibernéticas em ambientes Windows,
+capaz de operar sobre telemetria viva e de demonstrar resiliência mensurável a
+ataques adversariais dirigidos aos agentes, em comparação a linhas de base sem
+governança.
+
+\subsection{Objetivos Específicos}
+\label{subsec:objetivos-especificos}
+
+Para alcançar o objetivo geral, estabelecem-se os seguintes objetivos
+específicos:
+
+\begin{enumerate}
+  \item Revisar criticamente a literatura sobre caça a ameaças e detecção
+  comportamental, agentes baseados em LLMs e sistemas multiagente, segurança de
+  agentes (envenenamento de memória, injeção de \emph{prompt} e amplificação de
+  mau funcionamento) e técnicas de \emph{living-off-the-land} mapeadas ao MITRE
+  ATT\&CK.
+
+  \item Especificar a arquitetura MAS-Hunt em três camadas — Conselho de
+  Governança, Gerentes e Trabalhadores/Caçadores — detalhando os papéis dos
+  agentes, os protocolos de mensagens tipadas e os cinco mecanismos de
+  governança M1 (integridade de memória), M2 (validação cruzada), M3
+  (resistência a injeção), M4 (monitoramento comportamental) e M5 (quarentena).
+
+  \item Implementar o MAS-Hunt como um \emph{plugin} do Claude Code, materializado
+  por meio de habilidades (\emph{skills}), comandos de barra (\emph{slash
+  commands}) e \emph{hooks} que orquestram subagentes pelas capacidades nativas
+  do agente principal.
+
+  \item Construir um laboratório de avaliação instrumentado com Sysmon e Elastic
+  Security sobre um domínio Windows, com um corpus de \emph{playbooks} de
+  técnicas LOLBin (malicioso versus benigno) e um desenho adversarial que combina
+  modos de injeção e níveis de severidade.
+
+  \item Avaliar empiricamente o MAS-Hunt completo (C1-full) frente às condições de
+  referência (C1-nohardening, C2-naive e C3-Elastic) quanto ao desempenho de
+  detecção, à resiliência adversarial e à taxa de falsos positivos, com análise
+  estatística por intervalos de confiança via \emph{bootstrap}.
+\end{enumerate}
+
+\section{Hipótese}
+\label{sec:hipotese}
+
+A hipótese central desta dissertação é a seguinte: \emph{a arquitetura MAS-Hunt,
+ao incorporar mecanismos de governança multiagente (M1--M5), apresenta uma
+redução estatisticamente significativa da suscetibilidade a ataques de
+envenenamento de memória e de amplificação de mau funcionamento — medida pela
+taxa de sucesso do ataque (\emph{Attack Success Rate}) — em comparação a uma
+linha de base multiagente sem endurecimento e a um agente de passagem única,
+preservando ou aprimorando o desempenho de detecção e reduzindo a taxa de falsos
+positivos em relação às regras de detecção padrão do Elastic Security.}
+
+Dessa hipótese central derivam-se duas hipóteses operacionais subordinadas: (i) a
+governança contribui de forma marginal e mensurável para a resiliência, de modo
+que a ablação dos mecanismos de endurecimento (C1-nohardening) eleva a taxa de
+sucesso do ataque em relação ao sistema completo (C1-full); e (ii) a orquestração
+multiagente governada reduz a taxa de falsos positivos em comparação tanto ao
+agente de passagem única (C2-naive) quanto às regras padrão do Elastic
+(C3-Elastic), sem prejuízo da revocação.
+
+\section{Contribuições}
+\label{sec:contribuicoes}
+
+As principais contribuições desta dissertação são:
+
+\begin{enumerate}
+  \item \textbf{Uma síntese crítica} do panorama atual de ameaças e do
+  estado da arte em vulnerabilidades de agentes de IA, articulando os riscos da
+  camada de agentes (envenenamento de memória, injeção de \emph{prompt} e
+  amplificação de mau funcionamento) às exigências operacionais da caça a
+  ameaças em ambientes Windows.
+
+  \item \textbf{A arquitetura MAS-Hunt}, uma proposta de orquestração multiagente
+  em três camadas com cinco mecanismos de governança (M1--M5) e um
+  \emph{framework} estruturado de análise (OBSERVAR $\rightarrow$ HIPOTETIZAR
+  $\rightarrow$ EVIDÊNCIA $\rightarrow$ VALIDAÇÃO-CRUZADA $\rightarrow$
+  CLASSIFICAR) que confere resistência a injeção adversarial.
+
+  \item \textbf{Uma implementação concreta} do MAS-Hunt como \emph{plugin} do
+  Claude Code — composto por habilidades, comandos de barra e \emph{hooks} que
+  orquestram subagentes —, demonstrando que a governança multiagente pode ser
+  realizada sobre capacidades nativas de orquestração do agente principal, e não
+  apenas por meio de \emph{scripts} isolados.
+
+  \item \textbf{Um arcabouço de avaliação reprodutível}, incluindo o laboratório
+  instrumentado, o corpus de \emph{playbooks} LOLBin, o desenho adversarial e o
+  pipeline de medição com \emph{health-gate} de telemetria, que permite comparar
+  arquiteturas governadas e não governadas sob métricas e análise estatística
+  bem definidas.
+\end{enumerate}
+
+\section{Organização do Texto}
+\label{sec:organizacao}
+
+O restante desta dissertação está organizado em sete capítulos. O
+Capítulo~\ref{cap:introducao} — este capítulo — apresentou o contexto, o
+problema, a lacuna de pesquisa, os objetivos, a hipótese e as contribuições do
+trabalho. O Capítulo~2 desenvolve a fundamentação teórica, abrangendo a caça a
+ameaças e a detecção comportamental, os LLMs e agentes, os sistemas multiagente,
+a segurança de agentes, a telemetria Windows com Sysmon e Elastic Security, as
+técnicas de \emph{living-off-the-land} mapeadas ao MITRE ATT\&CK e a injeção
+adversarial de \emph{logs}. O Capítulo~3 examina os trabalhos relacionados,
+comparando abordagens existentes e situando as lacunas que o MAS-Hunt se propõe a
+preencher.
+
+O Capítulo~4 detalha a arquitetura MAS-Hunt: a visão geral das três camadas, os
+papéis dos agentes, os mecanismos M1--M5, o \emph{framework} M3 de análise, a
+implementação como \emph{plugin} do Claude Code e os protocolos de mensagens
+tipadas e de governança. O Capítulo~5 descreve a metodologia experimental,
+incluindo o laboratório, o corpus de \emph{playbooks}, o desenho adversarial, as
+quatro condições experimentais, o pipeline de medição e a análise estatística,
+documentando honestamente as limitações de telemetria e o papel do
+\emph{health-gate} na sua mitigação.
+
+O Capítulo~6 apresenta os resultados obtidos; o Capítulo~7 discute suas
+implicações, limitações e ameaças à validade; e o Capítulo~8 conclui o trabalho,
+recapitulando as contribuições e apontando direções para pesquisas futuras.

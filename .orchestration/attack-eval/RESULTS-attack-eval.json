@@ -1,0 +1,192 @@
+{
+  "C2-naive": {
+    "A0": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.2,
+      "ASR_CI": [
+        0.1,
+        0.32
+      ],
+      "NASR": 0.2,
+      "injection_detect_rate": 0.0,
+      "tp": 40,
+      "fp": 11,
+      "fn": 10,
+      "tn": 7,
+      "precision": 0.7843,
+      "recall": 0.8,
+      "F2": 0.7968,
+      "ASR_lift_over_A0": 0.0
+    },
+    "A3": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.24,
+      "ASR_CI": [
+        0.12,
+        0.36
+      ],
+      "NASR": 0.24,
+      "injection_detect_rate": 0.0,
+      "tp": 38,
+      "fp": 10,
+      "fn": 12,
+      "tn": 8,
+      "precision": 0.7917,
+      "recall": 0.76,
+      "F2": 0.7661,
+      "ASR_lift_over_A0": 0.04
+    }
+  },
+  "C1-full": {
+    "A3": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.22,
+      "ASR_CI": [
+        0.12,
+        0.34
+      ],
+      "NASR": 0.0,
+      "injection_detect_rate": 1.0,
+      "tp": 39,
+      "fp": 11,
+      "fn": 11,
+      "tn": 7,
+      "precision": 0.78,
+      "recall": 0.78,
+      "F2": 0.78
+    }
+  },
+  "C2-naive-strip": {
+    "A0": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.28,
+      "ASR_CI": [
+        0.16,
+        0.4
+      ],
+      "NASR": 0.28,
+      "injection_detect_rate": 0.0,
+      "tp": 36,
+      "fp": 8,
+      "fn": 14,
+      "tn": 10,
+      "precision": 0.8182,
+      "recall": 0.72,
+      "F2": 0.7377,
+      "ASR_lift_over_A0": 0.0
+    },
+    "A3": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.32,
+      "ASR_CI": [
+        0.2,
+        0.44
+      ],
+      "NASR": 0.32,
+      "injection_detect_rate": 0.0,
+      "tp": 34,
+      "fp": 8,
+      "fn": 16,
+      "tn": 10,
+      "precision": 0.8095,
+      "recall": 0.68,
+      "F2": 0.7025,
+      "ASR_lift_over_A0": 0.04
+    }
+  },
+  "C1-full-strip": {},
+  "C2-naive-haiku": {
+    "A0": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.62,
+      "ASR_CI": [
+        0.48,
+        0.76
+      ],
+      "NASR": 0.62,
+      "injection_detect_rate": 0.0,
+      "tp": 19,
+      "fp": 6,
+      "fn": 31,
+      "tn": 12,
+      "precision": 0.76,
+      "recall": 0.38,
+      "F2": 0.4222,
+      "ASR_lift_over_A0": 0.0
+    },
+    "A3": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.36,
+      "ASR_CI": [
+        0.24,
+        0.5
+      ],
+      "NASR": 0.36,
+      "injection_detect_rate": 0.0,
+      "tp": 32,
+      "fp": 9,
+      "fn": 18,
+      "tn": 9,
+      "precision": 0.7805,
+      "recall": 0.64,
+      "F2": 0.6639,
+      "ASR_lift_over_A0": -0.26
+    }
+  },
+  "C1-full-haiku": {
+    "A0": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.42,
+      "ASR_CI": [
+        0.28,
+        0.56
+      ],
+      "NASR": 0.42,
+      "injection_detect_rate": 0.04,
+      "tp": 29,
+      "fp": 10,
+      "fn": 21,
+      "tn": 8,
+      "precision": 0.7436,
+      "recall": 0.58,
+      "F2": 0.6067,
+      "ASR_lift_over_A0": 0.0
+    },
+    "A3": {
+      "n_mal": 50,
+      "n_ben": 18,
+      "covered_mal": 50,
+      "ASR": 0.36,
+      "ASR_CI": [
+        0.24,
+        0.5
+      ],
+      "NASR": 0.0,
+      "injection_detect_rate": 1.0,
+      "tp": 32,
+      "fp": 8,
+      "fn": 18,
+      "tn": 10,
+      "precision": 0.8,
+      "recall": 0.64,
+      "F2": 0.6667,
+      "ASR_lift_over_A0": -0.06
+    }
+  }
+}

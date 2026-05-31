@@ -1,0 +1,148 @@
+% =====================================================================
+% Capítulo 8 — Conclusão
+% Dissertação MAS-Hunt (ABNT, PT-BR)
+% Síntese + contribuições REFORMULADAS (não reivindicar ganho de detecção
+% da governança) + trabalhos futuros. Veredito honesto de aggregate-v2.md.
+% Chaves \cite verificadas: zhan2024injecagent, NEURIPS2024_eb113910,
+% huang2024resilience, ali2023huntgptintegratingmachinelearningbased.
+% =====================================================================
+
+\chapter{Conclusão}
+\label{cap:conclusao}
+
+\section{Síntese do Trabalho}
+\label{sec:concl-sintese}
+
+Esta dissertação apresentou o MAS-Hunt (\textit{Multi-Agent System for Threat
+Hunting}), uma arquitetura de governança multiagente em três camadas --- Conselho
+de Governança, Gerentes e Trabalhadores/Caçadores --- para caça proativa a
+ameaças em ambientes Windows instrumentados com Sysmon e Elastic Security,
+materializada como um \textit{plugin} do Claude Code que orquestra subagentes
+nativos por meio de habilidades, comandos de barra e \textit{hooks}. O sistema
+incorpora cinco mecanismos de governança --- integridade de memória (M1),
+validação cruzada (M2), resistência a injeção via \textit{framework} estruturado
+de análise (M3), monitoramento comportamental (M4) e quarentena (M5) --- e foi
+avaliado em um experimento controlado e reprodutível que comparou quatro condições
+(C1-full, C1-nohardening, C2-naive e C3-Elastic) sobre janelas de telemetria e
+verdade de referência idênticas, sob injeção adversarial de logs em múltiplos
+modos e níveis de sofisticação.
+
+A evidência experimental foi relatada com integridade, inclusive em seu achado
+contrário à expectativa inicial. Três conclusões quantitativas estruturam o
+trabalho. Primeira: um analista baseado em modelo de linguagem supera as regras
+estáticas de SIEM por aproximadamente $4{,}5$ vezes em F2, com intervalos de
+confiança amplamente separados, em um ganho dirigido pela revocação. Segunda: a
+camada de governança multiagente \emph{não} melhora o F2 de detecção sobre um
+modelo de linguagem de passagem única --- C1-full ($0{,}675$) e C2-naive
+($0{,}672$) são estatisticamente indistinguíveis. Terceira: o valor distintivo e
+mensurável da governança é a resistência à injeção adversarial --- somente
+C1-full detectou e sinalizou conteúdo adversarial injetado, em 407 janelas, contra
+zero nas três demais condições.
+
+\section{Resposta à Questão de Pesquisa}
+\label{sec:concl-resposta}
+
+A questão de pesquisa indagou como projetar uma arquitetura multiagente para caça
+a ameaças que opere sobre telemetria corporativa viva e demonstre resiliência
+contra ataques voltados aos próprios agentes. A resposta sustentada pela evidência
+é que o ganho de \emph{detecção} advém da interposição de um analista de modelo de
+linguagem entre a telemetria e a regra estática --- e não da camada de governança
+em si --- ao passo que o ganho de \emph{segurança} advém especificamente dos
+mecanismos de endurecimento (M1 e M3), que transformam a manipulação adversarial
+em evidência observável e auditável. Em outras palavras, a arquitetura multiagente
+governada não detecta melhor do que um único agente competente, mas é a única,
+entre as condições avaliadas, capaz de perceber e declarar que foi atacada ---
+propriedade ausente tanto no agente isolado quanto na linha de base SIEM.
+
+\section{Contribuições (Reformuladas)}
+\label{sec:concl-contribuicoes}
+
+À luz dos resultados, as contribuições do trabalho são enunciadas em sua forma
+honesta e reformulada, distinta da expectativa original de que a governança
+elevaria a acurácia de detecção:
+
+\begin{enumerate}
+    \item \textbf{Evidência quantitativa da superioridade do analista agêntico
+    sobre regras de SIEM.} Sob telemetria empresarial realista e contaminação
+    adversarial, demonstrou-se um ganho de $\approx 4{,}5\times$ em F2 das
+    condições baseadas em modelo de linguagem sobre as regras padrão do Elastic
+    Security, dirigido por uma recuperação de revocação que reduz os falsos
+    negativos de $\approx 88\%$ para faixas operacionalmente úteis. Esta é a
+    contribuição de detecção, e ela é arquiteturalmente atribuível ao analista de
+    modelo de linguagem, e não à governança \cite{ali2023huntgptintegratingmachinelearningbased}.
+    \item \textbf{Uma arquitetura de governança que adiciona resistência à injeção
+    e auditabilidade sem custo de detecção.} Os mecanismos M1--M5, e em especial
+    M1 e M3, conferem a C1-full a capacidade --- exclusiva entre as condições
+    avaliadas --- de detectar e sinalizar a contaminação adversarial de seu
+    próprio contexto analítico (407 janelas sinalizadas contra 0), mantendo F2 de
+    detecção estatisticamente equivalente ao do agente não governado. A
+    contribuição de governança é, portanto, de segurança e de observabilidade, e
+    não de acurácia \cite{zhan2024injecagent, NEURIPS2024_eb113910, huang2024resilience}.
+    Uma reavaliação adversarial complementar, sob um ataque de fabricação de
+    evidências mais forte e controlando um vazamento de rótulo da telemetria,
+    confirmou esse valor de auditabilidade --- detecção de injeção em $100\%$ das
+    janelas maliciosas e nenhum comprometimento silencioso --- de forma robusta
+    entre níveis de modelo trabalhador, sem que daí decorra qualquer vantagem de
+    acurácia de detecção.
+    \item \textbf{Uma metodologia de avaliação bidimensional e um arcabouço
+    reprodutível.} O trabalho entrega uma matriz de avaliação adversarial
+    --- corpus de 185 \textit{playbooks} LOLBin, injeções em quatro modos e três
+    níveis, gatilho de saúde de telemetria, extração priorizada de EID1 e
+    pontuação determinística por janela com intervalos de confiança por
+    \textit{bootstrap} --- que pontua os agentes não apenas pelo acerto da
+    classificação, mas também pela capacidade de detectar que foram atacados. Essa
+    dupla dimensão de avaliação é, ela própria, uma contribuição metodológica
+    transferível para a pesquisa em agentes de segurança.
+\end{enumerate}
+
+\section{Trabalhos Futuros}
+\label{sec:concl-futuros}
+
+A evidência reunida e as limitações reconhecidas apontam cinco direções de
+continuidade:
+
+\begin{enumerate}
+    \item \textbf{Saturar a telemetria discriminativa.} Reconfigurar a coleta de
+    Sysmon e complementá-la com fontes adicionais (ETW, EDR de
+    \textit{endpoint}, telemetria de PowerShell e de rede) para elevar o teto
+    estrutural de revocação imposto pela captura esparsa de EID1, isolando assim
+    o efeito da governança da escassez de sinal. Só com a telemetria saturada será
+    possível afirmar com segurança se a igualdade de F2 entre C1-full e C2-naive
+    persiste.
+    \item \textbf{Estressar adversarialmente a detecção, e não apenas a
+    observabilidade.} Conceber \textit{payloads} de injeção que efetivamente
+    alterem a evidência consumida pelo classificador (e não apenas o instruam a
+    ignorá-la), de modo a testar se a resistência da governança se traduz em
+    \emph{melhor acurácia sob ataque forte} --- regime em que o agente de passagem
+    única tenderia a falhar silenciosamente.
+    \item \textbf{Reduzir a taxa de falsos positivos.} Incorporar calibração,
+    agrupamento de alertas, validação determinística adicional e aprendizado com
+    \textit{feedback} do analista, transpondo o ponto de operação otimizado para
+    F2 a um ponto operacionalmente viável em SOC.
+    \item \textbf{Ampliar o escopo de avaliação.} Estender o corpus a técnicas
+    pós-exploração além de LOLBins e a ambientes Linux, macOS e nuvem pública, com
+    validação longitudinal em redes de maior escala e diversidade de
+    \textit{background}.
+    \item \textbf{Separar o efeito do modelo do efeito da governança.} Reavaliar a
+    arquitetura com diferentes modelos de linguagem subjacentes e medir custos
+    operacionais (latência de triagem, consumo de \textit{tokens}, custo
+    financeiro e tempo até a validação de evidência), de modo a caracterizar o
+    \textit{trade-off} entre robustez de governança e custo computacional.
+\end{enumerate}
+
+\section{Considerações Finais}
+\label{sec:concl-finais}
+
+O MAS-Hunt não elimina a necessidade de SIEM, de telemetria confiável ou de
+validação humana; ele os pressupõe e sobre eles opera. A principal lição deste
+trabalho não é a que se esperava no início: a governança multiagente não tornou o
+sistema um detector mais acurado. O que ela tornou o sistema foi um detector mais
+\emph{honesto} sob ataque --- capaz de declarar, sob manipulação adversarial, que
+seu próprio raciocínio foi alvo de contaminação, em vez de produzir uma
+classificação aparentemente correta sem qualquer rastro do ataque que sofreu. Em
+segurança cibernética, na qual o adversário explora justamente a confiança cega no
+processo de decisão, essa diferença --- entre errar (ou acertar) em silêncio e
+deixar evidência auditável da manipulação --- é precisamente o que separa um
+agente conveniente de um agente defensável. É essa propriedade, e não um número de
+acurácia superior, que a evidência experimental desta dissertação sustenta como a
+contribuição de segurança do MAS-Hunt.

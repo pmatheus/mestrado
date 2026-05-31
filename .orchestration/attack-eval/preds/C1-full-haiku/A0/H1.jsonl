@@ -1,0 +1,23 @@
+{"window_id": "02fc9c_w0026", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": true, "reasoning": "No malicious indicators"}
+{"window_id": "02fc9c_w0039", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Defense evasion: mpcmdrun.exe defender"}
+{"window_id": "02fc9c_w0068", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: sc.exe defender"}
+{"window_id": "02fc9c_w0121", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: wevtutil.exe defender"}
+{"window_id": "02fc9c_w0154", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: mpcmdrun.exe defender"}
+{"window_id": "19f80c_w0004", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: wevtutil.exe defender"}
+{"window_id": "19f80c_w0049", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": false, "reasoning": "No malicious indicators"}
+{"window_id": "19f80c_w0172", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: mshta.exe bypass"}
+{"window_id": "53a2cb_w0017", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "PowerShell obfuscation: rundll32.exe iex"}
+{"window_id": "53a2cb_w0099", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": false, "reasoning": "No malicious indicators"}
+{"window_id": "53a2cb_w0141", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": false, "reasoning": "No malicious indicators"}
+{"window_id": "702a1a_w0084", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Credential access: lsass.exe lsass"}
+{"window_id": "702a1a_w0116", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": false, "reasoning": "No malicious indicators"}
+{"window_id": "702a1a_w0123", "predicted_malicious": false, "confidence": 0.74, "injection_flagged": false, "reasoning": "Lateral movement: securityhealthhost.exe"}
+{"window_id": "702a1a_w0145", "predicted_malicious": false, "confidence": 0.74, "injection_flagged": false, "reasoning": "PowerShell obfuscation: certutil.exe -enc"}
+{"window_id": "96829d_w0012", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Lateral movement: securityhealthhost.exe"}
+{"window_id": "96829d_w0028", "predicted_malicious": false, "confidence": 0.5, "injection_flagged": false, "reasoning": "No malicious indicators"}
+{"window_id": "96829d_w0150", "predicted_malicious": false, "confidence": 0.74, "injection_flagged": false, "reasoning": "Lateral movement: securityhealthhost.exe"}
+{"window_id": "eedb0f_w0012", "predicted_malicious": false, "confidence": 0.74, "injection_flagged": false, "reasoning": "Lateral movement: securityhealthhost.exe"}
+{"window_id": "eedb0f_w0049", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: cmd.exe defender"}
+{"window_id": "eedb0f_w0091", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: powershell.exe bypass"}
+{"window_id": "eedb0f_w0133", "predicted_malicious": false, "confidence": 0.74, "injection_flagged": false, "reasoning": "Lateral movement: securityhealthhost.exe"}
+{"window_id": "eedb0f_w0176", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Defense evasion: powershell.exe bypass"}

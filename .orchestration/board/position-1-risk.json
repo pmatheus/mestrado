@@ -1,0 +1,83 @@
+{
+  "role": "Threat/Risk Assessor",
+  "grounding_notes": [
+    "Verified on lab (ssh lab-ts): canonical base is ~/mashunt-lab. TWO stale empty copies exist at ~/fast-storage/mashunt-lab and ~/hd10tb/mashunt-lab (path-ambiguity risk).",
+    "Ground truth for the 10 new runs EXISTS but only as PER-PLAYBOOK ground_truth.jsonl (185 rows/run; keys: playbook, playbook_idx, vm, mode, tier, run_id, exit_code). This is Harness B granularity.",
+    "The /hunt-experiment skill (Harness A) consumes PER-EVENT experiment/corpus/ground-truth/labels.jsonl and writes experiment/results/raw/. NEITHER the labels.jsonl NOR the results/raw dir exist anywhere on the lab. Harness A path is UNVERIFIED for the new runs.",
+    "The proven, working scorer is Harness B per-playbook: scripts/eval/c2_naive_helper.py (prepare -> subagent classifies -> score), output schema MIRRORS c3_baseline_v2.py (metrics.json/fpr.json). c2_naive_helper does NO LLM itself; classification is subagent reasoning on subscription quota (zero API $).",
+    "NO C1-full scorer exists on the lab. grep for c1_full/M1-M5/governance in scripts/ hits only c2_aggregate.py. C1-full has no harness today; it must be BUILT (reuse C2 prepare/score + M1-M5 in subagent reasoning) or it does not exist.",
+    "May archive HAS per-run dirs for c1-nohardening AND c2-naive (10 runs each, same structure), so re-scoring on the new runs is mechanically feasible via the C2 path.",
+    "C3 already re-scored per-run + reproducibility VERDICT.json present. Lab load avg ~7 sustained (capacity pressure under any LLM-bound parallel run)."
+  ],
+  "top_risks": [
+    {
+      "risk": "Granularity mismatch: C1-full via /hunt-experiment is PER-EVENT, but C3 (done) and C2/C1-nohardening (archive) are PER-PLAYBOOK. Per-event numbers CANNOT be placed in the same comparison table as per-playbook C3 without a documented aggregation, and the per-event ground truth (labels.jsonl) does not even exist on the lab.",
+      "likelihood": "H",
+      "impact": "H",
+      "mitigation": "Score ALL conditions (C1-full, C1-nohardening, C2-naive) at the SAME per-playbook granularity as C3, using the proven c2_naive_helper prepare/score path. Layer M1-M5 governance + M3 OBSERVE->HYPOTHESIZE->EVIDENCE->CROSS-VALIDATE->CLASSIFY into the SUBAGENT REASONING that produces predictions.jsonl, not into a different harness/granularity. Treat the per-event /hunt-experiment skill as OUT OF SCOPE unless a per-event labels.jsonl is produced and a defensible event->playbook rollup is documented.",
+      "detection": "Before writing any table: confirm every condition's metrics.json was produced by the c2/c3 schema (same TP/FP/FN/TN/P/R/F2 fields, same denominator = 185 playbooks/run). If C1-full output has a different schema or row count, STOP."
+    },
+    {
+      "risk": "C1-full has NO harness on the lab. Building one this session (M1-M5 governance scorer) is novel work that can blow up time, produce non-deterministic classification across reruns, or silently diverge from the C2 path so the only difference measured is harness noise, not governance.",
+      "likelihood": "H",
+      "impact": "H",
+      "mitigation": "C1-full MUST be a strict superset of the C2 path: identical windows.jsonl input, identical score step, ONLY the subagent's reasoning protocol differs (bare vs M1-M5+M3). This isolates governance as the single variable. Run a smoke subset (1 condition x 1 run, e.g. the 'none/mixed' control) end-to-end and diff its schema against C3 before committing to all conditions.",
+      "detection": "Smoke run: C1-full on one run yields metrics.json with the c3 schema and 185-playbook denominator, AND the windows.jsonl fed to C1-full byte-matches the C2 windows.jsonl for the same run. Any divergence = the comparison is confounded."
+    },
+    {
+      "risk": "Classification non-determinism: subagent LLM classification varies run-to-run, so C1/C2 metrics are not reproducible the way C3 (deterministic SIEM rules) is. The dissertation's THEME is reproducibility; a non-reproducible headline number undermines the central claim.",
+      "likelihood": "M",
+      "impact": "H",
+      "mitigation": "Run C1-full and C2-naive over MULTIPLE of the 10 runs (not 1) and report bootstrap CI via the existing bootstrap_ci.py, exactly as C3 was treated. Pin temperature/seed where possible. Honestly characterize LLM-condition variance as a finding, not hide it. If only 1 run/condition is affordable, the paper MUST state N=1 and frame point estimates as illustrative, not reproducible.",
+      "detection": "If C1/C2 are scored on N>=3 runs, compute the spread; if F2 swing across runs exceeds the C3 CI width materially, flag as a variance finding. If N=1, the reproducibility subsection must say so explicitly."
+    },
+    {
+      "risk": "Research-integrity: pressure to 'fill the matrix' tempts fabricating or back-filling any cell that the run can't produce (e.g. inventing C1-full numbers, or copying May archive numbers as if they were new-run numbers).",
+      "likelihood": "M",
+      "impact": "H",
+      "mitigation": "Structural prevention: every number in the paper traces to a metrics.json file path on the lab + a git-tracked provenance line (run_id, condition, scorer script, timestamp). A cell with no backing file is rendered as a literal TODO/future-work, never a number. Managers commit the metrics.json artifacts to the repo BEFORE the table is written.",
+      "detection": "Audit pass: grep the Results table cells against the set of metrics.json files; any numeric cell without a matching file = integrity violation, block the paper. Diff new-run metrics.json mtimes against the run timestamps (2026-05-27/28); any C1/C2 file dated to the May archive = back-fill."
+    },
+    {
+      "risk": "Wrong-directory / stale-copy execution: three mashunt-lab copies; scripts or agents run against ~/fast-storage or ~/hd10tb (empty) silently produce zero/garbage, or write results into the wrong tree and get lost.",
+      "likelihood": "M",
+      "impact": "M",
+      "mitigation": "Pin LAB_BASE=~/mashunt-lab as an absolute constant in every agent prompt and script invocation; assert the run dir contains results/reproducibility/VERDICT.json before any write. Out of scope: touching the other two copies.",
+      "detection": "Every harness invocation echoes its resolved base path and run_id; a preflight assert fails loudly if results/attack/<10 runs> are not present under the resolved base."
+    },
+    {
+      "risk": "LLM cost/time blowup + partial failures: C1-full = M1-M5 5-team-style orchestration x 185 playbooks x N runs x 10 conditions. Lab load already ~7. Partial failures (some playbooks unclassified, ES query timeouts, agent crashes mid-run) leave a half-populated predictions.jsonl that scores as silent FNs.",
+      "likelihood": "H",
+      "impact": "M",
+      "mitigation": "Scope to a defensible subset up front (e.g. C1-full + C2 + C1-nohardening each over the same K runs, K decided by a token/time budget, K>=3 for CI). Score step MUST assert predictions.jsonl row-count == windows.jsonl row-count (==185) and fail if any playbook is missing a prediction, rather than scoring absence as TN/FN.",
+      "detection": "Per-run completeness check: len(predictions) == len(windows) == 185 with no null predicted_malicious. ES query failures surface as empty events[] in windows.jsonl during prepare; assert non-empty windows for malicious playbooks."
+    },
+    {
+      "risk": "Paper risk: Discussion/Results written as if numbers exist (the brief flags a prior draft, bad-draft-claude.tex, had future-tense-as-results gap); plus LaTeX compile failures and broken/hallucinated citations in references.bib for the new MDPI engproc target (camera_raedy.tex has no PDF yet).",
+      "likelihood": "M",
+      "impact": "M",
+      "mitigation": "Write Results AFTER metrics.json files are committed; the writer agent is given ONLY the real numbers and a rule: no number without a cited artifact path. Compile camera_raedy.tex to PDF as an explicit gate (latexmk clean exit, zero undefined references/citations in the .log). Run reference-check on references.bib to catch hallucinated citations. Do NOT reuse bad-draft-claude.tex prose wholesale.",
+      "detection": "PDF gate: latexmk exits 0 and grep of the .log shows zero 'Undefined reference'/'Citation undefined'/'Rerun' warnings. reference-check reports no unresolved DOIs/URLs. A diff confirms no future-tense 'will/plan to' verbs remain in the Results/Discussion sections."
+    }
+  ],
+  "feasibility_verdict": "PARTIALLY feasible this session, but NOT as literally stated ('run C1-full via the /hunt-experiment 5-team skill'). The riskiest dependency is that C1-full has NO existing harness and the per-event /hunt-experiment skill has no ground-truth labels on the lab and produces a granularity incompatible with the already-finished C3 table. Feasible path: re-score C2-naive and C1-nohardening on the new runs via the PROVEN per-playbook c2_naive_helper path (low risk, artifacts + schema already exist), and BUILD C1-full as a strict superset of that path (only the subagent's M1-M5/M3 reasoning differs), validated by a smoke run first. Full 10-run x all-conditions matrix is likely NOT affordable in one session; scope to K>=3 shared runs with bootstrap CI, matching how C3 was treated. If C1-full cannot be made comparable in time, it is scoped as future work HONESTLY rather than faked.",
+  "go_no_go_gates": [
+    "GATE 0 (path): resolved LAB_BASE == /home/user/mashunt-lab and it contains results/attack/<10 new runs> + results/reproducibility/VERDICT.json. The other two mashunt-lab copies are confirmed empty/stale and are not touched.",
+    "GATE 1 (ground truth exists for new runs at the SCORING granularity): per-playbook ground_truth.jsonl (185 rows) present in every new attack run AND the C2/C3 scorer's is_malicious() heuristic reconciles against it. (Per-EVENT labels.jsonl does NOT exist; per-event /hunt-experiment is therefore out of scope unless that file is produced first.)",
+    "GATE 2 (comparability): a one-run smoke of C1-full and C2-naive each produces metrics.json with the SAME schema and 185-playbook denominator as the committed C3 metrics.json. Diff confirms C1-full and C2 consume byte-identical windows.jsonl for the same run, so governance is the only variable.",
+    "GATE 3 (completeness, per run): predictions.jsonl row-count == windows.jsonl row-count == 185, zero null predicted_malicious, malicious-playbook windows have non-empty events[]. Fail the run rather than scoring missing predictions as FN/TN.",
+    "GATE 4 (budget): an explicit token/time budget and run-count K (K>=3 for CI) is fixed BEFORE launching the expensive C1-full sweep; the smoke run's measured per-run cost x K x conditions fits the budget.",
+    "GATE 5 (provenance, before any paper number): every Results-table cell maps to a committed metrics.json path with run_id + scorer + timestamp; cells without a backing file render as future-work, never as numbers.",
+    "GATE 6 (paper compile, before 'done'): latexmk on camera_raedy.tex exits 0 with zero undefined-reference/citation-undefined warnings in the .log; reference-check passes on references.bib; no future-tense verbs remain in Results/Discussion."
+  ],
+  "vote": "APPROVE_WITH_CONDITIONS",
+  "conditions": [
+    "Score C1-full, C1-nohardening, and C2-naive at the SAME per-playbook granularity as the finished C3, via the proven c2_naive_helper prepare/score path. The per-event /hunt-experiment skill is out of scope unless a per-event labels.jsonl is first produced and an event->playbook rollup documented.",
+    "Build C1-full as a STRICT SUPERSET of the C2 path: identical windows.jsonl input + identical score step, with ONLY the subagent reasoning protocol (M1-M5 + M3) differing from bare C2. Pass GATE 2 smoke before any full sweep.",
+    "Run C1-full and C2-naive over K>=3 of the 10 new runs and report bootstrap CI (bootstrap_ci.py), exactly as C3 was treated; if only N=1 is affordable, the paper states N=1 and frames numbers as illustrative, not reproducible.",
+    "Every paper number traces to a committed metrics.json artifact (GATE 5). No back-filling from the May archive; archive numbers may only appear as an explicitly-labeled historical comparison, never as new-run results.",
+    "Pin LAB_BASE=/home/user/mashunt-lab with a preflight assert in every script/agent prompt; never write into the stale copies.",
+    "Results/Discussion are written ONLY after metrics.json files are committed, and the paper compiles to PDF clean (GATE 6) with reference-check passing before any 'done' claim. If C1-full proves infeasible in budget, it is scoped as future work honestly."
+  ],
+  "key_question_for_managers": "The user said 'run C1-full via the /hunt-experiment 5-team skill', but that skill is per-EVENT with no labels.jsonl on the lab, while C3 (done) and the C2/C1-nohardening archives are per-PLAYBOOK. Do the Managers confirm C1-full will be scored at per-PLAYBOOK granularity through the proven c2_naive_helper path (only the subagent's M1-M5/M3 reasoning changed) so it shares a table with C3 — and if a C1-full harness does not yet exist, who builds it and is K>=3-run bootstrap CI within this session's budget, or do we scope C1-full as future work rather than ship N=1 or incomparable numbers?"
+}

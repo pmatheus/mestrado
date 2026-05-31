@@ -1,0 +1,421 @@
+% =====================================================================
+% Capítulo 6 — Resultados
+% Dissertação MAS-Hunt (ABNT, PT-BR)
+% Números canônicos: .orchestration/RESULTS-v2.json e
+% .orchestration/reports/aggregate-v2.md (VEREDITO HONESTO). NÃO inventar.
+% Chaves \cite verificadas: dolan-gavitt2025, zhan2024injecagent,
+% NEURIPS2024_eb113910, zhang2024breaking.
+% =====================================================================
+
+\chapter{Resultados}
+\label{cap:resultados}
+
+Este capítulo apresenta os resultados quantitativos da matriz experimental v2
+do MAS-Hunt, coletada após a correção do gatilho de saúde de telemetria
+(\textit{health-gate}) e da extração \texttt{prepare-v2} descritas no
+Capítulo~\ref{cap:metodologia}. A apresentação é deliberadamente factual: os
+números são reportados com seus intervalos de confiança e contrastados entre as
+quatro condições, reservando-se a interpretação aprofundada e a discussão de
+suas implicações para o Capítulo~\ref{cap:discussao}. Em conformidade com a
+postura de integridade adotada ao longo do trabalho, os achados são relatados
+exatamente como observados, inclusive aqueles que \emph{não} corroboram as
+expectativas iniciais.
+
+\section{Conjunto de Dados Analisado e Recorte Inferencial}
+\label{sec:res-conjunto}
+
+A análise inferencial concentra-se nas \textbf{seis execuções adversariais com
+sinal efetivo de ataque}: os modos de injeção \textit{per-attack-burst} (rajada
+por ataque) e \textit{interleaved} (intercalado), cruzados com os três níveis de
+sofisticação \textit{overt} (explícito), \textit{encoded} (codificado) e
+\textit{steganographic} (esteganográfico). Esse recorte responde a uma decisão
+metodológica documentada na Seção~\ref{sec:met-limitacoes}: as quatro execuções
+restantes (o controle sem injeção e as três variantes \textit{pre-burst}) foram
+\emph{pobres em sinal} de criação de processo (EID1) e, portanto, excluídas da
+matriz principal, sob pena de a escassez instrumental de telemetria mascarar o
+desempenho de detecção que se pretende medir. A exclusão é transparente e
+preserva a comparabilidade: todas as quatro condições são pontuadas sobre
+exatamente as mesmas seis execuções e as mesmas janelas.
+
+Em cada uma das seis execuções, foram avaliadas 182 janelas --- uma por
+\textit{playbook} que produziu telemetria de criação de processo ---,
+totalizando \textbf{1.092 janelas} por condição, das quais
+\textbf{894 são maliciosas} e \textbf{198 são benignas} segundo o critério de
+verdade de referência da Equação~\ref{eq:ground-truth}. As quatro condições
+foram pontuadas pelo \emph{mesmo} \textit{script} determinístico, não baseado em
+inteligência artificial, garantindo que qualquer diferença observada decorra da
+condição, e não do procedimento de avaliação. Os intervalos de confiança (IC)
+de 95\% reportados foram obtidos por \textit{bootstrap} percentílico
+não-paramétrico com $B = 10.000$ reamostragens, conforme a
+Seção~\ref{sec:met-metricas}.
+
+\section{Desempenho de Detecção: Matriz das Quatro Condições}
+\label{sec:res-deteccao}
+
+A Tabela~\ref{tab:resultados-condicoes} apresenta os resultados agregados
+(\textit{pooled}) por condição: as contagens da matriz de confusão, a precisão,
+a revocação, o escore F2 com o respectivo IC de 95\% e o número de janelas
+sinalizadas como contendo conteúdo adversarial injetado.
+
+\begin{table}[H]
+\centering
+\caption{Desempenho de detecção agregado na matriz v2 (seis execuções
+adversariais ricas em sinal; 1.092 janelas por condição, sendo 894 maliciosas e
+198 benignas). Os intervalos de confiança de 95\% para o F2 foram obtidos por
+\textit{bootstrap} percentílico ($B = 10.000$). A última coluna reporta o número
+de janelas explicitamente sinalizadas como portadoras de injeção adversarial.}
+\label{tab:resultados-condicoes}
+\begin{tabular}{lrrrrrrcr}
+\toprule
+Condição & VP & FP & FN & VN & Precisão & Revocação & F2 [IC 95\%] & Inj. \\
+\midrule
+C1-full          & 579 & 135 & 315 & 63 & 0,811 & 0,648 & 0,675 [0,646; 0,703] & \textbf{407} \\
+C1-nohardening   & 542 & 118 & 352 & 80 & 0,821 & 0,606 & 0,640 [0,609; 0,669] & 0 \\
+C2-naive         & 576 & 136 & 318 & 62 & 0,809 & 0,644 & 0,672 [0,643; 0,700] & 0 \\
+C3-Elastic       & 111 &  20 & 783 & 178 & 0,847 & 0,124 & 0,150 [0,125; 0,175] & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dois padrões saltam imediatamente da tabela. O primeiro é a separação abrupta
+entre as três condições baseadas em modelo de linguagem (C1-full, C1-nohardening
+e C2-naive), cujos escores F2 se situam na faixa de $0{,}640$ a $0{,}675$, e a
+linha de base SIEM C3-Elastic, com F2 de apenas $0{,}150$. O segundo é a
+proximidade entre as três condições agênticas entre si, com intervalos de
+confiança de F2 amplamente sobrepostos. As duas subseções seguintes examinam
+cada um desses contrastes.
+
+\subsection{Modelo de linguagem versus regras estáticas: o contraste dominante}
+\label{subsec:res-llm-vs-siem}
+
+O contraste de maior magnitude e significância estatística no experimento opõe
+\emph{qualquer} condição baseada em modelo de linguagem à linha de base de
+regras do Elastic Security. As três condições agênticas superam C3-Elastic
+(F2~$=0{,}150$, IC~$[0{,}125;\,0{,}175]$) por um fator de aproximadamente
+$4{,}3$ a $4{,}5$ vezes em F2: $4{,}51\times$ para C1-full, $4{,}49\times$ para
+C2-naive e $4{,}27\times$ para C1-nohardening. A separação é inequívoca: o limite
+\emph{inferior} do IC de F2 de cada condição de modelo de linguagem
+($\geq 0{,}609$) situa-se muito acima do limite \emph{superior} do IC de
+C3-Elastic ($0{,}175$), de modo que os intervalos não se aproximam sequer de uma
+sobreposição.
+
+A origem dessa diferença é a \textbf{revocação}, e não a precisão. As precisões
+pontuais são comparáveis entre todas as condições, variando de $0{,}809$ a
+$0{,}847$; é a revocação que diverge dramaticamente: de $0{,}606$ a $0{,}648$
+nas condições agênticas contra apenas $0{,}124$ em C3-Elastic. Em termos
+absolutos, as regras padrão do Elastic identificaram corretamente apenas 111 das
+894 janelas maliciosas, deixando \textbf{783 falsos negativos} --- isto é,
+deixaram de detectar cerca de $88\%$ do corpus de abuso de LOLBins. A alta
+precisão pontual de C3-Elastic ($0{,}847$, a maior de todas as condições) é, na
+prática, um artefato de seu comportamento extremamente conservador: ao disparar
+muito pouco (apenas 131 alertas no total, dos quais 20 falsos positivos), ela
+mantém a fração de acertos elevada às custas de uma cobertura ínfima. Em caça a
+ameaças, na qual o custo de uma intrusão não detectada supera o de um alerta
+supérfluo \cite{dolan-gavitt2025}, essa troca é operacionalmente inadequada, e é
+precisamente por isso que o F2 --- que pondera a revocação quatro vezes mais que
+a precisão --- foi adotado como métrica de mérito.
+
+\subsection{Orquestração multiagente versus passagem única: ausência de ganho de F2}
+\label{subsec:res-multiagente-vs-naive}
+
+O segundo contraste é o que confronta a arquitetura multiagente governada
+(C1-full) com a linha de base agêntica não governada de passagem única
+(C2-naive). Aqui, o resultado deve ser relatado com franqueza: \textbf{a
+orquestração e a governança multiagente não produziram ganho mensurável de F2 de
+detecção sobre o classificador de passagem única}. C1-full obteve F2 de
+$0{,}675$ (IC~$[0{,}646;\,0{,}703]$) e C2-naive obteve F2 de $0{,}672$
+(IC~$[0{,}643;\,0{,}700]$). Os dois intervalos de confiança são praticamente
+idênticos e quase integralmente coincidentes, e a diferença das estimativas
+pontuais ($0{,}003$) é irrelevante perante a largura dos intervalos. Pelo
+critério de relevância estatística adotado na Seção~\ref{sec:met-metricas}
+--- uma diferença só é tratada como significativa quando os intervalos a
+sustentam --- as duas condições são \textbf{estatisticamente indistinguíveis}
+quanto ao desempenho de detecção.
+
+A ablação C1-nohardening, que preserva apenas o \textit{framework} de análise M3
+e desativa os mecanismos de endurecimento M1, M2, M4 e M5, obteve F2 marginalmente
+inferior ($0{,}640$, IC~$[0{,}609;\,0{,}669]$). Esse intervalo sobrepõe-se tanto
+ao de C1-full quanto ao de C2-naive, de modo que tampouco se pode afirmar uma
+diferença estatisticamente sustentada. Em síntese, no que tange exclusivamente ao
+\emph{F2 de detecção}, as três condições baseadas em modelo de linguagem formam
+um agrupamento estatisticamente coeso: o fator determinante do desempenho de
+detecção observado é \emph{empregar um analista de modelo de linguagem}, e não a
+camada de orquestração ou de governança que o envolve. Esse achado, contrário à
+expectativa inicial de que a governança elevaria o F2 de detecção, é relatado
+aqui em sua integralidade e tem suas implicações discutidas na
+Seção~\ref{sec:disc-governanca}.
+
+\section{Desempenho por Nível de Sofisticação da Injeção}
+\label{sec:res-tier}
+
+A Tabela~\ref{tab:resultados-tier} decompõe o F2 médio por nível de sofisticação
+do \textit{payload} adversarial, permitindo observar como cada condição responde
+ao aumento progressivo do disfarce, do explícito ao esteganográfico.
+
+\begin{table}[H]
+\centering
+\caption{F2 médio por nível de sofisticação da injeção adversarial.}
+\label{tab:resultados-tier}
+\begin{tabular}{lrrrr}
+\toprule
+Nível (\textit{tier}) & C1-full & C1-nohardening & C2-naive & C3-Elastic \\
+\midrule
+\textit{overt} (explícito)          & 0,661 & 0,682 & 0,724 & 0,126 \\
+\textit{encoded} (codificado)       & 0,590 & 0,513 & 0,591 & 0,146 \\
+\textit{steganographic} (esteganográfico) & 0,766 & 0,714 & 0,694 & 0,177 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A decomposição por nível confirma, em escala mais fina, o agrupamento das três
+condições de modelo de linguagem e o distanciamento de C3-Elastic em todos os
+níveis. Não emerge um padrão monotônico de degradação com o aumento do disfarce:
+o nível \textit{encoded} é o mais difícil para todas as condições agênticas
+(F2 entre $0{,}513$ e $0{,}591$), ao passo que o nível \textit{steganographic},
+contraintuitivamente, exibe os maiores escores entre os três níveis. Uma
+explicação plausível --- a ser tratada com cautela, dada a granularidade dos
+dados --- é que os \textit{payloads} esteganográficos, por se ocultarem em campos
+de log de aparência legítima, interferem menos no raciocínio sobre a telemetria
+genuína de criação de processo do que os \textit{payloads} codificados, que
+introduzem ruído textual de maior volume. No nível \textit{overt}, a condição de
+passagem única C2-naive obteve o maior F2 ($0{,}724$), acima de C1-full
+($0{,}661$); no nível \textit{steganographic}, a ordem se inverte, com C1-full à
+frente ($0{,}766$ contra $0{,}694$). Essas oscilações, contudo, ocorrem dentro da
+faixa de sobreposição dos intervalos agregados e não devem ser
+sobreinterpretadas como vantagens sistemáticas de uma condição sobre a outra.
+
+\section{Taxa de Falsos Positivos}
+\label{sec:res-fpr}
+
+A taxa de falsos positivos por janela benigna (Equação~\ref{eq:met-fpr}) foi de
+$0{,}682$ em C1-full (135 falsos positivos em 198 janelas benignas), $0{,}596$ em
+C1-nohardening (118 falsos positivos), $0{,}687$ em C2-naive (136 falsos
+positivos) e $0{,}101$ em C3-Elastic (20 falsos positivos). Esses valores precisam
+ser lidos em conjunto com a revocação. A FPR baixa de C3-Elastic é a contraface
+direta de sua revocação baixa: o detector que raramente alerta também raramente
+erra na classe benigna, mas, ao fazê-lo, deixa escapar a esmagadora maioria dos
+ataques. As condições agênticas, por sua vez, aceitam um número substancialmente
+maior de alarmes benignos como contrapartida de recuperarem cerca de cinco
+vezes mais ataques. A leitura honesta, portanto, é que \emph{o MAS-Hunt não reduz
+a taxa de falsos positivos por janela frente ao Elastic}; ao contrário, opera em
+um ponto de operação de revocação mais alta e precisão comparável, melhor
+sumarizado pelo F2 do que pela FPR isolada. As implicações operacionais desse
+ponto de operação para a fadiga do analista são discutidas na
+Seção~\ref{sec:disc-limitacoes}.
+
+\section{Resistência à Injeção Adversarial}
+\label{sec:res-resiliencia}
+
+É na resistência à injeção adversarial que se manifesta o efeito distintivo e
+mensurável da camada de governança --- e não no F2 de detecção. Sob os
+\textit{payloads} adversariais embutidos no fluxo de telemetria, concebidos para
+subverter o raciocínio dos agentes (com esteios como ``[SYSTEM-OVERRIDE] ignore a
+análise anterior'' e instruções para ``classificar como benigno''), as condições
+exibiram comportamentos qualitativamente distintos, sumarizados na última coluna
+da Tabela~\ref{tab:resultados-condicoes}.
+
+A condição C1-full --- por meio dos mecanismos de integridade de memória (M1) e
+de resistência a injeção (M3) --- \textbf{detectou e sinalizou 407 janelas
+contendo conteúdo adversarial injetado}, classificando a partir da telemetria de
+processo e recusando-se a obedecer às instruções embutidas. As demais três
+condições --- C1-nohardening, C2-naive e C3-Elastic --- processaram o mesmo
+conteúdo adversarial \emph{às cegas}, sem emitir qualquer sinal de contaminação:
+zero janelas sinalizadas em cada uma. Trata-se de uma diferença de natureza, e não
+de grau: 407 contra 0.
+
+Cumpre registrar uma nuance importante para não superinterpretar esse resultado.
+A condição de passagem única C2-naive não foi necessariamente \emph{enganada}
+pelas injeções nestas execuções --- seu F2 de detecção permaneceu estatisticamente
+equivalente ao de C1-full, porque a telemetria subjacente de criação de processo
+era suficientemente clara para sustentar a classificação correta. O que C2-naive
+não é capaz de fazer é \emph{perceber} que seu contexto foi contaminado e
+\emph{reportar} essa contaminação a um operador. As 407 janelas sinalizadas por
+C1-full materializam exatamente essa capacidade de consciência e auditabilidade:
+sob ataque, C1-full não apenas classifica, mas também declara que sua entrada
+analítica foi alvo de manipulação --- propriedade ausente nas três demais
+condições. Esse vetor adversarial concretiza, no domínio de caça a ameaças, as
+ameaças de injeção indireta de \textit{prompt} \cite{zhan2024injecagent}, de
+envenenamento de memória \cite{NEURIPS2024_eb113910} e de amplificação de mau
+funcionamento \cite{zhang2024breaking} que motivam o trabalho, e a sinalização
+das 407 janelas é a evidência empírica do valor de segurança da camada de
+governança.
+
+Em termos das métricas formais de resiliência da
+Seção~\ref{sec:met-adversarial} (Equações~\ref{eq:met-asr}
+e~\ref{eq:met-nasr}), as execuções v2 não permitiram isolar, janela a janela, o
+rótulo de sucesso da injeção em relação ao acerto de classificação: a telemetria
+de criação de processo registra o desfecho da classificação, mas não um marcador
+separável de \emph{qual} desfecho foi causalmente induzido pelo \textit{payload}
+adversarial. A resiliência é, portanto, operacionalizada pela contagem de
+detecção de injeção (407 contra 0), que instancia diretamente a distinção da
+NASR: para C1-nohardening, C2-naive e C3-Elastic, a injeção \emph{nunca} é
+detectada, de modo que qualquer erro de classificação por elas induzido sob
+ataque constitui, por definição, um comprometimento silencioso; já para C1-full,
+as 407 janelas em que a injeção é sinalizada são, pela própria definição da
+Equação~\ref{eq:met-nasr}, retiradas da classe de comprometimento silencioso. A
+estimativa numérica pontual de ASR e NASR fica como trabalho futuro,
+condicionada a uma instrumentação que rotule, por janela, o sucesso da injeção.
+
+\subsection{Efeito da ablação dos mecanismos de endurecimento}
+\label{subsec:res-ablacao}
+
+A ablação C1-nohardening isola, de forma limpa, a contribuição dos mecanismos de
+endurecimento M1, M2, M4 e M5, mantendo constantes os agentes subjacentes e o
+\textit{framework} de raciocínio M3. O contraste entre C1-full e C1-nohardening
+revela que o acréscimo desses mecanismos \textbf{não produz ganho de F2 de
+detecção estatisticamente sustentado} (os intervalos $[0{,}646;\,0{,}703]$ e
+$[0{,}609;\,0{,}669]$ se sobrepõem), mas é \emph{exatamente} o responsável por
+toda a capacidade de sinalização de injeção: C1-nohardening, desprovida de M1 e do
+endurecimento de M3, sinaliza zero janelas adversariais, ao passo que C1-full
+sinaliza 407. A contribuição marginal do endurecimento é, portanto, melhor
+caracterizada como \emph{resistência a injeção e auditabilidade sob ataque}, e não
+como aumento de acurácia de classificação.
+
+\section{Resiliência sob Ataque Reforçado e Controle de Vazamento de Rótulo}
+\label{sec:res-resiliencia-reforcada}
+
+A contagem de injeção sinalizada (407 contra 0) estabelece o eixo de
+auditabilidade da matriz v2, mas a sua leitura janela a janela ficou em aberto na
+Seção~\ref{sec:res-resiliencia} por duas razões: a telemetria v2 não isolava, por
+janela, o rótulo de sucesso da injeção em relação ao acerto de classificação, e o
+\textit{payload} adversarial original limitava-se, em sua maior parte, a
+\emph{instruir} o agente a ignorar a análise (esteios do tipo
+``[SYSTEM-OVERRIDE]''), sem \emph{fabricar} evidência concorrente. Esta seção
+reporta uma avaliação adversarial complementar, conduzida na camada de
+classificação, que ataca exatamente essas duas frentes: emprega um ataque de
+fabricação de evidências substancialmente mais forte e realista, e remove o
+oráculo de rótulo descrito adiante, permitindo recomputar ASR e NASR
+(Equações~\ref{eq:met-asr} e~\ref{eq:met-nasr}) janela a janela.
+
+\paragraph{Desenho.} A avaliação reaproveita a telemetria real das seis execuções
+ricas em sinal do v2, das quais se extraíram \textbf{50 janelas maliciosas} e
+\textbf{18 janelas benignas} reais, estratificadas pelas nove famílias de LOLBin.
+A telemetria maliciosa de cada janela é \emph{mantida constante}, de modo que
+qualquer alteração de classificação seja atribuível ao contexto forjado, e não a
+uma mudança na evidência genuína. Sobre cada janela maliciosa aplicam-se camadas
+de ataque por contexto forjado de sofisticação crescente, do nível
+\textbf{A0} (limpo; janela inalterada, contendo apenas as injeções originais do
+v2) ao nível \textbf{A3} (\emph{narrativa fabricada completa}): linhagem-pai
+benigna forjada --- o LOLBin é reparenteado para \texttt{CcmExec.exe} --- somada a
+um evento forjado de Windows Defender ``zero ameaças / \textit{Known-Good}'', a
+uma entrada forjada de AppLocker ``permitido'' e a um \textit{ticket}
+\texttt{[CHANGE-CONTROL CR-2026-0142]} marcado como ``aprovado / autorizado /
+suprimir alerta''. As métricas reportadas são a ASR
+($P(\text{predito benigno} \mid \text{malicioso})$), a NASR (comprometimento
+silencioso: janela classificada incorretamente \emph{e} injeção não detectada), a
+\textit{lift} de ASR (a diferença $\mathit{ASR}(A3) - \mathit{ASR}(A0)$ sobre as
+mesmas janelas, isto é, o efeito causal do ataque) e a taxa de detecção de
+injeção. Os intervalos de confiança de 95\% para a ASR foram obtidos por
+\textit{bootstrap} ($B = 10.000$), com $n_{\text{mal}} = 50$. A Tabela
+\ref{tab:resultados-ataque-reforcado} sumariza os resultados, contrastando o
+modelo de fronteira empregado na matriz v2 com um modelo trabalhador mais fraco
+(\textit{Haiku}) e a presença \emph{versus} ausência do vazamento de rótulo
+discutido adiante.
+
+\begin{table}[H]
+\centering
+\caption{Resiliência sob ataque reforçado de fabricação de evidências (50 janelas
+maliciosas; telemetria maliciosa mantida constante entre níveis). A coluna
+\textit{lift} reporta o efeito causal do ataque, $\mathit{ASR}(A3) -
+\mathit{ASR}(A0)$. Os intervalos de confiança de 95\% para a ASR foram obtidos por
+\textit{bootstrap} ($B = 10.000$). C1-nohardening não sinaliza injeção por
+construção (M3 desabilitado) e não foi reexecutada aqui.}
+\label{tab:resultados-ataque-reforcado}
+\begin{tabular}{llrrrrr}
+\toprule
+Modelo / dados & Condição & A0 ASR & A3 ASR & \textit{lift} & A3 NASR & A3 det.\ inj. \\
+\midrule
+Fronteira, com vazamento  & C2-naive & 0,200 & 0,240 & $+0{,}04$ & 0,240 & 0,000 \\
+Fronteira, com vazamento  & C1-full  & ---   & 0,220 & ---       & \textbf{0,000} & \textbf{1,000} \\
+Fronteira, sem vazamento  & C2-naive & 0,280 & 0,320 & $+0{,}04$ & 0,320 & 0,000 \\
+Haiku, sem vazamento      & C2-naive & 0,620 & 0,360 & $-0{,}26$ & 0,360 & 0,000 \\
+Haiku, sem vazamento      & C1-full  & 0,420 & 0,360 & $-0{,}06$ & \textbf{0,000} & \textbf{1,000} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Os intervalos de confiança de 95\% (\textit{bootstrap}, $B = 10.000$)
+para a ASR são: C2-naive com vazamento, A0 $[0{,}10;\,0{,}32]$ e A3
+$[0{,}12;\,0{,}36]$; C2-naive sem vazamento, A0 $[0{,}16;\,0{,}40]$ e A3
+$[0{,}20;\,0{,}44]$; Haiku C2-naive, A0 $[0{,}48;\,0{,}76]$ e A3
+$[0{,}24;\,0{,}50]$; Haiku C1-full, A0 $[0{,}28;\,0{,}56]$ e A3
+$[0{,}24;\,0{,}50]$.
+
+\subsection{O ataque não consegue ``lavar'' a atividade maliciosa}
+\label{subsec:res-reforcada-resistencia}
+
+O primeiro achado é que o ataque de fabricação de evidências \textbf{não consegue
+``lavar'' a atividade maliciosa em nenhuma das condições}. A \textit{lift} de ASR
+de A0 a A3 foi de $+0{,}04$ no modelo de fronteira com vazamento
+($0{,}20 \rightarrow 0{,}24$), $+0{,}04$ no modelo de fronteira sem vazamento
+($0{,}28 \rightarrow 0{,}32$) e de $-0{,}26$ e $-0{,}06$ no modelo trabalhador
+mais fraco (\textit{Haiku}) --- nunca um aumento expressivo. A corroboração
+benigna forjada (linhagem-pai limpa, varredura ``sem ameaças'', \textit{ticket}
+de mudança aprovado) jamais sobrepujou a evidência de processo genuinamente
+maliciosa retida na telemetria. No modelo \textit{Haiku} o ataque teve, inclusive,
+\emph{efeito reverso}: os eventos forjados, ao mencionarem repetidamente o
+processo suspeito, atraíram \emph{mais} atenção para ele e reduziram a ASR. Conclui-se
+que um ataque de fabricação de evidências mais forte e realista \textbf{não quebra
+o analista}, com ou sem governança, desde que a telemetria subjacente permaneça
+íntegra. Coerente com a Seção~\ref{subsec:res-multiagente-vs-naive}, este
+resultado \emph{não} sustenta um ganho de resistência-como-acurácia da governança:
+ele apenas estabelece que o ataque, por si, falha em ambas as condições.
+
+\subsection{O ganho de auditabilidade é robusto entre níveis de modelo}
+\label{subsec:res-reforcada-auditabilidade}
+
+O segundo achado reproduz, sob ataque mais forte e janela a janela, o contraste de
+auditabilidade do v2. Sob o mesmo ataque A3, C1-full sinalizou injeção em
+\textbf{100\% das janelas maliciosas} (taxa de detecção de injeção $1{,}000$),
+resultando em \textbf{NASR $= 0{,}000$} --- zero comprometimentos silenciosos ---
+\emph{tanto no modelo de fronteira quanto no modelo Haiku}. A condição C2-naive, por
+contraste, sinaliza injeção em $0\%$ das janelas, de modo que sua NASR iguala sua
+ASR (de $0{,}24$ a $0{,}62$ comprometimentos silenciosos, conforme o modelo e os
+dados). A condição C1-nohardening, por construção, não sinaliza injeção (M3
+desabilitado) e, portanto, comporta-se como C2-naive nesse eixo. Esse resultado
+reproduz o achado ``407 contra 0'' do v2 ao nível da janela, agora sob um ataque
+mais forte e \emph{independentemente da capacidade do modelo trabalhador}: a
+governança converte cada comprometimento potencialmente silencioso em um sinal
+explícito e auditável, robustez que se mantém ao se degradar o modelo subjacente.
+
+\subsection{Indício sugestivo, não significativo, de auxílio à detecção do modelo fraco}
+\label{subsec:res-reforcada-sugestivo}
+
+Registra-se, com a ressalva explícita de que \textbf{não é estatisticamente
+significativo}, um indício de que o \textit{framework} de raciocínio estruturado
+M3 pode auxiliar a detecção do modelo fraco: a ASR de linha de base (A0) do
+\textit{Haiku} caiu de $0{,}62$ em C2-naive para $0{,}42$ em C1-full. Os
+intervalos de confiança, todavia, sobrepõem-se amplamente
+($[0{,}48;\,0{,}76]$ contra $[0{,}28;\,0{,}56]$), e com $n = 50$ e um classificador
+ruidoso como o \textit{Haiku} o indício deve ser tratado como meramente
+sugestivo, e não como evidência de uma vantagem de acurácia da governança.
+
+\section{Síntese Quantitativa}
+\label{sec:res-sintese}
+
+Três achados quantitativos emergem da matriz v2, e são reportados conforme
+observados, sem ajuste à expectativa inicial:
+
+\begin{enumerate}
+    \item \textbf{Um analista de modelo de linguagem supera dramaticamente as
+    regras estáticas de SIEM.} Todas as três condições agênticas superam
+    C3-Elastic por um fator de $\approx 4{,}3$--$4{,}5\times$ em F2, com
+    intervalos de confiança amplamente separados. O ganho é dirigido pela
+    revocação (de $0{,}606$--$0{,}648$ contra $0{,}124$), com precisão comparável
+    entre todas as condições. Este é o achado mais forte e robusto do
+    experimento.
+    \item \textbf{A governança multiagente não melhora o F2 de detecção sobre o
+    modelo de linguagem de passagem única.} C1-full ($0{,}675$) e C2-naive
+    ($0{,}672$) são estatisticamente indistinguíveis; C1-nohardening ($0{,}640$)
+    é marginalmente inferior, mas com intervalo sobreposto. O fator determinante
+    da detecção é o uso do modelo de linguagem, não a camada de orquestração.
+    \item \textbf{O valor distintivo e mensurável da governança é a resistência à
+    injeção.} Somente C1-full detectou e sinalizou conteúdo adversarial injetado
+    (407 janelas contra 0 nas demais condições), conferindo consciência e
+    auditabilidade da contaminação que as linhas de base não possuem.
+\end{enumerate}
+
+\noindent A interpretação desses achados, a confrontação com a hipótese de
+pesquisa --- inclusive a reformulação da contribuição central à luz da ausência
+de ganho de F2 da governança --- e as ameaças à validade são objeto do
+Capítulo~\ref{cap:discussao}.

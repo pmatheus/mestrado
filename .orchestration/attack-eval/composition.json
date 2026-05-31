@@ -1,0 +1,93 @@
+{
+  "tiers": [
+    "A0",
+    "A1",
+    "A2",
+    "A3"
+  ],
+  "groups": {
+    "G1": {
+      "total": 14,
+      "malicious": 11,
+      "benign": 3,
+      "families": [
+        "bitsadmin",
+        "certutil",
+        "credential-access",
+        "lateral-movement",
+        "mshta",
+        "privilege-escalation",
+        "regsvr32",
+        "rundll32",
+        "wmic"
+      ]
+    },
+    "G2": {
+      "total": 14,
+      "malicious": 11,
+      "benign": 3,
+      "families": [
+        "bitsadmin",
+        "certutil",
+        "credential-access",
+        "lateral-movement",
+        "mshta",
+        "privilege-escalation",
+        "regsvr32",
+        "rundll32",
+        "wmic"
+      ]
+    },
+    "G3": {
+      "total": 14,
+      "malicious": 12,
+      "benign": 2,
+      "families": [
+        "bitsadmin",
+        "certutil",
+        "credential-access",
+        "lateral-movement",
+        "mshta",
+        "privilege-escalation",
+        "regsvr32",
+        "rundll32",
+        "wmic"
+      ]
+    },
+    "G4": {
+      "total": 13,
+      "malicious": 8,
+      "benign": 5,
+      "families": [
+        "bitsadmin",
+        "certutil",
+        "credential-access",
+        "lateral-movement",
+        "mshta",
+        "privilege-escalation",
+        "regsvr32",
+        "rundll32",
+        "wmic"
+      ]
+    },
+    "G5": {
+      "total": 13,
+      "malicious": 8,
+      "benign": 5,
+      "families": [
+        "bitsadmin",
+        "certutil",
+        "credential-access",
+        "lateral-movement",
+        "mshta",
+        "privilege-escalation",
+        "regsvr32",
+        "rundll32",
+        "wmic"
+      ]
+    }
+  },
+  "n_malicious": 50,
+  "n_benign": 18,
+  "per_family_target": 6
+}

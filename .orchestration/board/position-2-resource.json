@@ -1,0 +1,56 @@
+{
+  "role": "Resource Allocator",
+  "summary_premise": "The binding constraint is C1-full: it is the only condition with zero results, it is the paper's headline claim, and it is the single LLM-costly job (Harness A /hunt-experiment 5-team OBSERVE->HYPOTHESIZE->EVIDENCE->CROSS-VALIDATE->CLASSIFY per event). C2-naive re-score and C1-nohardening re-score are CHEAP (non-LLM eval helpers: c2_naive_helper.py prepare/score + compute_metrics.py + bootstrap_ci.py). C3 is already done+reproduced. Everything else (most paper prose) is data-independent and parallelizable today. So: spend the LLM budget on a SCOPED C1-full, run all cheap re-scores in parallel, and draft every non-Results paper section concurrently with data generation.",
+
+  "team_composition": [
+    {"layer": "manager", "agent_type": "general-purpose", "task": "Harness-mapping + data integrity manager: confirm ground_truth.jsonl exists for the new runs, map C1-full/C1-nohardening/C2 onto the 10 new run_ids, lock the exact /hunt-experiment invocation + output paths, and own the no-fabrication gate. Spawned FIRST, blocks the experiment wave.", "count": 1},
+    {"layer": "worker", "agent_type": "general-purpose (lab via ssh lab-ts)", "task": "Run C1-full via /hunt-experiment (Harness A, M1-M5 + M3 framework) on the SCOPED condition set, 1 run each, full event set. Foreground, long-running. THE critical-path worker.", "count": 1},
+    {"layer": "worker", "agent_type": "general-purpose (lab via ssh lab-ts)", "task": "Re-score C2-naive on the matching new runs using c2_naive_helper.py prepare/score (no live LLM) + compute_metrics.py. Cheap, parallel with C1-full.", "count": 1},
+    {"layer": "worker", "agent_type": "general-purpose (lab via ssh lab-ts)", "task": "Re-score C1-nohardening on the matching new runs (ablation) with compute_metrics.py + compute_fpr.py. Cheap, parallel with C1-full.", "count": 1},
+    {"layer": "worker", "agent_type": "Explore (research/mapping)", "task": "Map experiment->paper: extract the actual C3 metrics + reproducibility VERDICT.json numbers, the run matrix definition, and lab/Elastic versions into a structured facts sheet the LaTeX worker consumes. No file creation, read-only synthesis.", "count": 1},
+    {"layer": "worker", "agent_type": "LaTeX/writing worker", "task": "Draft data-INDEPENDENT paper sections in camera_raedy.tex: Experimental Setup / Methods (lab topology, 185-playbook x 9-condition matrix, conditions C1/C2/C3 definitions), expand Related Work, and the Reproducibility subsection (bootstrap CI B=10000 methodology, archive/re-run protocol). Past tense, MDPI engproc. Runs in parallel with the experiment wave.", "count": 1},
+    {"layer": "worker", "agent_type": "LaTeX/writing worker", "task": "After data lands: convert Validation Plan -> Results (C1/C2/C3 comparison matrix tables + adversarial-resilience-by-tier story) + Discussion, wire numbers from the facts sheet, compile to PDF. Sequential after experiment wave.", "count": 1},
+    {"layer": "worker", "agent_type": "reference-check / general-purpose", "task": "Validate references.bib against authoritative sources and compile-clean the bib. Parallelizable any time.", "count": 1}
+  ],
+
+  "parallel_vs_sequential": {
+    "sequential_chain": [
+      "1. Harness-mapping manager confirms ground_truth.jsonl exists for new runs + locks C1-full invocation (BLOCKER)",
+      "2. C1-full run on scoped conditions (LLM-costly, critical path)",
+      "3. Extract C1-full metrics + assemble full C1/C2/C3 matrix",
+      "4. Write Results + Discussion from real numbers",
+      "5. Compile PDF + final reference-check pass"
+    ],
+    "parallelizable_now": [
+      "C2-naive re-score (non-LLM helper) -- can start as soon as run-to-condition mapping is confirmed",
+      "C1-nohardening re-score (non-LLM) -- same gate",
+      "Experimental Setup / Methods section draft (definitions, not numbers)",
+      "Related Work expansion",
+      "Reproducibility subsection draft (methodology prose: bootstrap CI, archive protocol)",
+      "references.bib validation + cleanup",
+      "Explore facts-sheet extraction of already-final C3 + reproducibility numbers"
+    ]
+  },
+
+  "c1_full_budget_recommendation": "C1-full on 3 REPRESENTATIVE conditions, 1 run each, FULL event set: (a) control 'none' run, (b) one MID-difficulty adversarial run (e.g. per-attack-burst x encoded), (c) one HARD adversarial run (interleaved x steganographic). Rationale: the headline claim is 'governance survives adversarial log injection where naive LLM degrades' -- that needs a clean baseline + a clear difficulty gradient (easy/none -> mid -> hard), NOT all 10 runs. 3 conditions captures the resilience curve and lets C1-full be plotted against the already-scored C2/C3 on the SAME 3 runs (apples-to-apples). Running all 10 C1-full would blow the LLM/token budget on a 5-team-per-event orchestration with diminishing scientific return; the other 7 runs stay scoped as 'remaining conditions: future work / extended run' in the paper, which is honest under the no-fabrication constraint. IMPORTANT GATE: the mapping manager must verify ground_truth.jsonl is present for these 3 chosen run_ids before C1-full launches -- /hunt-experiment classifies against labels, so missing labels = wasted LLM spend. If labels exist for all 10, keep the 3-run scope anyway for budget; expand to 5 (add 2 more tiers) only if the C1-full worker reports cheap per-run cost after run (a).",
+
+  "wave_plan": [
+    "wave 0 (sequential, 1 agent): Harness-mapping manager -- confirm ground-truth labels on new runs, map conditions to run_ids, pick the 3 C1-full target runs, lock /hunt-experiment command + output paths. Gate for everything downstream.",
+    "wave 1 (5 parallel workers): [W1] C1-full on the 3 scoped runs (critical path, foreground) | [W2] C2-naive re-score | [W3] C1-nohardening re-score | [W4] LaTeX worker drafts Methods+Setup+Related-Work+Reproducibility subsection | [W5] reference-check on references.bib. Explore facts-sheet extraction folds into W4's input.",
+    "wave 2 (sequential, 1-2 workers): assemble full C1/C2/C3 matrix from wave-1 outputs -> LaTeX worker writes Results+Discussion, builds tables/figures, splices in the wave-1 prose sections.",
+    "wave 3 (sequential, 1 worker): compile PDF, fix LaTeX/bib errors, final reference-check, deliver."
+  ],
+
+  "vote": "APPROVE_WITH_CONDITIONS",
+
+  "conditions": [
+    "C1-full scope is CAPPED at 3 representative conditions (none + mid + hard tier), 1 run each, full event set -- not all 10 runs -- to fit one session's LLM budget. Expansion to 5 only if per-run cost proves cheap after the first run.",
+    "C2-naive and C1-nohardening MUST be re-scored on the SAME 3 run_ids that C1-full uses, so the published matrix is apples-to-apples on identical runs.",
+    "Wave 0 mapping manager MUST verify ground_truth.jsonl exists for the chosen run_ids before any C1-full LLM spend; missing labels block the launch.",
+    "Data-independent paper sections (Methods, Setup, Related Work, Reproducibility) are drafted in wave 1 IN PARALLEL with the experiment -- do not serialize prose behind data.",
+    "Any condition that cannot be run this session is scoped HONESTLY as future work in the paper; zero fabricated numbers (hard constraint).",
+    "C1-full worker runs in FOREGROUND (long-running, per CLAUDE.md no-background-agents rule) to avoid timeout/context exhaustion; if it exceeds the session, checkpoint per-run outputs to results/raw so a follow-up session resumes from the partial matrix."
+  ],
+
+  "key_question_for_managers": "Does ground_truth.jsonl exist for the 10 new attack run_ids (2026-05-27/28), and what is the measured per-run LLM/token cost of one C1-full /hunt-experiment pass over the full event set? The 3-vs-5-vs-10 run scope decision -- and whether C1-full even fits this session -- hinges entirely on that per-run cost number, which only a single calibration run on the control 'none' condition can establish."
+}

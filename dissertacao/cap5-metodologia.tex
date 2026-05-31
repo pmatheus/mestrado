@@ -1,0 +1,681 @@
+% =====================================================================
+% Capítulo 5 — Metodologia Experimental
+% Dissertação MAS-Hunt (ABNT, PT-BR)
+% Conteúdo: DESENHO experimental e procedimentos de medição. NÃO contém
+% resultados numéricos (estes são reportados no Capítulo 6, após R3).
+% Chaves \cite usadas (verificadas em mashunt/references.bib,
+% bibliografia.bib, revisao.bib): ucci2019, zhan2024injecagent,
+% NEURIPS2024_eb113910, zhang2024breaking, huang2024resilience,
+% dolan-gavitt2025, ali2023huntgptintegratingmachinelearningbased,
+% mahmud2025distributedmultiagentcoordinationusing.
+% =====================================================================
+
+\chapter{Metodologia Experimental}
+\label{cap:metodologia}
+
+Este capítulo descreve o desenho experimental empregado para avaliar o
+MAS-Hunt sob as duas afirmações centrais deste trabalho: a efetividade de
+detecção sobre telemetria empresarial realista e a resiliência da própria
+camada de agentes contra a manipulação adversarial da informação que eles
+analisam. A avaliação foi concebida como um experimento controlado e
+plenamente reprodutível, no qual todas as condições comparadas são pontuadas
+sobre execuções idênticas, janelas de detecção idênticas e o mesmo
+\textit{ground truth}, de modo a isolar a contribuição da arquitetura de
+governança proposta dos demais fatores. As seções seguintes apresentam, nesta
+ordem: o ambiente de laboratório instrumentado
+(Seção~\ref{sec:met-laboratorio}); o corpus de ataque e o critério de verdade
+de referência (Seção~\ref{sec:met-corpus}); o desenho adversarial de injeção de
+logs (Seção~\ref{sec:met-adversarial}); as quatro condições comparadas
+(Seção~\ref{sec:met-condicoes}); o \textit{pipeline} de medição, incluindo a
+extração de telemetria, o gatilho de saúde (\textit{health-gate}) e a
+reprodutibilidade (Seção~\ref{sec:met-pipeline}); as métricas e a análise
+estatística (Seção~\ref{sec:met-metricas}); e, por fim, as limitações e ameaças
+à validade (Seção~\ref{sec:met-limitacoes}).
+
+Cumpre destacar, de saída, uma decisão metodológica que governa todo o
+capítulo: \textbf{nenhum resultado numérico é apresentado aqui}. Esta seção
+documenta exclusivamente o \emph{desenho} do experimento e os procedimentos de
+medição; os valores observados de precisão, revocação, F2, taxa de falsos
+positivos e taxa de sucesso de ataque são reportados e discutidos no
+Capítulo~\ref{cap:resultados}.
+
+\section{Ambiente de Laboratório Instrumentado}
+\label{sec:met-laboratorio}
+
+\subsection{Topologia de domínio Active Directory}
+
+Os experimentos foram conduzidos sobre um ambiente virtualizado de
+\textit{Active Directory} hospedado em um único hipervisor KVM. As máquinas
+virtuais Windows foram provisionadas e gerenciadas por meio da pilha
+Dockur/QEMU, que encapsula instâncias QEMU/KVM em contêineres, simplificando o
+ciclo de provisionamento, restauração e instrumentação dos convidados Windows.
+O domínio foi composto por três hospedeiros:
+
+\begin{itemize}
+    \item \textbf{dc01} --- um controlador de domínio executando Windows Server
+    2025, responsável pelos serviços de diretório, autenticação e políticas de
+    grupo do domínio;
+    \item \textbf{ws01} e \textbf{ws02} --- duas estações de trabalho Windows~11
+    ingressadas no mesmo domínio \textit{Active Directory}, representando os
+    \textit{endpoints} de usuário.
+\end{itemize}
+
+Essa topologia reproduz deliberadamente a superfície de movimentação lateral de
+uma pequena rede corporativa --- com autenticação de domínio, relações de
+confiança e tráfego entre hospedeiros --- em vez do \textit{sandbox} estéril de
+um único hospedeiro contra o qual detectores baseados em aprendizado de máquina
+costumam ser treinados e avaliados \cite{ucci2019}. A presença de mais de
+uma estação ingressada no domínio é o que permite que técnicas de movimentação
+lateral e de execução remota (por exemplo, via WinRM) gerem cadeias de
+processos distribuídas entre hospedeiros, exigindo correlação entre máquinas ---
+uma das capacidades que o MAS-Hunt visa exercitar.
+
+\subsection{Instrumentação de telemetria}
+
+Cada \textit{endpoint} foi instrumentado para visibilidade comportamental de
+alta fidelidade por meio de três camadas complementares de coleta:
+
+\begin{enumerate}
+    \item \textbf{Sysmon com configuração ajustada para LOLBins.} O System
+    Monitor (Sysmon) foi implantado com uma configuração afinada para o abuso
+    de binários nativos do sistema operacional (\textit{living-off-the-land
+    binaries}, LOLBins). A configuração captura, em especial, eventos de criação
+    de processo (\textit{Event ID}~1, doravante EID1) com os respectivos
+    argumentos de linha de comando, a linhagem pai--filho de processos, conexões
+    de rede, carregamento de imagens (\textit{image load}) e modificações de
+    registro. O ajuste para LOLBins é central: como o vetor de ataque deste
+    trabalho são binários legítimos do Windows (\texttt{bitsadmin.exe},
+    \texttt{certutil.exe}, \texttt{regsvr32.exe}, \texttt{rundll32.exe},
+    \texttt{mshta.exe}, \texttt{wmic.exe}, entre outros), o sinal forense
+    discriminativo reside menos na identidade do binário e mais nos argumentos de
+    linha de comando e na relação pai--filho de processos, que a configuração
+    privilegia.
+    \item \textbf{Elastic Agent com a integração Elastic Defend.} Em paralelo ao
+    Sysmon, o Elastic Agent --- gerenciado centralmente pelo Fleet --- foi
+    implantado com a integração Elastic Defend, fornecendo telemetria de
+    proteção de \textit{endpoint} (EDR) e enriquecendo a cobertura de eventos de
+    processo, rede e arquivo.
+    \item \textbf{Políticas avançadas de auditoria do Windows.} As políticas de
+    auditoria avançada do Windows foram habilitadas para complementar a cobertura
+    com eventos de segurança nativos (\textit{Security event log}), em especial
+    os relacionados a autenticação, criação de processos e uso de privilégios.
+\end{enumerate}
+
+\subsection{Plataforma analítica: Elastic 9.3.4}
+
+Toda a telemetria das três camadas foi enviada a uma implantação do Elastic na
+versão~9.3.4, composta por:
+
+\begin{itemize}
+    \item \textbf{Elasticsearch} --- armazenamento e indexação dos eventos, com
+    os eventos de Sysmon indexados sob o fluxo de dados (\textit{data stream})
+    \texttt{logs-windows.sysmon\_operational-default};
+    \item \textbf{Kibana} --- interface de análise, visualização e consulta;
+    \item \textbf{Fleet} --- gerenciamento centralizado dos Elastic Agents e das
+    políticas de integração implantadas nos três hospedeiros.
+\end{itemize}
+
+A implantação Elastic serviu simultaneamente como \emph{fonte única de verdade}
+para a telemetria e como \emph{campo de caça analítico} comum a todas as
+condições avaliadas. Em particular, a quarta condição experimental (a linha de
+base C3-Elastic, definida na Seção~\ref{sec:met-condicoes}) emprega exatamente o
+mesmo \textit{deployment} e o conjunto padrão de regras de detecção do Elastic
+Security, garantindo que a comparação entre a camada agêntica proposta e a linha
+de base SIEM seja feita sobre a mesma telemetria, sem qualquer vantagem
+artificial de coleta.
+
+\section{Corpus de Ataque e Verdade de Referência}
+\label{sec:met-corpus}
+
+\subsection{Os 185 \textit{playbooks} em nove famílias}
+
+O corpus de detecção é composto por \textbf{185 \textit{playbooks}} de ataque
+baseados em LOLBins, distribuídos por \textbf{nove famílias de técnica}
+correspondentes aos binários nativos mais comumente abusados em campanhas reais:
+
+\begin{description}
+    \item[\texttt{bitsadmin}] --- abuso do serviço de transferência inteligente
+    em segundo plano (BITS) para \textit{download} e execução furtiva de
+    \textit{payloads};
+    \item[\texttt{certutil}] --- uso indevido do utilitário de certificados para
+    \textit{download}, codificação e decodificação de \textit{payloads};
+    \item[\texttt{credential-access}] --- técnicas de acesso a credenciais (por
+    exemplo, extração de segredos e abuso de processos sensíveis);
+    \item[\texttt{lateral-movement}] --- execução remota e movimentação entre
+    hospedeiros do domínio;
+    \item[\texttt{mshta}] --- execução de aplicações HTML maliciosas via
+    \texttt{mshta.exe};
+    \item[\texttt{privilege-escalation}] --- técnicas de elevação de
+    privilégios;
+    \item[\texttt{regsvr32}] --- execução de \textit{scriptlets} e DLLs via
+    \texttt{regsvr32.exe} (\textit{Squiblydoo} e variantes);
+    \item[\texttt{rundll32}] --- execução de código por meio de
+    \texttt{rundll32.exe};
+    \item[\texttt{wmic}] --- abuso da Instrumentação de Gerenciamento do Windows
+    (WMI) para execução e reconhecimento.
+\end{description}
+
+Cada família contém, deliberadamente, \textbf{\textit{playbooks} maliciosos
+misturados a variantes benignas} que exercitam exatamente os mesmos binários
+para fins administrativos legítimos. Esse balanceamento malicioso\,vs.\,benigno
+é uma decisão de desenho destinada a estressar a \emph{precisão} de cada
+condição, em vez de premiar o alarme indiscriminado: um detector que simplesmente
+sinalizasse toda ocorrência de \texttt{certutil.exe} ou \texttt{rundll32.exe}
+como maliciosa obteria revocação trivial às custas de uma taxa de falsos
+positivos inaceitável em ambientes operacionais de baixa taxa-base. A
+discriminação entre o uso benigno e o malicioso do mesmo binário é precisamente
+o problema de detecção que se deseja medir.
+
+Cada \textit{playbook} é executado em um dos três hospedeiros do domínio,
+produzindo uma \textbf{janela de execução determinística}
+$[t_{\text{início}}, t_{\text{fim}}]$ registrada contra o hospedeiro de origem.
+Essa janela é a unidade fundamental de medição de todo o experimento, conforme
+detalhado na Seção~\ref{sec:met-pipeline}.
+
+\subsection{Critério de verdade de referência (\textit{ground truth})}
+
+A verdade de referência foi atribuída \textbf{por \textit{playbook}}, na
+granularidade de uma janela de execução. Um \textit{playbook} é rotulado como
+\emph{malicioso} se, e somente se, o seu caminho de arquivo não denotar uma
+variante benigna --- isto é, se o caminho não contiver o prefixo
+\texttt{benign-} nem o segmento \texttt{/benign/}. Formalmente, define-se a
+função determinística:
+
+\begin{equation}
+\textit{é\_malicioso}(p) =
+\bigl(\texttt{benign-} \notin p\bigr)
+\;\wedge\;
+\bigl(\texttt{/benign/} \notin p\bigr),
+\label{eq:ground-truth}
+\end{equation}
+
+\noindent onde $p$ é o caminho relativo do \textit{playbook}. Essa regra de
+rotulação é determinística, auditável e independente de qualquer juízo de modelo
+de linguagem.
+
+Uma salvaguarda metodológica essencial acompanha esse critério: o caminho do
+\textit{playbook} --- e, portanto, o rótulo --- é mantido em um \textbf{arquivo
+lateral} (\texttt{ground\_truth.jsonl}) que \emph{nunca} é exposto aos agentes de
+linguagem durante a classificação. Desse modo, nenhuma condição pode inferir o
+rótulo a partir do nome do arquivo (\textit{anti-cheat}); os agentes classificam
+exclusivamente a partir da telemetria observável da janela. Durante a pontuação,
+cada janela de \textit{playbook} é reconciliada com o seu rótulo por meio de uma
+chave de junção, e a predição emitida pela condição sob teste é então comparada
+ao rótulo verdadeiro.
+
+\section{Desenho Adversarial de Injeção de Logs}
+\label{sec:met-adversarial}
+
+A avaliação de resiliência introduz \textbf{\textit{payloads} adversariais de
+injeção de logs} --- conteúdo controlado pelo atacante, embutido no fluxo de
+telemetria e concebido para subverter o raciocínio dos agentes. Esse vetor
+materializa, no domínio de caça a ameaças, as ameaças de injeção indireta de
+\textit{prompt} \cite{zhan2024injecagent}, de envenenamento de memória
+\cite{NEURIPS2024_eb113910} e de amplificação de mau funcionamento
+\cite{zhang2024breaking} que motivam este trabalho. O desenho adversarial cruza
+dois fatores ortogonais: o \emph{modo de injeção} e o \emph{nível de
+sofisticação}.
+
+\subsection{Quatro modos de injeção}
+
+\begin{description}
+    \item[\textit{none} (nenhum --- controle)] Condição de controle, sem
+    qualquer conteúdo adversarial injetado. Mede o desempenho de detecção em
+    telemetria limpa e serve de referência para quantificar a degradação imposta
+    pelos demais modos.
+    \item[\textit{pre-burst} (rajada prévia)] Uma rajada concentrada de
+    \textit{payloads} adversariais é injetada \emph{antes} da execução do corpus
+    de ataque, contaminando o contexto de logs que os agentes encontrarão.
+    \item[\textit{per-attack-burst} (rajada por ataque)] Uma rajada de
+    \textit{payloads} envolve \emph{cada} execução de \textit{playbook},
+    aproximando temporalmente o conteúdo adversarial dos eventos genuínos da
+    janela sob análise.
+    \item[\textit{interleaved} (intercalado)] \textit{Payloads} são
+    continuamente intercalados em meio à atividade benigna e maliciosa,
+    representando o cenário mais difuso e persistente de contaminação.
+\end{description}
+
+\subsection{Três níveis de sofisticação}
+
+\begin{description}
+    \item[\textit{overt} (explícito)] \textit{Payloads} que carregam, de forma
+    claramente visível, texto de sobreposição de instrução (\textit{instruction
+    override}) --- por exemplo, marcadores como ``ignore a análise anterior''
+    diretamente legíveis nos campos de log.
+    \item[\textit{encoded} (codificado)] \textit{Payloads} que ofuscam a mesma
+    intenção por meio de esquemas de codificação (por exemplo, Base64 ou
+    transformações análogas), exigindo do agente a decodificação implícita para
+    que a tentativa de subversão se manifeste.
+    \item[\textit{steganographic} (esteganográfico)] \textit{Payloads} que
+    ocultam a instrução maliciosa dentro de campos de log de aparência legítima,
+    representando o disfarce mais sutil entre os três níveis.
+\end{description}
+
+\subsection{Estrutura fatorial e \textit{payloads}}
+
+A combinação fatorial dos dois fatores produz a condição de controle (modo
+\textit{none}) mais nove condições adversariais
+($3~\text{modos} \times 3~\text{níveis}$, excluindo o controle sem injeção do
+cruzamento de níveis), totalizando \textbf{dez condições de execução}. Cada uma
+das dez condições executa o corpus completo de 185 \textit{playbooks} distribuído
+entre os três hospedeiros, de modo que todas as condições são pontuadas sobre o
+mesmo conjunto de janelas. Esse desenho permite investigar, de forma
+sistemática, duas hipóteses: (i) se a contaminação do contexto de logs degrada a
+detecção --- o objetivo de falso negativo dos \textit{payloads} injetados --- e
+(ii) se o aumento do disfarce, do explícito ao esteganográfico, erode
+progressivamente as defesas dos agentes.
+
+Cada \textit{payload} adversarial é descrito em um manifesto, identificado por
+um \texttt{injection\_id} único, e caracterizado por: a técnica de injeção, a
+categoria de objetivo (por exemplo, induzir falso negativo), o tipo de log alvo
+(Sysmon, PowerShell, \textit{Application} ou \textit{Security}), o texto do
+\textit{payload} e o nível de evasão (\textit{overt}, \textit{encoded} ou
+\textit{steganographic}). O instante de injeção de cada \textit{payload}
+($[t_{\text{inj,início}}, t_{\text{inj,fim}}]$) é registrado por hospedeiro, o
+que permite associar a janela temporal de contaminação às janelas de execução
+dos \textit{playbooks} durante a análise.
+
+\section{Condições Comparadas}
+\label{sec:met-condicoes}
+
+Quatro condições de detecção foram pontuadas sobre as mesmas execuções, as
+mesmas janelas e o mesmo \textit{ground truth}. Todas as condições emitem uma
+decisão binária malicioso/benigno \emph{por janela}, que é reconciliada com a
+verdade de referência por um \emph{único} \textit{script} de pontuação
+determinístico e não baseado em inteligência artificial --- desacoplando a
+descoberta flexível (a cargo dos agentes ou regras) da avaliação determinística
+(a cargo do pontuador). As quatro condições são as seguintes.
+
+\begin{description}
+    \item[\textbf{C1-full}] O sistema MAS-Hunt completo, compreendendo a
+    hierarquia de governança de três camadas (Conselho de Governança $\rightarrow$
+    Gerentes $\rightarrow$ Trabalhadores/Caçadores) e o complemento integral de
+    mecanismos de proteção M1--M5 (Integridade de Memória, Validação Cruzada,
+    Resistência a Injeção, Monitoramento Comportamental e Quarentena), em conjunto
+    com o \textit{framework} de análise M3, que conduz o laço de raciocínio
+    \textsc{observar} $\rightarrow$ \textsc{hipotetizar} $\rightarrow$
+    \textsc{evidência} $\rightarrow$ \textsc{validação-cruzada} $\rightarrow$
+    \textsc{classificar}. Esta é a condição que materializa a contribuição
+    central do trabalho.
+    \item[\textbf{C1-nohardening}] Uma ablação de C1-full na qual os mecanismos
+    de endurecimento e governança (M1, M2, M4 e M5) são desativados, preservando
+    apenas o \textit{framework} de análise M3. Esta condição isola a contribuição
+    marginal da camada de proteção, mantendo constantes os agentes subjacentes e
+    o laço de raciocínio.
+    \item[\textbf{C2-naive}] Um classificador de modelo de linguagem de passagem
+    única, que observa as mesmas janelas de telemetria, mas não aplica governança,
+    nem validação cruzada, nem defesas contra injeção. Representa a linha de base
+    agêntica não governada --- um único agente classificando cada janela de forma
+    isolada.
+    \item[\textbf{C3-Elastic}] O conjunto padrão de regras de detecção do Elastic
+    Security, representando a linha de base SIEM ``de prateleira'' que um
+    profissional obteria sem qualquer camada agêntica. As predições de C3-Elastic
+    são derivadas das contagens de alertas geradas pelas regras padrão dentro de
+    cada janela de \textit{playbook}.
+\end{description}
+
+A progressão C1-full $\rightarrow$ C1-nohardening $\rightarrow$ C2-naive
+constitui uma \textbf{ablação graduada} que atribui o desempenho,
+respectivamente, à arquitetura de governança, à camada agêntica e ao raciocínio
+de modelo de linguagem isolado; C3-Elastic ancora a comparação na linha de base
+SIEM. A literatura de caça a ameaças assistida por aprendizado de máquina
+\cite{ali2023huntgptintegratingmachinelearningbased} e de coordenação
+multiagente \cite{mahmud2025distributedmultiagentcoordinationusing} motiva
+essa estrutura de comparação graduada, na qual cada degrau acrescenta exatamente
+um componente arquitetural ao anterior.
+
+\section{\textit{Pipeline} de Medição}
+\label{sec:met-pipeline}
+
+O \textit{pipeline} de medição converte cada execução de corpus em um conjunto de
+métricas reconciliadas com o \textit{ground truth}. Ele é composto por três
+estágios --- \emph{preparação} (extração de janelas de telemetria),
+\emph{classificação} (a cargo da condição sob teste) e \emph{pontuação}
+(reconciliação determinística) --- precedidos por um gatilho de saúde de
+telemetria (\textit{health-gate}) que condiciona a própria execução do corpus.
+Esta seção descreve cada estágio.
+
+\subsection{Janelas por \textit{playbook} e extração de telemetria}
+
+A unidade de medição é a \textbf{janela por \textit{playbook}}. Para cada um dos
+185 \textit{playbooks} de uma execução, atribui-se um identificador de janela
+\texttt{window\_id} (na forma \texttt{w0001}, \texttt{w0002}, \dots), e extrai-se
+o hospedeiro de origem, o intervalo $[t_{\text{início}}, t_{\text{fim}}]$ e os
+eventos de telemetria observados nessa janela. A extração consulta o
+\textit{data stream} \texttt{logs-windows.sysmon\_operational-default} do
+Elasticsearch, filtrando por intervalo temporal e por hospedeiro
+(\texttt{host.name} ou \texttt{host.hostname}), e compacta cada evento a um
+registro enxuto contendo o \textit{timestamp}, o \textit{Event ID}, a ação, o
+processo, o PID, a linha de comando, o processo pai e sua linha de comando, e o
+usuário. O isolamento entre janelas é garantido pela \emph{disjunção temporal}
+dos intervalos $[t_{\text{início}}, t_{\text{fim}}]$, e não por índices
+separados.
+
+O estágio de preparação produz dois artefatos: (i) \texttt{windows.jsonl}, com um
+registro por \textit{playbook} contendo as janelas e os eventos compactados
+(\emph{sem} o caminho do \textit{playbook}, por \textit{anti-cheat}); e (ii) o
+arquivo lateral \texttt{ground\_truth.jsonl}, que mapeia cada \texttt{window\_id}
+ao caminho do \textit{playbook} e é usado exclusivamente pelo pontuador, nunca
+exposto ao agente classificador. A chave de junção entre predições, janelas e
+verdade de referência é o \texttt{window\_id}.
+
+\subsection{Extração \textit{prepare-v2}: priorização de EID1}
+\label{subsec:prepare-v2}
+
+A versão inicial da extração (\texttt{prepare}) recolhia, por janela, os
+primeiros eventos em ordem cronológica até um teto fixo (60 eventos). Constatou-se
+que esse critério cronológico plano permitia que o ruído de eventos de registro
+(EID~12/13), dominante no volume de telemetria, deslocasse os eventos de
+\emph{criação de processo} (EID1) --- justamente os mais discriminativos para a
+detecção de LOLBins --- para fora da janela amostrada. Adotou-se, portanto, uma
+extração aprimorada, denominada \texttt{prepare-v2}, que preserva
+identicamente o esquema de saída (registros indexados por \texttt{window\_id},
+com rótulos retidos no arquivo lateral, de modo que a pontuação permanece
+inalterada), acrescentando o campo \texttt{n\_eid1} e aplicando três mudanças:
+
+\begin{enumerate}
+    \item \textbf{Priorização de EID1.} Todos os eventos de criação de processo
+    (EID1) presentes na janela ampliada são recuperados (até um teto de
+    candidatos) e \emph{sempre} incluídos na amostra;
+    \item \textbf{Preenchimento subordinado.} Os demais eventos (não-EID1) são
+    então acrescentados em ordem cronológica até o teto de eventos por janela
+    (elevado para 120);
+    \item \textbf{Ampliação do \textit{padding}.} O \textit{padding} temporal da
+    janela é ampliado para $\pm120$\,s (ante os $\pm60$\,s da versão inicial), a
+    fim de absorver a latência de ingestão dos agentes/Sysmon e o desvio de
+    relógio dos convidados Windows.
+\end{enumerate}
+
+Em execuções ricas em sinal, essa priorização recupera a cadeia de criação de
+processos completa de um ataque conduzido remotamente (por exemplo, a cadeia
+\texttt{winrshost.exe} $\rightarrow$ \texttt{cmd.exe} $\rightarrow$
+\texttt{powershell.exe} de uma execução via WinRM), que a extração cronológica
+plana descartava. A motivação de desenho e a sua relação com a lacuna de
+telemetria de EID1 são discutidas na Seção~\ref{sec:met-limitacoes}.
+
+\subsection{O gatilho de saúde de telemetria (\textit{health-gate})}
+\label{subsec:health-gate}
+
+Um dos achados metodológicos mais importantes deste trabalho diz respeito à
+\emph{prontidão} da instrumentação após a restauração de um \textit{snapshot}
+limpo. As primeiras execuções enviaram telemetria \emph{quebrada}: os
+\textit{playbooks} eram executados imediatamente após a restauração da máquina
+virtual, antes que os Elastic Agents e o Sysmon das estações de trabalho tivessem
+concluído o \textit{check-in} com o Fleet e iniciado o envio de eventos.
+O resultado era assimétrico e silencioso --- por exemplo, uma estação enviando
+zero eventos, outra enviando poucas centenas e a criação de processos (EID1) dos
+\textit{playbooks} maliciosos ausente do Elasticsearch. Uma espera fixa
+(\texttt{sleep} cego) não constitui um sinal confiável de prontidão, porque
+disputa uma corrida com tempos de inicialização variáveis.
+
+Para sanar esse problema, introduziu-se um \textbf{gatilho de saúde de
+telemetria} (\textit{telemetry health-gate}) que substitui a espera cega. O
+gatilho consulta o Elasticsearch repetidamente e \emph{bloqueia a execução do
+corpus} até que os três hospedeiros (dc01, ws01 e ws02) estejam comprovadamente
+ativos em ambas as camadas das quais o orquestrador depende. Um hospedeiro é
+considerado \emph{saudável}, a cada sondagem, se, e somente se:
+
+\begin{enumerate}
+    \item houver enviado, desde o início do gatilho, um número mínimo de
+    documentos \emph{frescos} de criação de processo (EID1) ao Elasticsearch; e
+    \item o seu \textit{heartbeat} de WinRM responder com sucesso (porta
+    alcançável e capaz de executar comandos).
+\end{enumerate}
+
+\paragraph{Por que o gatilho é necessário.} A instrumentação restaurada a partir
+de um \textit{snapshot} precisa de \emph{tempo para estabilizar}: os agentes e o
+Sysmon levam um intervalo variável para iniciar o envio após a restauração. O
+gatilho de saúde torna a prontidão um sinal \emph{observável e verificado} --- em
+vez de uma suposição temporal --- e, com isso, garante que toda execução de
+\textit{playbook} ocorra somente quando a cadeia completa
+\texttt{WinRM alcançável} $\rightarrow$ \texttt{processo gerado} $\rightarrow$
+\texttt{Sysmon EID1} $\rightarrow$ \texttt{Fleet} $\rightarrow$
+\texttt{Elasticsearch} estiver comprovadamente funcional. Para forçar esse
+sinal ativamente, o gatilho dispara, a cada sondagem, alguns processos
+efêmeros via WinRM em cada hospedeiro ainda não saudável; se a cadeia de
+instrumentação estiver viva, esses processos afloram como EID1 fresco em poucos
+segundos, transformando o gatilho em uma sonda \textit{ponta-a-ponta} de toda a
+cadeia que antes falhava silenciosamente.
+
+Duas decisões de robustez merecem registro. Primeiro, a frescura dos eventos é
+medida \emph{no espaço de \textit{timestamps} do Elasticsearch}, e não contra o
+relógio do hospedeiro do laboratório: observou-se que os relógios dos convidados
+Windows operam adiantados em relação ao relógio do hospedeiro, de modo que uma
+comparação ingênua ``$@timestamp \geq \text{agora} - 3\,\text{min}$'' contra o
+relógio do hospedeiro encontraria zero eventos em um hospedeiro saudável. Por
+isso, no início do gatilho registra-se o \textit{timestamp} máximo corrente de
+EID1 de cada hospedeiro (congelado, pois as VMs estão desligadas/em restauração)
+e contam-se apenas os documentos EID1 estritamente posteriores a essa marca.
+Segundo, exigir o \textit{heartbeat} de WinRM como parte da saúde fecha, sem
+custo adicional, a lacuna de um hospedeiro que envia Sysmon mas tem o WinRM
+indisponível --- caso em que os \textit{playbooks} roteados para ele falhariam.
+
+\subsection{Reprodutibilidade: restauração limpa e \textit{snapshots}}
+\label{subsec:reprodutibilidade}
+
+A reprodutibilidade é tratada como contribuição de primeira classe, e não como
+um adendo: todo o laboratório de avaliação e o arsenal de medição são
+re-executáveis de ponta a ponta a partir de \textit{snapshots} versionados. A
+topologia de três VMs, o corpus de \textit{playbooks} (185 \textit{playbooks}),
+a condição de controle e as nove condições adversariais, o validador
+determinístico e o \textit{pipeline} de pontuação por \textit{bootstrap} são
+todos capturados como \textit{snapshots} de linha de base instrumentados.
+
+Cada condição é executada a partir de uma \textbf{restauração limpa}: as três
+VMs são restauradas a um estado de linha de base conhecido entre condições, o que
+assegura o isolamento estrutural entre execuções (a contaminação adversarial de
+uma condição não vaza para a seguinte). Para conter um pico de carga de memória
+observado durante a inicialização simultânea das três VMs, adotou-se um esquema
+de \textbf{inicialização escalonada} (\textit{staggered boot}): cada VM é
+iniciada e submetida ao gatilho de saúde individualmente, em sequência (dc01,
+depois ws01, depois ws02), antes que a próxima seja iniciada, eliminando a
+tempestade de inicialização simultânea. Esse procedimento foi essencial para a
+estabilidade do hospedeiro do laboratório, que opera com folga estreita de
+memória ao executar três VMs Windows mais a pilha Elastic completa.
+
+A combinação de \textit{snapshots} versionados, validador determinístico e
+comparação baseada em \textit{bootstrap} confere às medições uma garantia de
+reprodutibilidade \emph{verificável} em vez de apenas \emph{afirmada}: um
+terceiro de posse dos \textit{snapshots} pode reconstituir o experimento sem
+reconfiguração manual --- propriedade que, ela própria, é testada empiricamente
+no Capítulo~\ref{cap:resultados} por meio de uma re-execução limpa a partir da
+linha de base instrumentada.
+
+\section{Métricas e Análise Estatística}
+\label{sec:met-metricas}
+
+\subsection{Métricas de detecção}
+
+O desempenho de detecção é avaliado por \textit{playbook}, a partir das contagens
+de matriz de confusão de verdadeiros positivos ($\mathit{VP}$), falsos positivos
+($\mathit{FP}$), falsos negativos ($\mathit{FN}$) e verdadeiros negativos
+($\mathit{VN}$), nas quais um \emph{positivo} denota uma janela classificada como
+maliciosa. Como, em caça a ameaças, o custo operacional de uma intrusão não
+detectada supera o de um alerta supérfluo, ao passo que uma taxa de falsos
+positivos descontrolada inviabiliza qualquer detector em ambientes de baixa
+taxa-base \cite{dolan-gavitt2025}, reporta-se um equilíbrio entre as duas
+grandezas ponderado pela revocação.
+
+\begin{itemize}
+    \item \textbf{Precisão} --- a fração de janelas sinalizadas como maliciosas
+    que eram, de fato, maliciosas:
+    \begin{equation}
+    \mathit{Precisão} = \frac{\mathit{VP}}{\mathit{VP} + \mathit{FP}}.
+    \label{eq:met-precisao}
+    \end{equation}
+    \item \textbf{Revocação} (\textit{recall}, equivalente à Taxa de Verdadeiros
+    Positivos) --- a fração de janelas maliciosas corretamente identificadas:
+    \begin{equation}
+    \mathit{Revocação} = \frac{\mathit{VP}}{\mathit{VP} + \mathit{FN}}.
+    \label{eq:met-revocacao}
+    \end{equation}
+    \item \textbf{Escore F2} --- a média harmônica ponderada de precisão e
+    revocação, com $\beta = 2$, na qual a revocação é ponderada quatro vezes mais
+    que a precisão, refletindo o custo assimétrico das detecções perdidas:
+    \begin{equation}
+    \mathrm{F}_{\beta} = (1 + \beta^{2}) \cdot
+    \frac{\mathit{Precisão} \cdot \mathit{Revocação}}
+         {(\beta^{2} \cdot \mathit{Precisão}) + \mathit{Revocação}},
+    \qquad
+    \mathrm{F}_{2} = 5 \cdot
+    \frac{\mathit{Precisão} \cdot \mathit{Revocação}}
+         {(4 \cdot \mathit{Precisão}) + \mathit{Revocação}}.
+    \label{eq:met-f2}
+    \end{equation}
+    \item \textbf{Taxa de Falsos Positivos (FPR)} --- a taxa de alarmes falsos
+    entre a atividade benigna, reportada de duas formas complementares: por
+    janela benigna, e normalizada por 100\,000 eventos de Sysmon observados na
+    janela do corpus, de modo a permitir a comparação entre condições a um volume
+    comum de telemetria:
+    \begin{equation}
+    \mathit{FPR} = \frac{\mathit{FP}}{\mathit{FP} + \mathit{VN}}.
+    \label{eq:met-fpr}
+    \end{equation}
+\end{itemize}
+
+O cômputo das métricas é feito por um \textit{script} determinístico, idêntico
+para todas as quatro condições. Predições ausentes (janelas para as quais a
+condição não emitiu decisão) são tratadas como benignas, opção conservadora que
+penaliza a revocação. As métricas são, ainda, decompostas \emph{por família de
+LOLBin} (a primeira componente do caminho do \textit{playbook}), permitindo a
+análise diferencial por técnica.
+
+\subsection{Métricas de resiliência adversarial}
+
+A resiliência sob as condições adversariais da Seção~\ref{sec:met-adversarial} é
+quantificada por duas métricas complementares:
+
+\begin{itemize}
+    \item \textbf{Taxa de Sucesso de Ataque (ASR)} --- a fração de tentativas de
+    injeção em que o \textit{payload} adversarial atinge o seu objetivo de forçar
+    uma classificação incorreta:
+    \begin{equation}
+    \mathit{ASR} = \frac{N_{\text{classificadas\_incorretamente}}}{N}.
+    \label{eq:met-asr}
+    \end{equation}
+    \item \textbf{Taxa Líquida de Sucesso de Ataque (NASR)} --- contabiliza
+    apenas o desfecho estritamente pior: tentativas que foram \emph{ao mesmo
+    tempo} classificadas incorretamente \emph{e} nas quais a injeção
+    \emph{não foi detectada} como adversarial. Por construção,
+    $\mathit{NASR} \leq \mathit{ASR}$, pois uma classificação incorreta que a
+    camada de governança simultaneamente sinaliza como injeção detectada não
+    constitui um comprometimento silencioso:
+    \begin{equation}
+    \mathit{NASR} =
+    \frac{N_{\text{incorreta}\,\wedge\,\text{injeção\_não\_detectada}}}{N}.
+    \label{eq:met-nasr}
+    \end{equation}
+\end{itemize}
+
+Uma condição resiliente exibe ASR e NASR mais baixas. O contraste entre C1-full e
+a linha de base não governada C2-naive mede o valor protetor da camada de
+governança contra os modos de falha de propagação infecciosa e de corrupção de
+raciocínio documentados na literatura de segurança de sistemas multiagente
+\cite{huang2024resilience}.
+
+\subsection{Análise estatística por \textit{bootstrap}}
+
+Para assegurar que as diferenças observadas não sejam artefatos de amostragem,
+cada estimativa pontual reportada é acompanhada de um \textbf{intervalo de
+confiança (IC) de 95\% obtido por \textit{bootstrap} não-paramétrico}. Para cada
+métrica, extraem-se $B = 10\,000$ reamostras com reposição do vetor de desfechos
+por \textit{playbook} de cada condição (braço), recomputa-se a métrica em cada
+reamostra e reportam-se os percentis de $2{,}5\%$ e $97{,}5\%$ da distribuição
+\textit{bootstrap} como os limites inferior e superior do intervalo de 95\%
+(método percentil). Esse procedimento não faz qualquer suposição paramétrica
+sobre a distribuição amostral e é aplicado de forma idêntica à Precisão, à
+Revocação, ao F2 e às métricas de resiliência.
+
+Uma diferença entre condições só é tratada como estatisticamente relevante quando
+os intervalos de confiança correspondentes a sustentam. De modo análogo, a
+reprodutibilidade de cada métrica entre execuções independentes é avaliada por um
+\textbf{critério de sobreposição de intervalos}: uma métrica é considerada
+estatisticamente reprodutível quando a estimativa pontual de cada execução recai
+dentro do intervalo de confiança da outra e os dois intervalos se sobrepõem.
+
+\section{Limitações e Ameaças à Validade}
+\label{sec:met-limitacoes}
+
+Em conformidade com a postura de integridade adotada neste trabalho, registram-se
+de forma explícita as limitações do desenho experimental e as ameaças à validade
+das conclusões.
+
+\subsection{A lacuna de telemetria de EID1}
+
+A limitação mais significativa é a \textbf{lacuna de telemetria de criação de
+processo (EID1)}. Na configuração de Sysmon empregada, a esmagadora maioria dos
+documentos corresponde a eventos de registro (EID~12/13); em execuções
+\emph{pobres em sinal} (notadamente as condições de controle e \textit{pre-burst}),
+as criações de processo (EID1) dos LOLBins são capturadas de forma esparsa, e
+parte das cadeias de processo dos \textit{playbooks} maliciosos simplesmente não
+chega a ser registrada pelo Sysmon. Como o sinal forense discriminativo de um
+LOLBin reside, em grande medida, na criação do processo e em seus argumentos de
+linha de comando, essa lacuna impõe um \emph{teto} à revocação alcançável,
+\emph{independentemente} da condição --- nenhuma quantidade de raciocínio recupera
+um evento que nunca foi gravado.
+
+Esta dissertação enfrenta essa limitação de duas maneiras, ambas mitigadoras e
+não corretivas. Primeiro, a extração \texttt{prepare-v2}
+(Seção~\ref{subsec:prepare-v2}) \emph{prioriza} EID1 na amostragem por janela,
+maximizando a captura de toda a criação de processo que de fato exista na
+telemetria; em execuções ricas em sinal, isso recupera a cadeia de ataque
+completa. Segundo, o gatilho de saúde (Seção~\ref{subsec:health-gate}) elimina a
+\emph{causa instrumental} de parte da lacuna --- a ausência de EID1 por
+instrumentação ainda não estabilizada após a restauração --- ao exigir o envio
+verificado de EID1 fresco pelos três hospedeiros antes de qualquer execução.
+Cumpre, porém, ser explícito quanto à fronteira entre as duas: o gatilho e a
+\texttt{prepare-v2} sanam a lacuna \emph{instrumental} (eventos que existiriam,
+mas não eram coletados a tempo ou eram deslocados da amostra), mas \emph{não}
+sanam a lacuna \emph{estrutural} (eventos que o Sysmon, na configuração dada,
+nunca chegou a logar). Em consequência, o ganho de C1-full sobre as linhas de
+base deve ser interpretado primordialmente como decorrente de \emph{raciocínio
+contextual e correlação entre hospedeiros sob escassez de sinal}, e não como
+ganho de revocação bruta sobre eventos inexistentes.
+
+\subsection{Outras ameaças à validade}
+
+\paragraph{Validade interna.} A medição de resiliência opera no nível da
+\emph{tentativa} (\textit{trial-level}): a ASR e a NASR medem se o agente
+classificou incorretamente sob injeção, mas o corpus não dispõe de rótulos de
+contaminação \emph{por evento}. Não se afirma, portanto, qual evento individual
+foi corrompido, apenas o desfecho da janela sob contaminação. Adicionalmente, a
+regra de \textit{ground truth} baseada no caminho do arquivo
+(Equação~\ref{eq:ground-truth}) é determinística e auditável, mas pressupõe que a
+curadoria do corpus rotulou corretamente cada \textit{playbook}.
+
+\paragraph{Validade externa.} O ambiente é um domínio \textit{Active Directory}
+de pequena escala (um controlador de domínio e duas estações), o que reproduz a
+superfície de movimentação lateral de uma pequena empresa, mas não a escala, a
+heterogeneidade nem o volume de \textit{background} de uma rede empresarial de
+grande porte. O corpus de 185 \textit{playbooks} cobre nove famílias de LOLBin,
+porém não esgota o universo de técnicas de \textit{living-off-the-land}, e a
+distribuição malicioso/benigno do corpus não pretende refletir a taxa-base
+operacional real.
+
+\paragraph{Validade de construto.} A linha de base C2-naive é definida como um
+classificador de passagem única; deve-se assegurar, na execução, que ela seja de
+fato um passe genuíno de modelo de linguagem (paridade com C1-full), e não uma
+heurística determinística, sob pena de a comparação medir algo distinto do
+pretendido. Esse cuidado é registrado aqui como ameaça de construto a ser
+controlada na fase de execução e auditada nos artefatos (Capítulo~\ref{cap:resultados}).
+
+\paragraph{Estabilidade do laboratório.} A instância QEMU de uma das estações
+(ws02) apresentou instabilidade intermitente (asserção do monitor QEMU seguida de
+saída do contêiner) logo após a inicialização, sob a pressão de memória do
+hospedeiro. A inicialização escalonada, o \textit{watchdog} de reinício e o
+re-tentar do gatilho mitigam essa instabilidade na fase de \textit{boot}; uma
+falha \emph{durante} a execução, contudo, ainda poderia perder os
+\textit{playbooks} roteados para aquele hospedeiro naquela execução. Como
+salvaguarda, uma verificação de validade de telemetria, executada após cada
+condição, sinaliza qualquer execução com um hospedeiro ausente para
+re-execução dirigida.
+
+\bigskip
+\noindent
+Em síntese, o desenho experimental descrito neste capítulo isola a contribuição
+da arquitetura de governança por meio de condições pontuadas sobre janelas e
+verdade de referência idênticas, sob um \textit{pipeline} de medição
+determinístico e reprodutível, com as suas limitações --- sobretudo a lacuna de
+telemetria de EID1 --- documentadas de forma transparente. Os resultados
+quantitativos decorrentes deste desenho são apresentados no
+Capítulo~\ref{cap:resultados}.

@@ -1,0 +1,351 @@
+% =====================================================================
+% Capítulo 3 — Trabalhos Relacionados
+% Dissertação de Mestrado MAS-Hunt (ABNT, PT-BR)
+% Convenções: ver .orchestration/dissertacao-OUTLINE.md
+% Citações: chaves reais de bibliografia.bib e mashunt/references.bib
+% NOTA DE INTEGRAÇÃO (cite gap): chaves dos eixos (a),(b),(d) vêm de
+%   bibliografia.bib; chaves do eixo (c) — adversariais — vêm de
+%   mashunt/references.bib. As duas bases são disjuntas; o main.tex deve
+%   apontar \bibliography para ambas (ou mesclá-las) para resolver todas as
+%   chaves abaixo. A tabela usa \ding{} do pacote pifont.
+% =====================================================================
+
+\chapter{Trabalhos Relacionados}
+\label{cap:trabalhos-relacionados}
+
+A proposta do MAS-Hunt situa-se na confluência de quatro linhas de pesquisa que,
+até o momento, evoluíram de modo amplamente independente: (i) a aplicação de
+\textit{Large Language Models} (LLMs) e agentes autônomos à caça a ameaças e à
+detecção comportamental; (ii) os sistemas multiagente para segurança
+cibernética e sua governança; (iii) os ataques adversariais dirigidos aos
+próprios agentes baseados em LLM, em especial o envenenamento de memória e a
+injeção de prompt/logs; e (iv) a automação de detecção em ambientes
+SIEM/SOC. Este capítulo organiza a literatura segundo esses quatro eixos
+temáticos, compara criticamente as abordagens dentro de cada eixo e, ao final,
+explicita a lacuna que o MAS-Hunt se propõe a preencher. A revisão é deliberadamente
+comparativa: o objetivo não é catalogar trabalhos, mas evidenciar que nenhuma das
+linhas existentes integra, em um único artefato avaliado empiricamente,
+governança multiagente real e resistência a injeção adversarial sobre telemetria
+viva.
+
+% =====================================================================
+\section{Caça a Ameaças e Detecção Comportamental Assistidas por IA}
+\label{sec:rel-hunting-ia}
+
+A caça a ameaças (\textit{threat hunting}) consolidou-se como um deslocamento
+paradigmático da postura reativa, baseada em assinaturas, para uma busca
+proativa e iterativa por adversários já presentes no ambiente
+\cite{hillier2022turninghuntedhunterthreat}. \citeonline{hillier2022turninghuntedhunterthreat}
+descrevem o ciclo de vida da caça a ameaças e seu ecossistema, antecipando a
+\textit{grande promessa} da inteligência artificial como força multiplicadora do
+analista humano; o trabalho, contudo, permanece no plano conceitual, sem
+implementação operacional. Essa promessa é sistematizada de forma prospectiva por
+\citeonline{academia22}, que propõe a \textit{caça autônoma a ameaças} como
+paradigma futuro de inteligência de ameaças dirigida por IA, e por
+\citeonline{academia21}, que mapeia o \textit{caminho para a defesa cibernética
+autônoma}. Ambos os trabalhos, entretanto, são essencialmente revisões de visão:
+identificam direções desejáveis sem entregar uma arquitetura validada nem
+quantificar resiliência.
+
+No plano das técnicas concretas de detecção, há uma trajetória clara que vai do
+aprendizado de máquina supervisionado em domínio fechado até o uso de LLMs como
+motores de raciocínio. \citeonline{HADDADPAJOUH201888} aplicam redes neurais
+recorrentes profundas à caça a \textit{malware} em dispositivos de Internet das
+Coisas, alcançando bons índices de classificação, porém à custa de um modelo
+treinado de modo \textit{offline}, incapaz de formular hipóteses ou de interagir
+com a telemetria em tempo de execução. As limitações intrínsecas dessa família de
+abordagens são sintetizadas por \citeonline{ucci2019}, cujo levantamento sobre
+técnicas de aprendizado de máquina para análise de \textit{malware} evidencia a
+dependência de \textit{features} predominantemente sintáticas e a fragilidade
+frente à mudança de distribuição entre o ambiente de treino e o \textit{endpoint}
+real.
+
+A introdução de LLMs altera qualitativamente esse panorama ao acoplar raciocínio
+em linguagem natural e capacidade de geração de consultas. O HuntGPT
+\cite{ali2023huntgptintegratingmachinelearningbased} é representativo dessa
+geração: integra detecção de anomalias baseada em aprendizado de máquina,
+inteligência artificial explicável e um LLM como camada de interpretação,
+oferecendo ao analista justificativas legíveis para os alertas. Trata-se,
+porém, de um agente único e assistivo, sem orquestração colaborativa nem
+qualquer hipótese de defesa contra manipulação do próprio modelo. O modelo de
+geração de hipóteses de \citeonline{10713082} formaliza o estágio mais cognitivo
+da caça --- a formulação de hipóteses verificáveis ---, mas o faz como
+componente isolado, desacoplado de execução, validação ou resposta. O TIRA, de
+\citeonline{10750987}, avança rumo à automação de ponta a ponta (caça, detecção e
+perfilamento de atores), aproximando-se de um fluxo operacional completo;
+todavia, não modela um adversário inteligente capaz de subverter o próprio
+sistema de caça, premissa central do MAS-Hunt.
+
+Em síntese, o eixo de caça assistida por IA progrediu da classificação
+\textit{offline} \cite{HADDADPAJOUH201888,ucci2019} para a interpretação
+explicável \cite{ali2023huntgptintegratingmachinelearningbased} e a geração de
+hipóteses \cite{10713082,10750987}, mas mantém duas omissões recorrentes: a
+ausência de \textit{colaboração estruturada entre múltiplos agentes
+especializados} e a desconsideração da \textit{superfície de ataque do próprio
+sistema de IA}.
+
+% =====================================================================
+\section{Sistemas Multiagente para Segurança e sua Governança}
+\label{sec:rel-mas-governanca}
+
+A coordenação entre múltiplos agentes para resolver problemas distribuídos é um
+campo maduro, cujas raízes remontam à formalização de organizações, planos e
+escalonamento como mecanismos de coordenação de agentes de IA
+\cite{durfee1993organizations}. O advento dos LLMs reabilitou esse campo sob nova
+forma: agentes de linguagem passaram a coordenar-se em arranjos hierárquicos para
+tarefas complexas. \citeonline{liu2023llm} propõem um agente hierárquico de
+linguagem para coordenação humano-IA em tempo real, demonstrando que a
+decomposição em camadas --- um agente de alto nível que delega a subagentes ---
+melhora a latência e a qualidade da cooperação. \citeonline{agashe2023llmcoordination}
+avaliam sistematicamente as capacidades de coordenação multiagente de diferentes
+LLMs, e \citeonline{qiu2024collaborativeintelligencepropagatingintentions}
+mostram que a propagação explícita de intenções e raciocínio entre agentes
+aprimora a inteligência coletiva. Padrões cooperativos correlatos aparecem no
+ProAgent \cite{DBLP:journals/corr/abs-2308-11339}, na coordenação \textit{zero-shot}
+de \citeonline{pmlr-v202-li23au} e na coordenação fundamentada em modelos
+multimodais de \citeonline{mahmud2025distributedmultiagentcoordinationusing}.
+Essa literatura, contudo, otimiza \textit{desempenho cooperativo} em ambientes
+benignos: a coordenação é tratada como problema de eficiência
+\cite{bai2024reducingredundantcomputationmultiagent}, não de segurança.
+
+Um subconjunto da literatura começa a tratar a coordenação como problema
+adversarial e de confiança. \citeonline{Yuan_Zhang_Xue_Yin_Chen_Guan_Li_Qian_Yu_2023}
+propõem coordenação multiagente robusta via geração evolutiva de atacantes
+auxiliares, endurecendo políticas contra perturbações; o BlockAgents
+\cite{doe2023emergent} busca coordenação tolerante a falhas bizantinas por meio de
+\textit{blockchain}, atacando o problema do agente comprometido pela via da
+imutabilidade do registro. Esses trabalhos, entretanto, situam-se no domínio de
+aprendizado por reforço multiagente ou de consenso distribuído genérico, sem
+ancoragem em telemetria de segurança real nem nos vetores de ataque específicos a
+LLMs (envenenamento de memória, injeção de prompt).
+
+Paralelamente, emerge uma literatura de \textit{governança} de sistemas de IA que
+fornece o vocabulário normativo --- mas não a implementação técnica --- para o
+controle de agentes autônomos. \citeonline{isaca2025leveraging} adaptam o
+arcabouço COBIT à governança de sistemas de IA; \citeonline{mcintosh2024cobit} e
+\citeonline{McIntosh2024} avaliam a transição do COBIT para a ISO/IEC 42001 sob a
+ótica de oportunidades, riscos e conformidade regulatória na comercialização de
+LLMs. Esses estudos estabelecem \textit{por que} a governança é necessária e
+\textit{quais} controles deveriam existir, mas não descem ao nível de protocolos
+executáveis de mensagens tipadas, votação de conselho ou quarentena de agentes ---
+exatamente o terreno onde o MAS-Hunt opera. A obra de referência sobre
+\textit{frameworks} de agentes \cite{kirshteyn2024aif} complementa esse quadro no
+plano da engenharia, mas sem viés de segurança.
+
+A comparação entre os dois subcampos revela uma assimetria reveladora: a
+coordenação multiagente sabe \textit{como} fazer agentes cooperarem, e a
+governança de IA sabe \textit{quais} controles são desejáveis, porém raramente os
+dois se encontram em um sistema concreto de segurança cibernética cuja
+arquitetura de governança seja ela própria o mecanismo de defesa.
+
+% =====================================================================
+\section{Ataques Adversariais a Agentes Baseados em LLM}
+\label{sec:rel-ataques-adversariais}
+
+O terceiro eixo é o que motiva diretamente o endurecimento do MAS-Hunt: a
+constatação empírica de que a autonomia que torna os agentes poderosos os torna
+igualmente frágeis. A superfície de ataque mais crítica é a memória cognitiva do
+agente. \citeonline{NEURIPS2024_eb113910}, com o AgentPoison, demonstram que a
+memória ou a base de conhecimento de recuperação aumentada (RAG) de um agente
+pode ser envenenada com taxa de injeção inferior a 0{,}1\% para induzir
+comportamento malicioso direcionado com taxa de sucesso de ataque superior a
+80\%. Esse resultado é decisivo: mostra que a integridade da memória não pode ser
+presumida e fundamenta o mecanismo M1 (Integridade de Memória) do MAS-Hunt.
+
+Uma segunda classe de ataques explora o \textit{loop de raciocínio} do agente.
+\citeonline{zhang2024breaking}, em \textit{Breaking Agents}, caracterizam a
+\textit{amplificação de mau funcionamento} (\textit{malfunction amplification}),
+em que um erro menor desencadeia um laço de realimentação de ações inúteis, com
+taxas de falha que ultrapassam 80\% --- um vetor efetivo de negação de serviço
+contra o próprio agente. A injeção indireta de \textit{prompt}, por sua vez, é
+quantificada pelo \textit{benchmark} InjecAgent \cite{zhan2024injecagent}, que
+mede a vulnerabilidade de agentes integrados a ferramentas a instruções
+maliciosas embutidas em conteúdo externo --- precisamente o cenário da
+injeção adversarial de logs, em que o adversário contamina a telemetria que o
+caçador irá ler. O CRDA \cite{liu2024crda} estende a análise ao \textit{drift} de
+risco de conteúdo via interação adversarial multiagente, evidenciando que a
+degradação pode emergir da própria dinâmica entre agentes.
+
+O caráter sistêmico dessas ameaças em \textit{coletivos} de agentes é o achado
+mais alarmante. \citeonline{gu2024agent}, com o Agent Smith, mostram que uma
+única imagem adversarial pode desencadear um \textit{jailbreak infeccioso} que se
+propaga exponencialmente por um milhão de agentes multimodais.
+\citeonline{huang2024resilience} estudam a resiliência de sistemas multiagente na
+presença de agentes maliciosos e apresentam o resultado de projeto mais relevante
+para esta dissertação: estruturas de orquestração \textit{hierárquicas} exibem a
+menor degradação de desempenho sob condições adversariais quando comparadas a
+topologias alternativas. Esse achado justifica diretamente a escolha arquitetural
+do MAS-Hunt por uma hierarquia de três camadas. Por fim, essas vulnerabilidades
+devem ser lidas à luz de um adversário ativo e inteligente:
+\citeonline{moreno2025analysis} propõem teste de intrusão autônomo via
+aprendizado por reforço e sistemas de recomendação, e \citeonline{academia20}
+discute a IA como o \textit{novo atacante}, desenvolvendo agentes para segurança
+ofensiva. Um agente ofensivo dessa natureza é o candidato natural a executar os
+ataques de envenenamento e de manipulação comportamental acima descritos --- donde
+a conclusão de que qualquer arquitetura defensiva que não modele um adversário de
+IA igualmente capaz é fundamentalmente incompleta.
+
+A leitura conjunta deste eixo estabelece a tríade de ameaças que o MAS-Hunt
+endereça: envenenamento de memória \cite{NEURIPS2024_eb113910}, amplificação de
+mau funcionamento \cite{zhang2024breaking} e injeção/propagação infecciosa
+\cite{zhan2024injecagent,gu2024agent,huang2024resilience}. Crucialmente, a
+literatura deste eixo \textit{ataca} e \textit{mede}, mas raramente \textit{defende}:
+as defesas práticas, quando propostas, permanecem em ambiente simulado, desacopladas
+de qualquer tarefa de segurança operacional como a caça a ameaças.
+
+% =====================================================================
+\section{Automação de Detecção em Ambientes SIEM/SOC}
+\label{sec:rel-siem-soc}
+
+O quarto eixo trata da automação da detecção no contexto operacional de um centro
+de operações de segurança (SOC) apoiado por um \textit{Security Information and
+Event Management} (SIEM). A caça a \textit{ransomware} via técnicas de
+\textit{threat hunting} é levantada por \citeonline{9791234}, que sistematiza o
+estado da arte e expõe a dependência de regras e heurísticas construídas
+manualmente. A análise de logs como substrato primário da caça é tratada por
+\citeonline{10616474}, evidenciando tanto o valor da telemetria bruta quanto sua
+suscetibilidade à manipulação --- um log adulterado é um vetor de injeção
+adversarial direto. Em ambientes distribuídos, \citeonline{9931222} aplicam
+aprendizado federado à caça a ameaças para detecção de ataques de Ameaça
+Persistente Avançada (APT) em redes definidas por software, demonstrando
+detecção colaborativa que preserva privacidade, porém sem agentes de raciocínio
+nem governança sobre eles.
+
+O obstáculo estatístico que assombra toda automação de detecção em larga escala é
+a falácia da taxa de base bayesiana, articulada por \citeonline{dolan-gavitt2025}:
+mesmo modelos altamente acurados geram um volume avassalador de falsos positivos
+quando o evento procurado é raro, tornando-os operacionalmente inúteis. A resposta
+proposta naquele trabalho --- validação determinística baseada em \textit{canaries}
+e provas de posse, que mira uma taxa de falsos positivos próxima de zero ---
+informa diretamente o mecanismo M2 (Validação Cruzada) do MAS-Hunt, que exige
+corroboração por evidência verificável antes de qualquer escalonamento. No plano
+da detecção comportamental sobre o \textit{endpoint},
+A literatura de análise de malware documenta a sensibilidade de detectores a
+traços comportamentais e ao contexto de execução \cite{ucci2019}, o que motiva a
+opção do MAS-Hunt por operar diretamente sobre telemetria viva da pilha Elastic,
+e não apenas sobre traços sintéticos. Abordagens correlatas que integram LLMs a
+detecção anômala explicável \cite{ali2023huntgptintegratingmachinelearningbased}
+reforçam a tendência, mas mantêm o paradigma de modelo único, sem orquestração
+nem \textit{hardening}.
+
+A comparação neste eixo expõe um padrão consistente: a automação SIEM/SOC ou
+delega a regras determinísticas frágeis e ruidosas \cite{9791234,10616474}, ou
+emprega modelos estatísticos vulneráveis à falácia da taxa de base
+\cite{dolan-gavitt2025} e à mudança de distribuição \cite{ucci2019}. Em
+nenhum dos casos a própria camada de automação é tratada como alvo a ser
+endurecido contra manipulação adversarial.
+
+% =====================================================================
+\section{Síntese Comparativa}
+\label{sec:rel-sintese}
+
+A Tabela~\ref{tab:rel-comparacao} confronta representantes de cada eixo segundo
+cinco dimensões que delimitam a contribuição do MAS-Hunt: orquestração multiagente
+real (não um agente único nem um \textit{pipeline} monolítico); governança
+explícita (conselho, mensagens tipadas, papéis); resiliência a ataques
+adversariais ao próprio agente (memória, injeção, mau funcionamento); operação
+sobre telemetria viva de produção; e avaliação empírica controlada da resiliência.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparação dos trabalhos relacionados segundo as dimensões críticas do MAS-Hunt. Legenda: \ding{51}~contemplado; $\sim$~parcial/conceitual; \ding{55}~não contemplado.}
+\label{tab:rel-comparacao}
+\small
+\begin{tabular}{p{4.4cm}ccccc}
+\hline
+\textbf{Trabalho / Eixo} & \textbf{Multi-} & \textbf{Gover-} & \textbf{Resil.} & \textbf{Telem.} & \textbf{Aval.} \\
+                         & \textbf{agente} & \textbf{nança}  & \textbf{advers.} & \textbf{viva}  & \textbf{empír.} \\
+\hline
+\multicolumn{6}{l}{\textit{(a) Caça/detecção assistida por IA}} \\
+HuntGPT \cite{ali2023huntgptintegratingmachinelearningbased}        & \ding{55} & \ding{55} & \ding{55} & $\sim$    & \ding{51} \\
+Ger.\ de hipóteses \cite{10713082}                                  & \ding{55} & \ding{55} & \ding{55} & \ding{55} & $\sim$    \\
+TIRA \cite{10750987}                                                & $\sim$    & \ding{55} & \ding{55} & $\sim$    & \ding{51} \\
+Caça autônoma \cite{academia22}                                     & $\sim$    & \ding{55} & \ding{55} & \ding{55} & \ding{55} \\
+\hline
+\multicolumn{6}{l}{\textit{(b) Multiagente e governança}} \\
+Agente hierárquico \cite{liu2023llm}                                & \ding{51} & $\sim$    & \ding{55} & \ding{55} & \ding{51} \\
+BlockAgents \cite{doe2023emergent}                                  & \ding{51} & $\sim$    & $\sim$    & \ding{55} & \ding{51} \\
+Coord.\ robusta \cite{Yuan_Zhang_Xue_Yin_Chen_Guan_Li_Qian_Yu_2023} & \ding{51} & \ding{55} & $\sim$    & \ding{55} & \ding{51} \\
+Governança COBIT/ISO \cite{mcintosh2024cobit}                       & \ding{55} & \ding{51} & \ding{55} & \ding{55} & \ding{55} \\
+\hline
+\multicolumn{6}{l}{\textit{(c) Ataques adversariais a agentes}} \\
+AgentPoison \cite{NEURIPS2024_eb113910}                             & $\sim$    & \ding{55} & \ding{55} & \ding{55} & \ding{51} \\
+Breaking Agents \cite{zhang2024breaking}                            & $\sim$    & \ding{55} & \ding{55} & \ding{55} & \ding{51} \\
+Agent Smith \cite{gu2024agent}                                      & \ding{51} & \ding{55} & \ding{55} & \ding{55} & \ding{51} \\
+Resiliência MAS \cite{huang2024resilience}                          & \ding{51} & $\sim$    & $\sim$    & \ding{55} & \ding{51} \\
+\hline
+\multicolumn{6}{l}{\textit{(d) Automação SIEM/SOC}} \\
+Caça a \textit{ransomware} \cite{9791234}                           & \ding{55} & \ding{55} & \ding{55} & $\sim$    & \ding{55} \\
+Caça federada APT \cite{9931222}                                    & \ding{51} & \ding{55} & \ding{55} & $\sim$    & \ding{51} \\
+Validação determin.\ \cite{dolan-gavitt2025}                        & \ding{55} & \ding{55} & $\sim$    & $\sim$    & \ding{51} \\
+\hline
+\textbf{MAS-Hunt (este trabalho)} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
+\hline
+\end{tabular}
+\end{table}
+
+A leitura da Tabela~\ref{tab:rel-comparacao} torna a lacuna manifesta. Os trabalhos
+do eixo (a) operam, na melhor das hipóteses, com um agente único sobre telemetria,
+sem governança nem modelo de adversário. Os do eixo (b) dominam a orquestração e o
+discurso de governança, mas não os confrontam com ataques concretos a agentes nem
+com telemetria de segurança real. Os do eixo (c) demonstram exaustivamente \textit{que}
+os agentes são vulneráveis, porém em laboratório simulado e sem propor defesa
+operacional integrada a uma tarefa de caça. Os do eixo (d) automatizam detecção,
+mas tratam o componente de IA como caixa estatística, jamais como alvo a ser
+endurecido. Nenhuma linha, isoladamente, ocupa simultaneamente as cinco colunas.
+
+% =====================================================================
+\section{A Lacuna que o MAS-Hunt Preenche}
+\label{sec:rel-lacunas}
+
+Da análise comparativa precedente decorre a lacuna central que esta dissertação
+endereça. As quatro linhas de pesquisa convergem para um mesmo ponto cego: cada
+uma resolve uma fração do problema, mas nenhuma integra, em um único sistema
+avaliado empiricamente, \textit{governança multiagente real} e \textit{resistência
+a injeção adversarial} sobre dados de produção. Especificamente, identificam-se
+três deficiências que o MAS-Hunt se propõe a sanar:
+
+\begin{enumerate}
+    \item \textbf{Ausência de orquestração multiagente com governança como mecanismo
+    de defesa.} A literatura de coordenação \cite{liu2023llm,agashe2023llmcoordination,qiu2024collaborativeintelligencepropagatingintentions}
+    otimiza cooperação, e a de governança \cite{isaca2025leveraging,mcintosh2024cobit}
+    prescreve controles, mas não há sistema em que a hierarquia de três camadas
+    --- Conselho de Governança $\rightarrow$ Gerentes $\rightarrow$ Caçadores ---,
+    com mensagens tipadas e protocolos de consenso, atue \textit{ela própria} como
+    a barreira que impede a propagação de um agente comprometido. O achado de
+    \citeonline{huang2024resilience} de que estruturas hierárquicas degradam menos
+    sob ataque é aqui transformado de observação em princípio de projeto operante.
+
+    \item \textbf{Falta de validação de integridade em tempo de execução contra
+    ataques a agentes.} Os trabalhos que demonstram envenenamento de memória
+    \cite{NEURIPS2024_eb113910}, injeção indireta \cite{zhan2024injecagent} e
+    amplificação de mau funcionamento \cite{zhang2024breaking} caracterizam as
+    ameaças sem oferecer contramedidas operacionais acopladas a uma tarefa real. O
+    MAS-Hunt responde com os mecanismos M1 (Integridade de Memória), M2 (Validação
+    Cruzada por evidência verificável, na linha da validação determinística de
+    \citeonline{dolan-gavitt2025}), M3 (\textit{framework} de análise estruturada
+    OBSERVAR $\rightarrow$ HIPOTETIZAR $\rightarrow$ EVIDÊNCIA $\rightarrow$
+    VALIDAÇÃO-CRUZADA $\rightarrow$ CLASSIFICAR, resistente à injeção de logs),
+    M4 (Monitoramento Comportamental) e M5 (Quarentena).
+
+    \item \textbf{Inexistência de avaliação empírica de resiliência sobre telemetria
+    viva.} As defesas, quando existem, são avaliadas em simulação; as caças, quando
+    operam sobre telemetria real \cite{ali2023huntgptintegratingmachinelearningbased},
+    não são submetidas a um adversário que ataque o agente. O MAS-Hunt fecha essa
+    lacuna ao ser avaliado em laboratório instrumentado com a pilha Elastic,
+    confrontando o sistema completo (C1-full) contra a ablação sem endurecimento
+    (C1-nohardening), contra uma linha de base de passagem única sem governança
+    (C2-naive) e contra as regras padrão do Elastic Security (C3-Elastic), medindo
+    tanto desempenho de detecção (Precisão, Revocação, F2) quanto resiliência
+    (\textit{Attack Success Rate}) sob injeção adversarial, com intervalos de
+    confiança por \textit{bootstrap}.
+\end{enumerate}
+
+Em suma, enquanto os trabalhos relacionados respondem isoladamente às perguntas
+``como coordenar agentes?'', ``como governar IA?'', ``como atacar agentes?'' e
+``como automatizar detecção?'', o MAS-Hunt responde à pergunta integradora que
+nenhum deles enfrenta: \textit{como projetar e validar empiricamente um sistema
+multiagente de caça a ameaças cuja própria estrutura de governança o torna
+resiliente a ataques adversariais dirigidos aos agentes, operando sobre telemetria
+de produção?} É essa integração --- e sua verificação experimental --- que
+constitui a contribuição original posicionada pelos capítulos seguintes.

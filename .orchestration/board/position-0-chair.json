@@ -1,0 +1,31 @@
+{
+  "role": "Board Chair / Strategist",
+  "goal_refinement": "Produce the dissertation's headline C1-full results and an internally-consistent C1/C2/C3 comparison matrix on the SAME 10 new attack runs, then convert the paper's future-tense Validation Plan into a past-tense Results+Discussion that compiles to PDF, with zero fabricated numbers and bootstrap CIs reported.",
+  "priorities_ordered": [
+    "Generate real C1-full results — the central contribution that currently has NO data anywhere",
+    "Re-score C2-naive and C1-nohardening on the NEW runs so all conditions share one ground-truth basis (no cross-run contamination from the May archive)",
+    "Assemble the unified C1-full / C1-nohardening / C2-naive / C3-Elastic matrix with point estimates + 95% bootstrap CIs",
+    "Write Results + Discussion (past tense) including adversarial-resilience story and the already-completed reproducibility verdict",
+    "Compile camera_raedy.tex to a clean PDF (no LaTeX errors, all tables/figures resolve)"
+  ],
+  "acceptance_criteria": [
+    "At least one statistically-defensible C1-full run exists under experiment/results/raw/C1-full/ produced by Harness A against the new runs' ground-truth labels (no placeholder/synthetic data)",
+    "C2-naive and C1-nohardening are re-scored on the SAME new runs and ground-truth used for C1-full (not the May archive)",
+    "Results table has all four columns (C1-full, C1-nohardening, C2-naive, C3-Elastic) with Precision/Recall/F2 (and FPR where applicable) as real numbers",
+    "Every reported metric carries a 95% bootstrap CI (B>=10000) computed by bootstrap_ci.py; any condition run on fewer than the full sample is explicitly labeled with its n and scoped honestly",
+    "Reproducibility subsection cites the existing VERDICT.json (C3 REPRODUCIBLE vs May) verbatim — no re-derivation",
+    "Zero fabricated numbers: every cell in every table traces to a results/ or experiment/results/ artifact path",
+    "camera_raedy.tex compiles to PDF with no errors and no undefined references/citations",
+    "Any condition that could not be fully run is scoped explicitly as a limitation/future-work, not silently omitted or estimated"
+  ],
+  "scope_recommendation": "Take the floor as ONE C1-full run per condition (C1-full, and re-scored C1-nohardening + C2-naive) over the full ground-truth event set of a single representative new run — NOT all 10 runs blindly. C1-full via Harness A is LLM-costly and unmeasured; committing to 10 runs before measuring per-run cost risks burning budget without finishing the paper. Floor = 1 run/condition with the FULL event corpus (preserves per-event statistics for bootstrap CIs over events). Stretch = expand C1-full to 3 runs IF Managers' measured cost shows a single run completes within an acceptable LLM budget/time, enabling run-level CIs. A single full run with event-level bootstrap CIs is a defensible, publishable claim; the matrix's internal consistency (same runs/labels across conditions) matters more than run count.",
+  "phasing": "Phase 0 (Managers, BLOCKING research, no LLM spend): map C1-full/C1-nohardening/C2 onto the new attack runs, confirm ground-truth labels exist for those runs (or generate them deterministically from labels.jsonl + the attack orchestrator output), and MEASURE the LLM cost/time of one C1-full event-classification pass on a small probe (e.g. 10 events) before committing. Phase 1 (data generation, sequential-then-parallel): pick the representative run; run C1-full via Harness A on its full ground-truth set; in PARALLEL re-score C2-naive (c2_naive_helper.py, no live LLM) and C1-nohardening on the same run; compute_metrics + compute_fpr + bootstrap_ci for all four conditions. Phase 2 (paper, can start drafting tables/prose in parallel with Phase 1 using placeholders that are FILLED only from real artifacts): write Results + Discussion past tense, insert the matrix, wire reproducibility subsection, compile to PDF and iterate to zero errors. Gate between phases: Phase 1 may not start until Phase 0's cost probe confirms feasibility and label availability.",
+  "vote": "APPROVE_WITH_CONDITIONS",
+  "conditions": [
+    "Managers MUST measure C1-full per-event LLM cost on a small probe and confirm new-run ground-truth labels exist BEFORE committing to a run count — no open-ended C1-full launch.",
+    "All four conditions MUST be scored on the SAME new run(s) and SAME ground-truth; mixing May-archive metrics into the headline matrix is prohibited (May data may only appear in the already-done C3 reproducibility comparison).",
+    "If C1-full cannot complete even one full run within budget, fall back to a documented subset (n events stated) and scope the gap as a limitation — never extrapolate or fabricate to fill the matrix.",
+    "Paper prose may be drafted in parallel but NO numeric cell is committed to the .tex until its source artifact exists on disk; a final integrity pass must verify every table cell against an artifact path."
+  ],
+  "key_question_for_managers": "What is the measured per-run LLM cost/time of one full C1-full pass via Harness A on the new runs' ground-truth event set, and do ground-truth labels already exist for those new runs (or must they be deterministically derived) — because that single answer decides whether scope is 1, 3, or all 10 runs, and whether the matrix can be built at all without fabrication?"
+}

@@ -1,0 +1,204 @@
+% =====================================================================
+% MAS-Hunt — Dissertação de Mestrado (ABNT, PT-BR)
+% Documento mestre. Espelha a configuração funcional de ../pre-projeto.tex
+% (abntex2 + abntex2cite + capa.sty), expandida para o formato de
+% dissertação (capítulos via \include, resumo/abstract, sumário).
+% Compila mesmo com capítulos em placeholder.
+% =====================================================================
+\documentclass[
+  12pt,
+  a4paper,
+  oneside,        % impressão em face única
+  brazil
+]{abntex2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Pacotes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{ifthen}
+\usepackage[T1]{fontenc}          % Codificação da fonte
+\usepackage[utf8]{inputenc}       % Codificação do arquivo
+\usepackage{lmodern}              % Fonte Latin Modern
+\usepackage[brazil]{babel}        % Idioma do documento
+\usepackage{graphicx}             % Inclusão de gráficos
+\usepackage[table]{xcolor}        % Cores para tabelas
+\usepackage{float}                % Posicionamento de figuras e tabelas
+\usepackage{booktabs}             % Tabelas de qualidade tipográfica
+\usepackage{pifont}               % Símbolos \ding (tabelas comparativas)
+\usepackage{amsmath,amssymb}      % Matemática
+\usepackage[num]{abntex2cite}     % Citações ABNT (numérico, como no pré-projeto)
+\citebrackets[]
+\usepackage{indentfirst}          % Indenta o primeiro parágrafo de cada seção
+\usepackage{microtype}            % Melhoria da tipografia
+\usepackage{hyperref}             % Hiperlinks
+\usepackage{setspace}             % Controle de espaçamento
+
+% Imagens referenciadas a partir do diretório-raiz do repositório
+\graphicspath{{../}{../mashunt/}{./}}
+
+% Estilo de capa customizado (versão local que aponta para ../bandeira.png)
+\usepackage{capa}
+
+%%%%%%%%%%%%%%%%%%%%%%% Configuração dos hiperlinks %%%%%%%%%%%%%%%%%%%%%
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    pdftitle={MAS-Hunt: Arquitetura de Governanca Multiagente Resiliente para Caca a Ameacas},
+    pdfauthor={Paulo Matheus Nicolau Silva}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Dados da Capa %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titulo{MAS-Hunt: Arquitetura de Governança Multiagente Resiliente para a Busca Proativa por Ameaças Cibernéticas em Ambientes Windows}
+\autor{Paulo Matheus Nicolau Silva}
+\local{Brasília}
+\data{2025}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\renewcommand{\baselinestretch}{1.2}\normalsize
+
+% ------------------------------------------------------------------ %
+% ELEMENTOS PRÉ-TEXTUAIS
+% ------------------------------------------------------------------ %
+\pretextual
+
+\imprimircapa
+
+% --- Folha de rosto ---
+\begin{folhaderosto*}
+  \begin{center}
+    {\ABNTEXchapterfont\large Universidade de Brasília — UnB}\\
+    {\ABNTEXchapterfont Faculdade de Tecnologia — FT}\\
+    {\ABNTEXchapterfont Departamento de Engenharia Elétrica — ENE}\\
+    {\ABNTEXchapterfont Programa de Pós-Graduação em Engenharia Elétrica — PPEE}\\[3cm]
+
+    {\ABNTEXchapterfont\large\imprimirautor}\\[3cm]
+
+    {\ABNTEXchapterfont\bfseries\Large\imprimirtitulo}\\[3cm]
+  \end{center}
+
+  \hspace{.45\textwidth}
+  \begin{minipage}{.5\textwidth}
+    \SingleSpacing
+    Dissertação de mestrado apresentada ao Programa de
+    Pós-Graduação em Engenharia Elétrica da Universidade de
+    Brasília, como requisito parcial à obtenção do título de
+    Mestre em Engenharia Elétrica, na área de concentração
+    Segurança Cibernética.\\[0.4cm]
+    \textbf{Área de concentração:} Segurança Cibernética.\\
+    \textbf{Linha de pesquisa:} Segurança e Inteligência Cibernética.\\[0.4cm]
+    Orientador(a): a definir.
+  \end{minipage}
+  \vfill
+  \begin{center}
+    \imprimirlocal\\
+    \imprimirdata
+  \end{center}
+\end{folhaderosto*}
+
+% --- Resumo (PT-BR) ---
+\begin{resumo}
+A crescente sofisticação e a natureza evasiva das ameaças cibernéticas
+contemporâneas — marcadas pelo uso de técnicas de \emph{living-off-the-land}
+(LOLBins), pela permanência prolongada de atacantes (\emph{dwell time}) e pela
+sobrecarga cognitiva imposta aos analistas de segurança — expõem os limites das
+arquiteturas reativas e baseadas em assinaturas. Agentes autônomos apoiados em
+grandes modelos de linguagem (LLMs) surgem como alternativa proativa, porém são,
+eles próprios, vulneráveis a manipulação adversarial, incluindo envenenamento de
+memória, injeção de \emph{prompt} e amplificação de mau funcionamento. Esta
+dissertação apresenta o MAS-Hunt (\emph{Multi-Agent System for Threat Hunting}),
+uma arquitetura multiagente em três camadas — Conselho de Governança, Gerentes e
+Trabalhadores/Caçadores — concebida com prioridade à segurança e materializada
+como um \emph{plugin} do Claude Code que orquestra subagentes por meio de
+habilidades, comandos de barra e \emph{hooks}. O sistema incorpora cinco
+mecanismos de governança: integridade de memória (M1), validação cruzada (M2),
+resistência a injeção via \emph{framework} estruturado de análise (M3),
+monitoramento comportamental (M4) e quarentena (M5). A avaliação é conduzida em
+um laboratório instrumentado com Sysmon e Elastic Security sobre um domínio
+Windows, comparando o MAS-Hunt completo (C1-full) a três condições de referência
+(C1-nohardening, C2-naive e C3-Elastic) quanto a desempenho de detecção,
+resiliência adversarial e taxa de falsos positivos. Na matriz v2 com 1.092
+janelas adversariais ricas em sinal, todas as três condições baseadas em modelo
+de linguagem superaram a linha de base SIEM C3-Elastic (F2~$=0{,}150$) por
+aproximadamente 4,5 vezes, ganho dirigido pela revocação. A governança
+multiagente, porém, não melhorou o F2 de detecção sobre o modelo de passagem
+única: C1-full (0,675) e C2-naive (0,672) mostraram-se estatisticamente
+indistinguíveis, com intervalos de confiança sobrepostos. O valor distintivo da
+governança manifestou-se na resistência à injeção adversarial: somente C1-full
+detectou e sinalizou conteúdo adversarial injetado, marcando 407 janelas
+contaminadas contra zero nas demais condições. Conclui-se que o analista agêntico
+supera dramaticamente as regras estáticas de SIEM, e que a governança multiagente
+agrega resistência à injeção e auditabilidade --- e não maior acurácia de
+detecção --- sobre o modelo de linguagem isolado.
+
+\noindent\textbf{Palavras-chave}: caça a ameaças; sistemas multiagente; segurança
+de agentes de IA; injeção adversarial; governança; Elastic Stack; Windows.
+\end{resumo}
+
+% --- Abstract (EN) ---
+\begin{resumo}[Abstract]
+\begin{otherlanguage*}{english}
+The escalating sophistication and evasive nature of contemporary cyber threats —
+characterized by living-off-the-land (LOLBin) techniques, prolonged attacker
+dwell time, and the cognitive overload imposed on security analysts — expose the
+limits of reactive, signature-based architectures. Autonomous agents powered by
+large language models (LLMs) offer a proactive alternative, yet they are
+themselves vulnerable to adversarial manipulation, including memory poisoning,
+prompt injection, and malfunction amplification. This dissertation presents
+MAS-Hunt (Multi-Agent System for Threat Hunting), a security-first three-layer
+multi-agent architecture — Governance Board, Managers, and Workers/Hunters —
+implemented as a Claude Code plugin that orchestrates subagents through skills,
+slash commands, and hooks. The system embeds five governance mechanisms: memory
+integrity (M1), cross-validation (M2), injection resistance via a structured
+analysis framework (M3), behavioral monitoring (M4), and quarantine (M5). The
+evaluation is conducted in a laboratory instrumented with Sysmon and Elastic
+Security over a Windows domain, comparing the full MAS-Hunt (C1-full) against
+three baselines (C1-nohardening, C2-naive, and C3-Elastic) with respect to
+detection performance, adversarial resilience, and false-positive rate. In the
+v2 matrix with 1,092 signal-rich adversarial windows, all three language-model
+conditions outperformed the C3-Elastic SIEM baseline (F2~$=0.150$) by roughly
+4.5 times, a gain driven by recall. Multi-agent governance, however, did not
+improve detection F2 over the single-pass model: C1-full (0.675) and C2-naive
+(0.672) were statistically indistinguishable, with overlapping confidence
+intervals. The distinctive value of governance emerged in adversarial-injection
+resistance: only C1-full detected and flagged injected adversarial content,
+marking 407 contaminated windows versus zero for the other conditions. We
+conclude that the agentic analyst dramatically outperforms static SIEM rules,
+and that multi-agent governance adds injection resistance and auditability ---
+rather than higher detection accuracy --- over the standalone language model.
+
+\noindent\textbf{Keywords}: threat hunting; multi-agent systems; AI agent
+security; adversarial injection; governance; Elastic Stack; Windows.
+\end{otherlanguage*}
+\end{resumo}
+
+% --- Sumário ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+
+% ------------------------------------------------------------------ %
+% ELEMENTOS TEXTUAIS
+% ------------------------------------------------------------------ %
+\textual
+
+\include{cap1-introducao}
+\include{cap2-fundamentacao}
+\include{cap3-trabalhos-relacionados}
+\include{cap4-arquitetura}
+\include{cap5-metodologia}
+\include{cap6-resultados}
+\include{cap7-discussao}
+\include{cap8-conclusao}
+
+% ------------------------------------------------------------------ %
+% ELEMENTOS PÓS-TEXTUAIS
+% ------------------------------------------------------------------ %
+\postextual
+
+\bibliographystyle{abntex2-alf}
+\newboolean{exibirdoi}
+\setboolean{exibirdoi}{true}
+\bibliography{../bibliografia,../mashunt/references}
+
+\end{document}

@@ -1,0 +1,144 @@
+\changetocdepth {4}
+\babel@toc {brazil}{}\relax 
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {1}\MakeTextUppercase []{Introdução}}{8}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Contextualização}{8}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Definição do Problema}{9}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Lacuna de Pesquisa}{10}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Objetivos}{11}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Objetivo Geral}{11}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Objetivos Específicos}{11}{subsection.1.4.2}%
+\contentsline {section}{\numberline {1.5}Hipótese}{11}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Contribuições}{12}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Organização do Texto}{12}{section.1.7}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Fundamentação Teórica}}{14}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Caça a Ameaças e Detecção Comportamental}{14}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Limitações das defesas convencionais}{14}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}O ciclo da caça dirigida por hipóteses}{15}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}A falácia da taxa-base e seus efeitos sobre o falso positivo}{15}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Grandes Modelos de Linguagem e Agentes de IA}{16}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Modelos de linguagem como mecanismo de raciocínio}{16}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}De modelos a agentes}{16}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Sistemas Multiagente}{17}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Topologias de orquestração e robustez}{17}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.4}Segurança de Agentes de IA}{18}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Envenenamento de memória e de bases de conhecimento}{18}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Injeção de prompt direta e indireta}{18}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Amplificação de mau funcionamento e jailbreaks infecciosos}{19}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Governança e conformidade de sistemas de IA}{19}{subsection.2.4.4}%
+\contentsline {section}{\numberline {2.5}Elastic Security, Sysmon e Telemetria Windows}{20}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}O Elastic Stack como terreno de caça}{20}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Sysmon e os identificadores de evento}{20}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}A lacuna de telemetria do EID~1 e o \textit {health-gate}}{21}{subsection.2.5.3}%
+\contentsline {section}{\numberline {2.6}Técnicas LOLBin e o MITRE ATT\&CK}{21}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}O framework MITRE ATT\&CK}{21}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Binários do tipo Living-off-the-Land}{22}{subsection.2.6.2}%
+\contentsline {section}{\numberline {2.7}Injeção Adversarial de Logs}{22}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Síntese do Capítulo}{23}{section.2.8}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Trabalhos Relacionados}}{24}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Caça a Ameaças e Detecção Comportamental Assistidas por IA}{24}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Sistemas Multiagente para Segurança e sua Governança}{25}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Ataques Adversariais a Agentes Baseados em LLM}{26}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Automação de Detecção em Ambientes SIEM/SOC}{27}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Síntese Comparativa}{28}{section.3.5}%
+\contentsline {section}{\numberline {3.6}A Lacuna que o MAS-Hunt Preenche}{28}{section.3.6}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Arquitetura MAS-Hunt}}{31}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Visão Geral da Arquitetura em Três Camadas}{31}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Papéis e Responsabilidades dos Agentes}{32}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Camada 1 --- Conselho de Governança}{32}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Camada 2 --- Gerentes}{34}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Camada 3 --- Caçadores}{35}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Os Mecanismos de Governança M1--M5}{35}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}M1 --- Integridade de Memória}{36}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}M2 --- Validação Cruzada}{36}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}M3 --- Resistência a Injeção}{36}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}M4 --- Monitoramento Comportamental}{36}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}M5 --- Quarentena}{37}{subsection.4.3.5}%
+\contentsline {subsection}{\numberline {4.3.6}Síntese: a defesa em profundidade dos agentes}{37}{subsection.4.3.6}%
+\contentsline {section}{\numberline {4.4}O Framework M3 de Análise Estruturada}{38}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Implementação como Plugin do Claude Code}{38}{section.4.5}%
+\contentsline {paragraph}{\numberline {4.5.0.0.1}Habilidades (\emph {skills}).}{39}{paragraph.4.5.0.0.1}%
+\contentsline {paragraph}{\numberline {4.5.0.0.2}Comandos de barra (\emph {slash commands}).}{39}{paragraph.4.5.0.0.2}%
+\contentsline {paragraph}{\numberline {4.5.0.0.3}\emph {Hooks}.}{39}{paragraph.4.5.0.0.3}%
+\contentsline {section}{\numberline {4.6}Protocolos de Mensagens Tipadas e Governança}{40}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Por que a Orquestração Real Difere de uma Chamada LLM Isolada}{41}{subsection.4.6.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Metodologia Experimental}}{43}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Ambiente de Laboratório Instrumentado}{43}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Topologia de domínio Active Directory}{43}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Instrumentação de telemetria}{44}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Plataforma analítica: Elastic 9.3.4}{44}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}Corpus de Ataque e Verdade de Referência}{45}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Os 185 \textit {playbooks} em nove famílias}{45}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Critério de verdade de referência (\textit {ground truth})}{46}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Desenho Adversarial de Injeção de Logs}{46}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Quatro modos de injeção}{47}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Três níveis de sofisticação}{47}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Estrutura fatorial e \textit {payloads}}{47}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Condições Comparadas}{48}{section.5.4}%
+\contentsline {section}{\numberline {5.5}\textit {Pipeline} de Medição}{49}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Janelas por \textit {playbook} e extração de telemetria}{49}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Extração \textit {prepare-v2}: priorização de EID1}{49}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}O gatilho de saúde de telemetria (\textit {health-gate})}{50}{subsection.5.5.3}%
+\contentsline {paragraph}{\numberline {5.5.3.0.1}Por que o gatilho é necessário.}{51}{paragraph.5.5.3.0.1}%
+\contentsline {subsection}{\numberline {5.5.4}Reprodutibilidade: restauração limpa e \textit {snapshots}}{51}{subsection.5.5.4}%
+\contentsline {section}{\numberline {5.6}Métricas e Análise Estatística}{52}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Métricas de detecção}{52}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Métricas de resiliência adversarial}{53}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}Análise estatística por \textit {bootstrap}}{53}{subsection.5.6.3}%
+\contentsline {section}{\numberline {5.7}Limitações e Ameaças à Validade}{54}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}A lacuna de telemetria de EID1}{54}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Outras ameaças à validade}{55}{subsection.5.7.2}%
+\contentsline {paragraph}{\numberline {5.7.2.0.1}Validade interna.}{55}{paragraph.5.7.2.0.1}%
+\contentsline {paragraph}{\numberline {5.7.2.0.2}Validade externa.}{55}{paragraph.5.7.2.0.2}%
+\contentsline {paragraph}{\numberline {5.7.2.0.3}Validade de construto.}{55}{paragraph.5.7.2.0.3}%
+\contentsline {paragraph}{\numberline {5.7.2.0.4}Estabilidade do laboratório.}{55}{paragraph.5.7.2.0.4}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Resultados}}{57}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Conjunto de Dados Analisado e Recorte Inferencial}{57}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Desempenho de Detecção: Matriz das Quatro Condições}{57}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Modelo de linguagem versus regras estáticas: o contraste dominante}{58}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Orquestração multiagente versus passagem única: ausência de ganho de F2}{59}{subsection.6.2.2}%
+\contentsline {section}{\numberline {6.3}Desempenho por Nível de Sofisticação da Injeção}{59}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Taxa de Falsos Positivos}{60}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Resistência à Injeção Adversarial}{60}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Efeito da ablação dos mecanismos de endurecimento}{61}{subsection.6.5.1}%
+\contentsline {section}{\numberline {6.6}Resiliência sob Ataque Reforçado e Controle de Vazamento de Rótulo}{62}{section.6.6}%
+\contentsline {paragraph}{\numberline {6.6.0.0.1}Desenho.}{62}{paragraph.6.6.0.0.1}%
+\contentsline {subsection}{\numberline {6.6.1}O ataque não consegue ``lavar'' a atividade maliciosa}{63}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}O ganho de auditabilidade é robusto entre níveis de modelo}{63}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}Indício sugestivo, não significativo, de auxílio à detecção do modelo fraco}{64}{subsection.6.6.3}%
+\contentsline {section}{\numberline {6.7}Síntese Quantitativa}{64}{section.6.7}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {7}\MakeTextUppercase []{Discussão}}{66}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Interpretação dos Três Achados}{66}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}O analista de modelo de linguagem como ruptura de patamar}{66}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}A governança não melhora o F2 de detecção --- relato honesto}{67}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}A resistência à injeção como valor distintivo}{67}{subsection.7.1.3}%
+\contentsline {section}{\numberline {7.2}Confronto com a Hipótese e Reformulação da Contribuição}{68}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Implicações Práticas e de Pesquisa}{69}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Para operações de SOC}{69}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Para a avaliação de agentes de segurança}{69}{subsection.7.3.2}%
+\contentsline {section}{\numberline {7.4}Limitações}{69}{section.7.4}%
+\contentsline {paragraph}{\numberline {7.4.0.0.1}A lacuna estrutural de telemetria de EID1.}{69}{paragraph.7.4.0.0.1}%
+\contentsline {paragraph}{\numberline {7.4.0.0.2}Granularidade da matriz.}{70}{paragraph.7.4.0.0.2}%
+\contentsline {paragraph}{\numberline {7.4.0.0.3}Taxa de falsos positivos por janela benigna.}{70}{paragraph.7.4.0.0.3}%
+\contentsline {paragraph}{\numberline {7.4.0.0.4}Vazamento de rótulo na telemetria do laboratório v2.}{70}{paragraph.7.4.0.0.4}%
+\contentsline {section}{\numberline {7.5}Ameaças à Validade}{70}{section.7.5}%
+\contentsline {paragraph}{\numberline {7.5.0.0.1}Validade interna.}{70}{paragraph.7.5.0.0.1}%
+\contentsline {paragraph}{\numberline {7.5.0.0.2}Validade de construto.}{71}{paragraph.7.5.0.0.2}%
+\contentsline {paragraph}{\numberline {7.5.0.0.3}Validade externa.}{71}{paragraph.7.5.0.0.3}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {8}\MakeTextUppercase []{Conclusão}}{72}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Síntese do Trabalho}{72}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Resposta à Questão de Pesquisa}{72}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Contribuições (Reformuladas)}{73}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Trabalhos Futuros}{73}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Considerações Finais}{74}{section.8.5}%
+\vspace {\cftbeforechapterskip }
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{75}{section*.8}%

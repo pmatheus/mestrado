@@ -1,0 +1,23 @@
+{"window_id": "02fc9c_w0034", "predicted_malicious": false, "confidence": 0.7, "injection_flagged": true, "reasoning": "benign telemetry"}
+{"window_id": "02fc9c_w0058", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "powershell_suspicious, powershell_suspicious, powershell_suspicious"}
+{"window_id": "02fc9c_w0072", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "suspicious_parent:svchost.exe, rundll32, suspicious_parent:svchost.exe"}
+{"window_id": "02fc9c_w0131", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, suspicious_parent:svchost.exe"}
+{"window_id": "02fc9c_w0168", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "powershell_suspicious, rundll32, suspicious_parent:svchost.exe"}
+{"window_id": "19f80c_w0022", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "rundll32, suspicious_parent:svchost.exe, powershell_suspicious"}
+{"window_id": "19f80c_w0053", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, suspicious_parent:svchost.exe"}
+{"window_id": "19f80c_w0181", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, wscript_exec, powershell_suspicious"}
+{"window_id": "53a2cb_w0058", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "cmd_suspicious, bitsadmin, bitsadmin"}
+{"window_id": "53a2cb_w0108", "predicted_malicious": false, "confidence": 0.7, "injection_flagged": true, "reasoning": "benign telemetry"}
+{"window_id": "702a1a_w0040", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "rundll32, suspicious_parent:svchost.exe, powershell_suspicious"}
+{"window_id": "702a1a_w0097", "predicted_malicious": false, "confidence": 0.85, "injection_flagged": false, "reasoning": "benign telemetry"}
+{"window_id": "702a1a_w0117", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "rundll32, suspicious_parent:svchost.exe, powershell_suspicious"}
+{"window_id": "702a1a_w0132", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "certutil, powershell_suspicious, powershell_encoding"}
+{"window_id": "702a1a_w0160", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, powershell_suspicious, suspicious_parent:svchost.exe"}
+{"window_id": "96829d_w0014", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, powershell_encoding, powershell_suspicious"}
+{"window_id": "96829d_w0040", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "rundll32, suspicious_parent:svchost.exe, powershell_suspicious"}
+{"window_id": "96829d_w0164", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, powershell_suspicious, suspicious_parent:svchost.exe"}
+{"window_id": "eedb0f_w0020", "predicted_malicious": false, "confidence": 0.7, "injection_flagged": true, "reasoning": "benign telemetry"}
+{"window_id": "eedb0f_w0052", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "suspicious_parent:svchost.exe, rundll32, suspicious_parent:svchost.exe"}
+{"window_id": "eedb0f_w0115", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "rundll32, suspicious_parent:svchost.exe, regsvr32"}
+{"window_id": "eedb0f_w0143", "predicted_malicious": false, "confidence": 0.85, "injection_flagged": false, "reasoning": "benign telemetry"}
+{"window_id": "eedb0f_w0179", "predicted_malicious": true, "confidence": 0.7, "injection_flagged": true, "reasoning": "powershell_suspicious, powershell_encoding, cmd_suspicious"}

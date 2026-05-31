@@ -1,0 +1,49 @@
+{
+  "task_slug": "mashunt-matrix-and-paper",
+  "created_utc": "2026-05-28T19:06:56Z",
+  "vote": "APPROVE_WITH_CONDITIONS",
+  "vote_tally": {"approve_with_conditions": 5, "approve": 0, "reject": 0},
+  "groupthink_flag": false,
+  "groupthink_note": "Not groupthink: genuine independent divergence on harness granularity (Risk=per-playbook superset of c2_naive_helper vs Domain=per-event harness A). Real technical dispute, conditionally approved.",
+  "goal": "Generate the missing MAS-Hunt experimental matrix (run C1-full; re-score C1-nohardening and C2-naive on the SAME run-ids/window/scorer; C3-Elastic already reproduced) and finish + compile the IEEE/MDPI paper camera_raedy.tex with an executed Results + Discussion section centered on adversarial-injection resilience, with bootstrap CIs and zero fabricated numbers.",
+  "priorities_ordered": [
+    "1. Resolve the load-bearing harness question (per-event vs per-playbook ground truth) via a research+probe gate BEFORE any expensive run",
+    "2. Generate C1-full data on a representative subset + re-score C2 and C1-nohardening identically",
+    "3. Aggregate full matrix with bootstrap CIs; center the C1-full-vs-C2 adversarial-resilience contrast",
+    "4. Write + compile the paper Results + Discussion from the committed numbers",
+    "5. Dissertation ABNT (later phase)"
+  ],
+  "acceptance_criteria": [
+    "All LLM conditions (C1-full, C2-naive, C1-nohardening) scored on the SAME run-id subset, SAME ground-truth, SAME scorer, SAME model/window — no May-archive carry-over",
+    "Each condition has per-run + aggregate P/R/F2(/FPR) with 95% bootstrap CIs (B=10000)",
+    "A single source-of-truth results JSON exists; every number in the paper table is diffed against it",
+    "C3-Elastic kept in its own explicitly-labeled (per-playbook) table; LLM conditions not granularity-merged with it unless harness research proves equivalence",
+    "The resilience contribution is shown as a MEASURED contrast (C1-full stable vs C2-naive degrading under per-attack-burst/interleaved x encoded/steganographic injection), not just clean F2",
+    "camera_raedy.tex compiles to PDF with zero errors, no undefined \\ref/\\cite, Results in past tense, no future-tense 'will be' leftovers in Results",
+    "No fabricated cells: numbers written only AFTER the producing artifact is committed"
+  ],
+  "scope_constraints": {
+    "c1_full_runs": "Default 3 representative runs (none/mixed control + 1 mid tier e.g. pre-burst/encoded + 1 hard tier e.g. per-attack-burst or interleaved/steganographic), full event set. Expand toward more runs ONLY if measured LLM cost permits; shrink to 1 if cost is prohibitive — decide from the probe.",
+    "lab_base": "Pin LAB_BASE=/home/user/mashunt-lab (3 copies of mashunt-lab exist on the lab box; do not touch the others)",
+    "integrity": "Research integrity is absolute: never fabricate or carry over numbers. Unaffordable/incomparable conditions are scoped as honest future work.",
+    "access": "Lab via ssh -o BindAddress=0.0.0.0 lab-ts; ES via in-container creds; avoid Bash containing literal env-file token or bare word env"
+  },
+  "research_questions": [
+    "RQ1 (LOAD-BEARING): Does per-event ground truth (labels.jsonl) exist for the 10 NEW attack runs, or only per-playbook ground_truth.jsonl (185 rows/run)? This decides harness A (per-event) vs harness B (per-playbook).",
+    "RQ2: Does a C1-full scorer/runner exist that applies to the new runs? If not, must it be built as a strict superset of the proven per-playbook c2_naive_helper path, or run via the per-event /hunt-experiment 5-team skill?",
+    "RQ3: Measured per-run LLM/token cost + wall-time of ONE C1-full pass (tiny smoke) — decides 1 vs 3 vs more runs.",
+    "RQ4: Paper mechanics — exact insertion points in camera_raedy.tex for Results/Discussion/tables, the bib file + compile engine, and reusable Discussion prose from draft_hunting_flags_v3.tex.",
+    "RQ5: Is there an adversarial-resilience measurement (ASR / injection-contamination / FP-under-contamination) in the harness (hunt-adversarial / results/adversarial)? That metric is the contribution."
+  ],
+  "resources": {
+    "mechanism": "kgb fallback: batched parallel Agent tasks, foreground (TeamCreate teammate model not required)",
+    "research_wave": "parallel Explore agents (lab harness mapping + paper mapping)",
+    "execution_wave": "parallel workers: C1-full runner (critical path), C2 re-score, C1-nohardening re-score, LaTeX drafters for non-results-dependent sections (Methods/Setup/Related-Work/Reproducibility), reference-check",
+    "validation_wave": "FRESH-memory manager agents running deterministic hooks (LaTeX compile, JSON<->table consistency, no-fabrication audit)"
+  },
+  "go_no_go_gates": [
+    "Ground-truth availability + granularity confirmed for new runs",
+    "C1-full subset smoke run produces a metrics.json matching the agreed schema before any full launch",
+    "K>=3 runs feasible within budget for bootstrap CI, else document reduced K honestly"
+  ]
+}

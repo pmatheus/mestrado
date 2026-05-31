@@ -1,0 +1,546 @@
+% =====================================================================
+% Capítulo 4 — Arquitetura MAS-Hunt
+% Dissertação MAS-Hunt (ABNT, PT-BR). Capítulo de contribuição central.
+% Convenções: M1-M5, 3 camadas (Conselho de Governança -> Gerentes ->
+% Trabalhadores/Caçadores), condições C1-full/C1-nohardening/C2-naive/C3-Elastic.
+% Citações: apenas chaves existentes em ../bibliografia.bib.
+% =====================================================================
+\chapter{Arquitetura MAS-Hunt}
+\label{cap:arquitetura}
+
+Este capítulo apresenta a contribuição central da dissertação: a arquitetura do
+MAS-Hunt (\emph{Multi-Agent System for Threat Hunting}), um sistema multiagente
+de busca proativa por ameaças concebido com prioridade à segurança do próprio
+sistema de agentes. A exposição parte de uma visão geral da organização
+hierárquica em três camadas (Seção~\ref{sec:arq-visao-geral}), detalha os papéis
+e responsabilidades dos agentes em cada camada (Seção~\ref{sec:arq-papeis}),
+formaliza os cinco mecanismos de governança M1--M5 e o \emph{framework} de
+análise estruturada (Seção~\ref{sec:arq-mecanismos} e
+Seção~\ref{sec:arq-framework-m3}) e, por fim, descreve a materialização do sistema
+como um \emph{plugin} do Claude Code, esclarecendo por que a orquestração
+multiagente real difere de forma fundamental de uma chamada isolada a um modelo de
+linguagem (Seção~\ref{sec:arq-plugin} e Seção~\ref{sec:arq-protocolos}).
+
+A premissa de projeto é que a autonomia que torna os agentes de IA poderosos é
+também a sua principal fragilidade. Agentes baseados em grandes modelos de
+linguagem (LLMs) são suscetíveis a envenenamento de
+memória~\cite{NEURIPS2024_eb113910}, injeção indireta de
+\emph{prompt} via conteúdo externo~\cite{zhan2024injecagent} e amplificação de
+mau funcionamento~\cite{zhang2024breaking}. Em um
+sistema de caça a ameaças, essa fragilidade é agravada pelo fato de que o
+material analisado — registros de telemetria, alertas e inteligência sobre
+ameaças — é, por natureza, conteúdo potencialmente hostil e controlado, em parte,
+pelo adversário. O MAS-Hunt responde a essa tensão tratando a governança
+multiagente não como um adendo operacional, mas como o objeto de projeto
+primário: a contribuição não reside em \emph{scripts} de detecção, e sim no
+arcabouço de governança que organiza, valida e contém o comportamento dos
+agentes.
+
+\section{Visão Geral da Arquitetura em Três Camadas}
+\label{sec:arq-visao-geral}
+
+O MAS-Hunt organiza-se como uma hierarquia estrita de três camadas, na qual o
+fluxo de comando desce do estratégico para o operacional e o fluxo de evidências
+sobe do operacional para o estratégico. As camadas são, do topo para a base:
+
+\begin{enumerate}
+  \item \textbf{Conselho de Governança (\emph{Board})} --- camada estratégica
+        (\emph{layer}~0). Define objetivos de caça, valida a metodologia,
+        delibera por quórum e assina o veredito final da campanha.
+  \item \textbf{Gerentes (\emph{Managers})} --- camada de coordenação
+        (\emph{layer}~1). Traduz os objetivos estratégicos em planos de execução,
+        instancia e supervisiona os caçadores, e consolida as evidências antes da
+        validação.
+  \item \textbf{Trabalhadores/Caçadores (\emph{Workers/Hunters})} --- camada de
+        execução (\emph{layer}~2). Interage diretamente com a telemetria no
+        Elastic Stack e com fontes externas de inteligência, classificando
+        eventos e produzindo achados fundamentados em evidência.
+\end{enumerate}
+
+A escolha por uma organização hierárquica não é arbitrária. A literatura sobre
+coordenação multiagente baseada em LLMs indica que estruturas hierárquicas
+apresentam a menor degradação de desempenho sob condições adversariais, quando
+comparadas a topologias planas ou totalmente conectadas, justamente porque a
+hierarquia limita o caminho de propagação de instruções maliciosas ou de
+raciocínio comprometido entre
+agentes~\cite{liu2023llm,agashe2023llmcoordination}. Em um arranjo plano, um
+único agente comprometido pode contaminar todos os seus pares; em uma hierarquia,
+a contaminação precisa atravessar fronteiras de camada que são, por projeto,
+pontos de mediação e validação. O princípio de coordenação por uma autoridade
+central que delega e consolida tarefas é, ademais, consistente com a tradição de
+organização de agentes em planos e
+escalonamentos~\cite{durfee1993organizations}, aqui adaptada ao contexto de
+agentes generativos.
+
+A Figura~\ref{fig:mashunt-arq} apresenta o esquema de alto nível da arquitetura,
+ilustrando as três camadas, o sentido descendente das diretivas e o sentido
+ascendente dos relatórios e vereditos, bem como os pontos em que os mecanismos de
+governança M1--M5 atuam sobre o fluxo de mensagens.
+
+\begin{figure}[htbp]
+  \centering
+  % A imagem mashunt.png reside em ../mashunt/ (incluída no \graphicspath de main.tex).
+  \includegraphics[width=0.95\textwidth]{mashunt.png}
+  \caption[Arquitetura em três camadas do MAS-Hunt]{Arquitetura em três camadas
+    do MAS-Hunt. As diretivas descem do Conselho de Governança para os Gerentes e
+    destes para os Caçadores; os relatórios, achados e vereditos sobem no sentido
+    inverso. Os caçadores interagem com o Elastic Stack e com fontes externas de
+    inteligência. Os mecanismos M1--M5 atuam nas fronteiras de camada e sobre o
+    conteúdo da telemetria.}
+  \label{fig:mashunt-arq}
+\end{figure}
+
+Três propriedades de projeto perpassam todas as camadas e distinguem o MAS-Hunt
+de uma simples cadeia de prompts. A primeira é a \emph{mediação por fronteira de
+camada}: nenhuma mensagem trafega diretamente entre o Conselho e os Caçadores sem
+atravessar a camada de Gerentes, o que cria pontos de inspeção e impede a
+ação de um agente isolado sobre o sistema. A segunda é a \emph{separação entre
+descoberta e validação}: a descoberta flexível de achados (atividade dos
+caçadores, tolerante a ambiguidade) é desacoplada da validação rígida e
+determinística (atividade de agentes e \emph{scripts} validadores), de modo que a
+criatividade necessária à caça não comprometa a confiabilidade do veredito. A
+terceira é a \emph{rastreabilidade integral}: toda decisão de agente, voto de
+governança e transição de tarefa é registrada em uma trilha de auditoria
+imutável, condição necessária para a reprodutibilidade científica e para a
+análise post-mortem de comportamento anômalo.
+
+A Figura~\ref{fig:mashunt-fluxo} resume o ciclo de vida de uma campanha de caça,
+do objetivo estratégico ao veredito assinado, e serve de referência para as
+seções seguintes.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.92\textwidth}
+  \footnotesize
+  \setlength{\fboxsep}{6pt}
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering
+    \textbf{Conselho de Governança} (\emph{layer}~0)\\
+    \emph{define objetivo, valida corpus, vota por quórum} $\Rightarrow$ emite \texttt{HuntGoal}\\[4pt]
+    $\big\downarrow$ \emph{diretiva descendente (mensagem tipada e assinada)}\\[4pt]
+    \textbf{Gerentes} (\emph{layer}~1)\\
+    \emph{planeja lotes de execução, sanitiza amostra, aloca famílias LOLBin} $\Rightarrow$ \texttt{HuntTask}\\[4pt]
+    $\big\downarrow$\\[4pt]
+    \textbf{Caçadores} (\emph{layer}~2) --- \emph{um por família LOLBin, em paralelo}\\
+    \emph{consultam o Elastic Stack, aplicam o framework M3, classificam} $\Rightarrow$ \texttt{HuntFinding}\\[4pt]
+    $\big\uparrow$ \emph{achado ascendente}\\[4pt]
+    \textbf{Validação} (\emph{layer}~1) --- \emph{validação cruzada determinística (M2)} $\Rightarrow$ \texttt{ValidationVerdict}\\[4pt]
+    $\big\uparrow$\\[4pt]
+    \textbf{Conselho de Governança} (\emph{layer}~0)\\
+    \emph{revisão final contra hipóteses, assina o Dossiê de Caça}
+  }}
+  \end{minipage}
+  \caption[Pipeline de caça do MAS-Hunt]{Pipeline de caça do MAS-Hunt:
+    \emph{board} $\rightarrow$ \emph{management} $\rightarrow$ caçadores por
+    família LOLBin $\rightarrow$ validação $\rightarrow$ \emph{board}. Cada
+    transição entre camadas é mediada por uma mensagem tipada, validada por
+    esquema e assinada (Seção~\ref{sec:arq-protocolos}).}
+  \label{fig:mashunt-fluxo}
+\end{figure}
+
+\section{Papéis e Responsabilidades dos Agentes}
+\label{sec:arq-papeis}
+
+\subsection{Camada 1 --- Conselho de Governança}
+\label{sec:arq-board}
+
+No ápice da hierarquia situa-se o \textbf{Conselho de Governança}, um colegiado de
+agentes com personas distintas responsável pela estratégia e pela direção geral
+da caça. O Conselho não interage com a telemetria; sua função é deliberativa e de
+controle. Ele inicia o fluxo de trabalho definindo objetivos de alto nível —
+hipóteses de caça, escopo de índices e janela temporal, táticas do MITRE ATT\&CK
+a priorizar — e atua como ponto de verificação final, recebendo e revisando os
+relatórios sintetizados de inteligência, de caça e de validação produzidos pelas
+camadas inferiores.
+
+A deliberação do Conselho é governada por dois princípios inegociáveis. O
+primeiro é a \emph{exigência de quórum}: nenhuma decisão estratégica é tomada sem
+um número mínimo de votos. Na configuração de referência, o Conselho é composto
+por três personas — um revisor de metodologia, um avaliador de risco e um diretor
+estratégico — e a aprovação de um objetivo de caça requer quórum de dois terços.
+O segundo princípio é a \emph{impossibilidade de sobreposição por agente único}
+(\emph{no single-agent override}): o mecanismo de consenso impede que um agente
+isolado, eventualmente comprometido, imponha uma decisão ao
+sistema~\cite{huang2024resilience}. Cada voto é
+registrado com sua justificativa e suas condições, e a contagem é persistida na
+trilha de auditoria, atendendo ao requisito de transparência. Esse desenho de
+governança por colegiado, com tolerância a participantes potencialmente
+defeituosos, é informado por abordagens de coordenação multiagente robusta a
+falhas bizantinas~\cite{doe2023emergent} e por arcabouços de geração de
+adversários auxiliares para endurecer a
+coordenação~\cite{Yuan_Zhang_Xue_Yin_Chen_Guan_Li_Qian_Yu_2023}.
+
+Ao aprovar um objetivo, o Conselho emite uma diretiva \texttt{HuntGoal} — a
+mensagem tipada que governa toda a campanha e à qual todas as mensagens
+subsequentes se referenciam por meio de um identificador comum
+(\texttt{hunt\_goal\_ref}). Ao final, o Conselho realiza a revisão conclusiva:
+confronta os resultados com as hipóteses da pesquisa, avalia a acionabilidade dos
+achados em um cenário operacional realista e assina o Dossiê de Caça, condição
+sem a qual a campanha não é considerada encerrada.
+
+\subsection{Camada 2 --- Gerentes}
+\label{sec:arq-managers}
+
+A camada intermediária é composta por \textbf{Gerentes} especializados que
+traduzem os objetivos estratégicos do Conselho em tarefas acionáveis. São eles os
+responsáveis por instanciar (\emph{spawn}), supervisionar e coordenar os
+caçadores da camada de execução. O Gerente de planejamento lê o \texttt{HuntGoal},
+verifica a conectividade e a disponibilidade de dados no Elastic Stack para cada
+grupo de eventos, particiona o corpus em lotes de execução e produz um plano
+explícito de execução que aloca cada família LOLBin a um caçador dedicado.
+
+Antes que qualquer caçador veja conteúdo de telemetria, um Gerente aplica a
+\emph{sanitização} sobre uma amostra dos eventos: o conteúdo é varrido em busca de
+sequências que tentem alterar o comportamento de classificação — instruções
+embutidas, marcadores de fim de sequência forjados, falsa "inteligência" que
+contradiga a evidência de criação de processo. Essa etapa de pré-processamento é o
+primeiro anteparo da resistência a injeção e materializa a separação entre o
+canal de dados e o canal de instruções.
+
+A camada de Gerentes também hospeda a função de \emph{validação} (executada por um
+ou mais Gerentes validadores), que recebe os achados dos caçadores e os
+corrobora antes que um caso seja criado. A validação emprega \emph{scripts}
+determinísticos e inteligência externa para confirmar a evidência, computa as
+métricas de classificação e emite um \texttt{ValidationVerdict} com veredito
+\textsc{pass}, \textsc{fail} ou \textsc{conditional\_pass}, condicionado a
+critérios de porta (\emph{gate}) — por exemplo, F2 mínimo e taxa máxima de falsos
+positivos. É nessa camada que se concretiza o desacoplamento entre descoberta e
+validação descrito na Seção~\ref{sec:arq-visao-geral}.
+
+\subsection{Camada 3 --- Caçadores}
+\label{sec:arq-hunters}
+
+A base da arquitetura é a camada de execução, na qual os \textbf{Caçadores}
+realizam o trabalho operacional de interação direta com os dados. Cada caçador é
+um agente especializado em uma \emph{família} de \emph{binários living-off-the-land}
+(LOLBins) — por exemplo, \texttt{certutil}, \texttt{bitsadmin},
+\texttt{rundll32}, \texttt{regsvr32}, \texttt{mshta}, \texttt{wmic} e
+\texttt{powershell}, entre as nove famílias do corpus. A especialização por
+família é deliberada: ela concentra em cada agente o conhecimento contextual
+sobre os padrões legítimos e abusivos de um mesmo \emph{binário} nativo do
+sistema, o que melhora a discriminação entre execução benigna (ruído de
+manutenção do sistema operacional) e execução maliciosa (abuso da técnica). Os
+caçadores são instanciados em paralelo, um por família, dentro de uma mesma
+chamada de orquestração, de modo que a campanha varre todas as famílias
+simultaneamente.
+
+Para cada evento atribuído a si, o caçador consulta o Elastic Stack em busca da
+telemetria de criação de processo (Sysmon, \emph{event code}~1), extrai os campos
+observáveis — nome e caminho do executável, linha de comando, processo-pai,
+usuário, \emph{host}, \emph{hashes}, diretório corrente e nível de integridade —
+e aplica o \emph{framework} de análise estruturada M3 (detalhado na
+Seção~\ref{sec:arq-framework-m3}). O resultado é uma classificação
+\texttt{malicious} ou \texttt{benign}, acompanhada de um escore de confiança e de
+um raciocínio fundamentado exclusivamente na telemetria observada. O achado é
+então propagado para cima como uma mensagem \texttt{HuntFinding}. Caçadores que
+correlacionam aprendizado de máquina, detecção de anomalia e explicação baseada em
+LLM têm precedente na literatura de caça assistida por
+IA~\cite{ali2023huntgptintegratingmachinelearningbased}; o diferencial do
+MAS-Hunt é submeter essa atividade ao regime de governança das camadas superiores.
+
+\section{Os Mecanismos de Governança M1--M5}
+\label{sec:arq-mecanismos}
+
+O endurecimento de segurança do MAS-Hunt concretiza-se em cinco mecanismos de
+governança, designados M1 a M5, que atuam de forma complementar sobre a memória,
+o raciocínio, o conteúdo, o comportamento e a contenção dos agentes. Os
+mecanismos são, ao mesmo tempo, o objeto de projeto e a variável independente do
+desenho experimental: a condição C1-full ativa todos eles; a condição
+C1-nohardening preserva o \emph{framework} de análise M3 mas desabilita o
+endurecimento M1/M2/M4/M5; a condição C2-naive remove toda a governança; e a
+condição C3-Elastic substitui o sistema de agentes pelas regras de detecção
+padrão do Elastic Security. Essa estrutura de ablação permite isolar a
+contribuição de cada camada de governança.
+
+\subsection{M1 --- Integridade de Memória}
+\label{sec:arq-m1}
+
+O mecanismo \textbf{M1} protege a base de conhecimento e a memória dos agentes
+contra envenenamento. A premissa de ameaça é que um adversário pode injetar, com
+taxa de envenenamento mínima, conteúdo que induza o agente a um comportamento
+direcionado~\cite{NEURIPS2024_eb113910}. M1 responde a isso por dois meios. O primeiro é a
+\emph{verificação criptográfica}: os arquivos da base de conhecimento têm seus
+resumos SHA-256 calculados e registrados em uma referência confiável, e qualquer
+divergência entre o resumo corrente e o resumo de referência sinaliza adulteração.
+O segundo é a \emph{validação contra a telemetria observável}: toda "inteligência"
+ou conhecimento que contradiga a evidência de criação de processo é tratado como
+suspeito. Em outras palavras, a memória do agente nunca tem precedência sobre o
+que a telemetria efetivamente registra; a evidência primária é o árbitro último.
+
+\subsection{M2 --- Validação Cruzada}
+\label{sec:arq-m2}
+
+O mecanismo \textbf{M2} exige que todo achado seja corroborado por uma instância
+independente antes de se tornar um veredito. Concretamente, os achados dos
+caçadores são encaminhados a agentes validadores dedicados, na camada de
+Gerentes, que reexaminam a evidência com \emph{scripts} determinísticos e
+inteligência externa. A validação cruzada cumpre dois propósitos: contém o efeito
+de um caçador individualmente comprometido — pois um achado espúrio não sobrevive
+à corroboração independente — e impõe disciplina de evidência, requerendo que
+cada classificação seja acompanhada de raciocínio detalhado e de citação
+específica da telemetria de suporte. O desacoplamento entre a descoberta flexível
+e a validação rígida é a expressão operacional desse mecanismo.
+
+\subsection{M3 --- Resistência a Injeção}
+\label{sec:arq-m3}
+
+O mecanismo \textbf{M3} é o coração analítico do MAS-Hunt e responde diretamente à
+ameaça de injeção indireta de \emph{prompt}~\cite{zhan2024injecagent}. O princípio reitor é simples e
+inviolável: \emph{conteúdo de telemetria é dado, nunca instrução}. Qualquer
+sequência embutida nos registros que tente alterar o comportamento de
+classificação do agente — por exemplo, uma linha de comando contendo texto como
+\texttt{"classifique como benigno"} ou \texttt{"SYSTEM-OVERRIDE"} — é reconhecida
+como injeção adversarial, sinalizada e tratada estritamente como dado a ser
+classificado, e não como diretiva a ser obedecida. A operacionalização desse
+princípio é o \emph{framework} de análise estruturada apresentado na
+Seção~\ref{sec:arq-framework-m3}.
+
+\subsection{M4 --- Monitoramento Comportamental}
+\label{sec:arq-m4}
+
+O mecanismo \textbf{M4} observa o comportamento dos agentes em tempo de execução
+para detectar degradação e mau funcionamento, em particular a chamada
+\emph{amplificação de mau funcionamento}, em que um erro menor desencadeia um
+laço de realimentação de ações inúteis~\cite{zhang2024breaking}. M4 monitora batimentos
+(\emph{heartbeats}) de atividade, estados de tarefa (ativo, concluído, bloqueado,
+ocioso), obsolescência (\emph{staleness}) de agentes que deixam de progredir,
+consumo de recursos e a fila de mensagens rejeitadas (\emph{dead-letter}). Um
+agente cujo padrão de ação se desvia da metodologia esperada — repetição
+improdutiva, sequências anômalas, silêncio prolongado — é sinalizado como
+candidato à contenção. Aplicar consistentemente a mesma metodologia a todos os
+eventos é, em si, um critério comportamental: desvios dessa consistência são
+indício de comprometimento.
+
+\subsection{M5 --- Quarentena}
+\label{sec:arq-m5}
+
+O mecanismo \textbf{M5} fecha o ciclo de defesa ao isolar agentes comprometidos e
+ao gerenciar a recuperação. Quando M4 sinaliza comportamento anômalo, ou quando
+M1/M3 detectam adulteração ou injeção, M5 coloca o agente em quarentena,
+removendo-o do fluxo de produção sem interromper a campanha como um todo, e
+sinaliza padrões de dado anômalos (por exemplo, \emph{timestamps} fabricados ou
+incoerentes). A quarentena impede que o comprometimento se propague para outros
+agentes ou contamine o veredito, e cria o registro necessário para a análise
+forense posterior. Em conjunto, M4 e M5 implementam a doutrina de
+detecção-e-contenção que confina o efeito de um agente defeituoso à fronteira de
+sua própria camada.
+
+\subsection{Síntese: a defesa em profundidade dos agentes}
+\label{sec:arq-defesa}
+
+Tomados em conjunto, os cinco mecanismos constituem uma defesa em profundidade
+voltada não para a rede ou para o \emph{endpoint}, mas para o próprio sistema de
+agentes. A Tabela~\ref{tab:m-mecanismos} resume cada mecanismo, a ameaça que ele
+endereça e o instrumento que o materializa na implementação. É importante notar
+que M2 e M3 atuam sobre o \emph{conteúdo} e o \emph{raciocínio} de cada
+classificação, ao passo que M1, M4 e M5 atuam sobre o \emph{estado} e o
+\emph{comportamento} dos agentes ao longo do tempo — uma separação que é
+precisamente o que a condição de ablação C1-nohardening explora ao manter M3 e
+remover os demais.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Os cinco mecanismos de governança do MAS-Hunt.}
+  \label{tab:m-mecanismos}
+  \footnotesize
+  \begin{tabular}{@{}p{1.2cm}p{3.0cm}p{4.2cm}p{4.0cm}@{}}
+    \toprule
+    \textbf{Mec.} & \textbf{Nome} & \textbf{Ameaça endereçada} & \textbf{Instrumento} \\
+    \midrule
+    M1 & Integridade de Memória & Envenenamento de memória/base de conhecimento & Resumo SHA-256 e validação contra telemetria \\
+    M2 & Validação Cruzada & Achado espúrio de agente comprometido & Validador independente + \emph{scripts} determinísticos \\
+    M3 & Resistência a Injeção & Injeção indireta de \emph{prompt} no conteúdo & \emph{Framework} \textsc{observar}$\rightarrow$\ldots$\rightarrow$\textsc{classificar} \\
+    M4 & Monitoramento Comportamental & Amplificação de mau funcionamento & \emph{Heartbeats}, \emph{staleness}, \emph{dead-letter} \\
+    M5 & Quarentena & Propagação de comprometimento & Isolamento de agente + registro forense \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{O Framework M3 de Análise Estruturada}
+\label{sec:arq-framework-m3}
+
+Para garantir consistência metodológica e resistência a manipulação, o mecanismo
+M3 obriga todo agente caçador a seguir, para \emph{cada} evento, um
+\emph{framework} de análise estruturada em cinco passos. Mais do que uma
+heurística de classificação, o \emph{framework} é o protocolo cognitivo que ancora
+o veredito na evidência primária e, por isso, é o anteparo central contra a
+injeção adversarial:
+
+\begin{description}
+  \item[\textsc{Observar}] Listar todos os fatos observáveis a partir da
+    telemetria Sysmon (executável, linha de comando, processo-pai, usuário,
+    \emph{host}, \emph{hashes}, diretório corrente, nível de integridade), sem
+    interpretação.
+  \item[\textsc{Hipotetizar}] Formular duas hipóteses concorrentes e explícitas —
+    uma maliciosa e uma benigna — para a atividade observada.
+  \item[\textsc{Evidência}] Citar a telemetria específica que sustenta ou
+    contradiz cada hipótese, ancorando o raciocínio em fatos verificáveis.
+  \item[\textsc{Validação Cruzada}] Conferir a coerência entre a linha de comando,
+    o processo-pai, o usuário, o diretório de trabalho e a atividade de rede,
+    buscando confirmação ou contradição mútua entre os campos.
+  \item[\textsc{Classificar}] Emitir o veredito final (\texttt{malicious} ou
+    \texttt{benign}) com escore de confiança, justificado pelos passos anteriores.
+\end{description}
+
+A sequência \textsc{observar} $\rightarrow$ \textsc{hipotetizar} $\rightarrow$
+\textsc{evidência} $\rightarrow$ \textsc{validação-cruzada} $\rightarrow$
+\textsc{classificar} cumpre uma função dupla. Como protocolo cognitivo, ela impõe
+um raciocínio deliberado e auditável, reduzindo a propensão do modelo a saltar
+diretamente para uma conclusão sugerida pelo conteúdo. Como anteparo de segurança,
+ela ancora a classificação na evidência primária: como o veredito decorre dos
+passos \textsc{observar} e \textsc{evidência}, uma instrução injetada que não
+corresponda a um fato observável não tem por onde influenciar o resultado. A
+capacidade de tratar texto injetado como dado é, assim, uma consequência estrutural
+do \emph{framework}, e não uma regra avulsa. Note-se ainda que o passo
+\textsc{validação cruzada} interno ao raciocínio de cada caçador é distinto, em
+escopo, do mecanismo M2 da Seção~\ref{sec:arq-m2}: o primeiro é a corroboração
+\emph{intra-agente} entre campos de uma mesma evidência; o segundo é a corroboração
+\emph{interagente} de um achado por um validador independente. Os dois operam em
+níveis complementares de defesa.
+
+\section{Implementação como Plugin do Claude Code}
+\label{sec:arq-plugin}
+
+A arquitetura descrita não é uma abstração de papel: ela é materializada como um
+\emph{plugin} do Claude Code, ambiente de agente de linha de comando que expõe
+capacidades nativas de orquestração de subagentes. Esta seção descreve os três
+artefatos de extensão que compõem o \emph{plugin} — habilidades, comandos de
+barra e \emph{hooks} — e o modo como o agente principal os combina para
+instanciar a hierarquia de três camadas. A noção de organizar agentes de LLM por
+arcabouços extensíveis e modulares é coerente com os \emph{frameworks} de agentes
+contemporâneos~\cite{kirshteyn2024aif}; o MAS-Hunt particulariza essa modularidade
+para o domínio da caça a ameaças sob governança.
+
+\paragraph{Habilidades (\emph{skills}).} As habilidades encapsulam o conhecimento
+metodológico e procedimental do sistema. São elas que codificam, por exemplo, o
+protocolo do Conselho de Governança (votação, quórum, roteamento por camada), o
+\emph{framework} de construção de consultas ao Elastic Stack (seleção entre DSL,
+EQL e ES\textbar QL conforme a tarefa) e os padrões de integração com inteligência
+externa. Uma habilidade não executa por si só; ela fornece ao agente o
+conhecimento de \emph{como} agir corretamente quando uma tarefa do domínio é
+acionada, promovendo consistência metodológica entre execuções e entre agentes.
+
+\paragraph{Comandos de barra (\emph{slash commands}).} Os comandos de barra são os
+pontos de entrada que disparam fluxos completos. O comando que executa o
+experimento de detecção, por exemplo, implementa a arquitetura de governança como
+uma sucessão de cinco equipes (\emph{teams}) consecutivas — Conselho de
+Governança, Gerência, Execução, Validação e Revisão Final do Conselho —, cada
+qual cumprindo sua fase, escrevendo seus artefatos em \texttt{.orchestration/} e
+sendo encerrada antes que a próxima inicie. Comandos distintos materializam as
+diferentes condições experimentais: o fluxo completo com governança (C1-full) e o
+fluxo de referência desprovido de governança (C2-naive), no qual nenhuma das
+equipes de validação ou dos mecanismos M1--M5 é instanciada. Os comandos são,
+portanto, a face executável das condições de ablação.
+
+\paragraph{\emph{Hooks}.} Os \emph{hooks} são pontos de interceptação que acoplam
+verificações automáticas ao laço de execução do agente, atuando às fronteiras das
+chamadas de ferramenta e do encerramento de tarefas. No MAS-Hunt, os \emph{hooks}
+são o substrato técnico de parte do endurecimento: eles podem acionar a
+sanitização de conteúdo (M3), registrar entradas na trilha de auditoria em formato
+compatível com o Elastic Common Schema, e impor portas de verificação que
+bloqueiam o encerramento de uma fase enquanto critérios de evidência não forem
+observavelmente satisfeitos. Por operarem na fronteira do laço do agente — e não
+no corpo do \emph{prompt} —, os \emph{hooks} aplicam controles que o próprio
+agente não pode contornar por meio de raciocínio manipulado.
+
+A orquestração propriamente dita é responsabilidade do \emph{agente principal}.
+Por meio das capacidades nativas do Claude Code, o agente principal cria equipes,
+instancia subagentes (caçadores, gerentes, membros do Conselho), distribui-lhes
+tarefas e coleta seus resultados, percorrendo o \emph{pipeline} de caça
+(Figura~\ref{fig:mashunt-fluxo}): \emph{board} $\rightarrow$ \emph{management}
+$\rightarrow$ caçadores por família LOLBin (em paralelo) $\rightarrow$ validação
+$\rightarrow$ \emph{board}. Cada subagente recebe um contexto próprio e um conjunto
+restrito de ferramentas, e comunica-se exclusivamente pelo protocolo de mensagens
+tipadas da Seção~\ref{sec:arq-protocolos}. É a combinação entre habilidades (o
+que saber), comandos (o que disparar), \emph{hooks} (o que verificar
+automaticamente) e a orquestração nativa de subagentes (quem faz o quê, e quando)
+que dá existência efetiva à arquitetura de três camadas.
+
+\section{Protocolos de Mensagens Tipadas e Governança}
+\label{sec:arq-protocolos}
+
+A comunicação entre camadas não é texto livre: ela é mediada por um
+\emph{protocolo de mensagens tipadas} que torna cada transição verificável,
+assinada e roteável. Toda mensagem é um envelope com tipo declarado, identificador
+único, identificação do remetente (\texttt{sender\_id}, \texttt{sender\_role} e
+\texttt{sender\_layer}), referência ao objetivo de caça governante
+(\texttt{hunt\_goal\_ref}), identificador de correlação para rastreabilidade
+(\texttt{correlation\_id}), carga útil (\texttt{payload}) e assinatura. O
+protocolo impõe quatro garantias:
+
+\begin{enumerate}
+  \item \textbf{Validação por esquema.} Cada tipo de mensagem possui um
+    esquema JSON próprio; uma mensagem que não conforme ao esquema é rejeitada e
+    desviada para uma fila de mensagens mortas (\emph{dead-letter}).
+  \item \textbf{Assinatura criptográfica.} Cada mensagem é assinada por
+    HMAC-SHA256 sobre sua forma canônica, de modo que a adulteração de conteúdo ou
+    a falsificação de remetente seja detectável na recepção.
+  \item \textbf{Roteamento por adjacência de camada.} As mensagens classificam-se
+    em descendentes (\texttt{HuntGoal}, \texttt{HuntTask}, \texttt{IntelTask},
+    \texttt{DetectionTask}), ascendentes (\texttt{HuntFinding}, \texttt{HuntReport},
+    \texttt{IntelFeed}, \texttt{ValidationVerdict}) e laterais
+    (\texttt{DetectionRule}, \texttt{IntelReport}, \texttt{ValidationReport}). O
+    protocolo verifica o sentido (uma diretiva descendente não pode partir de uma
+    camada inferior) e adverte sobre violações de adjacência (saltos de mais de uma
+    camada), reforçando a mediação por fronteira descrita na
+    Seção~\ref{sec:arq-visao-geral}.
+  \item \textbf{Fila de mensagens mortas.} Mensagens inválidas, não assinadas ou
+    mal roteadas não são silenciosamente descartadas: são preservadas com o motivo
+    da rejeição, alimentando o monitoramento comportamental (M4) e a auditoria.
+\end{enumerate}
+
+Essa tipagem estrita realiza, no plano da comunicação, os princípios de uso de
+mensagens estruturadas, propagação de identificadores de correlação e registro de
+decisões de agente que caracterizam a coordenação multiagente
+disciplinada~\cite{qiu2024collaborativeintelligencepropagatingintentions}. O
+roteamento mediado por uma autoridade que delega e consolida é, ainda, a
+contraparte técnica da organização hierárquica de
+agentes~\cite{liu2023llm}.
+
+\subsection{Por que a Orquestração Real Difere de uma Chamada LLM Isolada}
+\label{sec:arq-difere}
+
+O ponto central deste capítulo é que a contribuição do MAS-Hunt reside na
+orquestração multiagente governada, e não em \emph{scripts} de detecção ou em uma
+chamada bem elaborada a um modelo de linguagem. Uma chamada isolada a um LLM,
+ainda que com um \emph{prompt} sofisticado, é uma operação sem estado, sem
+mediação e sem contenção: ela recebe um contexto, produz uma saída e não impõe
+qualquer disciplina sobre como essa saída é formada, validada ou contida. Cinco
+diferenças estruturais separam a orquestração real do MAS-Hunt desse regime.
+
+\begin{enumerate}
+  \item \textbf{Separação de poderes entre agentes.} Em uma chamada isolada, um
+    único agente concentra descoberta, julgamento e veredito. No MAS-Hunt, essas
+    funções são distribuídas por camadas distintas — caçadores descobrem,
+    validadores corroboram, o Conselho decide — de modo que nenhum agente isolado
+    determina o resultado. O comprometimento de um agente não compromete o
+    sistema.
+  \item \textbf{Estado, memória e auditoria persistentes.} A orquestração mantém
+    estado entre fases — objetivos, planos, achados, vereditos, votos — em uma
+    trilha de auditoria imutável. Uma chamada isolada não tem memória do que
+    ocorreu antes nem registro do que ocorreu depois; não há, nela, base para
+    reprodutibilidade ou análise post-mortem.
+  \item \textbf{Mediação de comunicação por protocolo tipado.} O conteúdo que
+    trafega entre agentes é validado por esquema, assinado e roteado por
+    adjacência de camada. Em uma chamada isolada, todo conteúdo — inclusive
+    conteúdo hostil — entra indiscriminadamente no mesmo canal do \emph{prompt},
+    sem fronteira entre dado e instrução.
+  \item \textbf{Defesa ativa contra manipulação do próprio agente.} Os mecanismos
+    M1--M5 monitoram, detectam e contêm o comprometimento dos agentes em tempo de
+    execução. Uma chamada isolada não dispõe de monitoramento comportamental nem
+    de quarentena; se for envenenada ou injetada, ela simplesmente produz a saída
+    manipulada.
+  \item \textbf{Governança deliberativa por quórum.} As decisões estratégicas
+    emergem de um colegiado que vota e registra, e não de um oráculo único. Essa
+    deliberação é o que confere ao sistema robustez a participantes defeituosos,
+    propriedade ausente por construção em uma chamada isolada.
+\end{enumerate}
+
+Em síntese, o MAS-Hunt não é um classificador de eventos com um \emph{prompt}
+melhor; é um sistema de governança que organiza, valida e contém o comportamento
+de múltiplos agentes ao redor da tarefa de caça. As condições experimentais
+materializam exatamente essa distinção: C2-naive aproxima-se de um conjunto de
+agentes sem governança — o regime que esta seção contrasta —, enquanto C1-full
+aplica toda a pilha de mediação e contenção. A comparação entre essas condições, e
+a ablação intermediária C1-nohardening, é o instrumento empírico pelo qual a
+dissertação isola e mensura o valor da governança multiagente, objeto dos
+Capítulos~\ref{cap:metodologia} e seguintes.

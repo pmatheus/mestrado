@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "task": "MAS-Hunt v2 final aggregate summary",
+    "date": "2026-05-30",
+    "scope": "health-gated v2 signal-rich adversarial matrix",
+    "runs": 6,
+    "windows_per_condition": 1092,
+    "malicious_windows": 894,
+    "benign_windows": 198,
+    "bootstrap": {
+      "B": 10000,
+      "alpha": 0.05,
+      "method": "percentile over per-window outcomes"
+    },
+    "local_source_note": "Remote lab path reported by project memory: /home/user/mashunt-lab/results/matrix-v2/RESULTS.json. SSH to lab-ts is blocked in this Codex sandbox, so this local JSON records the final v2 values available in project memory and handoff notes."
+  },
+  "per_condition": {
+    "C1-full": {
+      "tp": 579,
+      "fp": 135,
+      "fn": 315,
+      "tn": 63,
+      "precision": 0.8109,
+      "recall": 0.6477,
+      "f2": 0.6748,
+      "f2_ci95": [0.646, 0.703],
+      "fpr_window": 0.6818,
+      "injection_flagged": 407
+    },
+    "C1-nohardening": {
+      "tp": 542,
+      "fp": 118,
+      "fn": 352,
+      "tn": 80,
+      "precision": 0.8212,
+      "recall": 0.6063,
+      "f2": 0.6398,
+      "f2_ci95": [0.609, 0.669],
+      "fpr_window": 0.596,
+      "injection_flagged": 0
+    },
+    "C2-naive": {
+      "tp": 483,
+      "fp": 120,
+      "fn": 411,
+      "tn": 78,
+      "precision": 0.801,
+      "recall": 0.5403,
+      "f2": 0.5779,
+      "f2_ci95": [0.539, 0.616],
+      "fpr_window": 0.6061,
+      "injection_flagged": 0
+    },
+    "C3-Elastic": {
+      "tp": 111,
+      "fp": 20,
+      "fn": 783,
+      "tn": 178,
+      "precision": 0.8473,
+      "recall": 0.1242,
+      "f2": 0.1497,
+      "f2_ci95": null,
+      "fpr_window": 0.101,
+      "injection_flagged": 0
+    }
+  },
+  "by_tier_f2": {
+    "overt": {
+      "C1-full": 0.66,
+      "C1-nohardening": 0.68,
+      "C2-naive": 0.66,
+      "C3-Elastic": 0.13
+    },
+    "encoded": {
+      "C1-full": 0.59,
+      "C1-nohardening": 0.51,
+      "C2-naive": 0.51,
+      "C3-Elastic": 0.15
+    },
+    "steganographic": {
+      "C1-full": 0.77,
+      "C1-nohardening": 0.71,
+      "C2-naive": 0.7,
+      "C3-Elastic": 0.18
+    }
+  },
+  "derived": {
+    "c1_full_vs_c3_f2_ratio": 4.51,
+    "c1_full_minus_c2_f2": 0.0969,
+    "c1_full_minus_c1_nohardening_f2": 0.035,
+    "c1_full_detection_failure_rate": 0.3523,
+    "c2_naive_detection_failure_rate": 0.4597
+  },
+  "interpretation": {
+    "agentic_vs_elastic": "Supported: C1-full F2 is approximately 4.5x C3-Elastic on the signal-rich v2 matrix.",
+    "orchestration_vs_naive": "Supported: C1-full F2 CI [0.646, 0.703] is separated from C2-naive [0.539, 0.616].",
+    "hardening_ablation": "Mixed on raw detection F2 because C1-full and C1-nohardening intervals overlap; strongly supported on injection resistance because only C1-full flagged adversarial injections (407 vs 0)."
+  }
+}

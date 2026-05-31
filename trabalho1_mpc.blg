@@ -1,0 +1,15 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'trabalho1_mpc.blg'
+[35] biber-darwin:340> INFO - === Thu May  8, 2025, 19:02:05
+[44] Biber.pm:419> INFO - Reading 'trabalho1_mpc.bcf'
+[86] Biber.pm:976> INFO - Using all citekeys in bib section 0
+[94] Biber.pm:4419> INFO - Processing section 0
+[99] Biber.pm:4610> INFO - Looking for bibtex file 'revisao.bib' for section 0
+[101] bibtex.pm:1713> INFO - LaTeX decoding ...
+[104] bibtex.pm:1519> INFO - Found BibTeX data source 'revisao.bib'
+[135] UCollate.pm:68> INFO - Overriding locale 'pt-BR' defaults 'variable = shifted' with 'variable = non-ignorable'
+[135] UCollate.pm:68> INFO - Overriding locale 'pt-BR' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[135] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'pt-BR'
+[135] Biber.pm:4245> INFO - No sort tailoring available for locale 'pt-BR'
+[140] bbl.pm:660> INFO - Writing 'trabalho1_mpc.bbl' with encoding 'UTF-8'
+[142] bbl.pm:763> INFO - Output to trabalho1_mpc.bbl

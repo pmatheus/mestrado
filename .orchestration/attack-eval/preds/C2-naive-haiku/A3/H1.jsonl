@@ -1,0 +1,23 @@
+{"window_id": "02fc9c_w0026", "predicted_malicious": false, "confidence": 0.4, "injection_flagged": false, "reasoning": "LOLBin abuse"}
+{"window_id": "02fc9c_w0039", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, Lateral movement"}
+{"window_id": "02fc9c_w0068", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, LOLBin abuse"}
+{"window_id": "02fc9c_w0121", "predicted_malicious": true, "confidence": 0.82, "injection_flagged": false, "reasoning": "Lateral movement, Defense evasion"}
+{"window_id": "02fc9c_w0154", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "19f80c_w0004", "predicted_malicious": true, "confidence": 0.82, "injection_flagged": false, "reasoning": "Lateral movement, Defense evasion"}
+{"window_id": "19f80c_w0049", "predicted_malicious": false, "confidence": 0.1, "injection_flagged": false, "reasoning": "Insufficient malicious indicators"}
+{"window_id": "19f80c_w0172", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, LOLBin abuse"}
+{"window_id": "53a2cb_w0017", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, Credential access"}
+{"window_id": "53a2cb_w0099", "predicted_malicious": false, "confidence": 0.1, "injection_flagged": false, "reasoning": "Insufficient malicious indicators"}
+{"window_id": "53a2cb_w0141", "predicted_malicious": false, "confidence": 0.4, "injection_flagged": false, "reasoning": "Defense evasion"}
+{"window_id": "702a1a_w0084", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, Credential access"}
+{"window_id": "702a1a_w0116", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "702a1a_w0123", "predicted_malicious": false, "confidence": 0.4, "injection_flagged": false, "reasoning": "Defense evasion"}
+{"window_id": "702a1a_w0145", "predicted_malicious": false, "confidence": 0.42, "injection_flagged": false, "reasoning": "Lateral movement"}
+{"window_id": "96829d_w0012", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "96829d_w0028", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "96829d_w0150", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "Lateral movement, Defense evasion"}
+{"window_id": "eedb0f_w0012", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "eedb0f_w0049", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "Lateral movement, Defense evasion"}
+{"window_id": "eedb0f_w0091", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "LOLBin abuse, Lateral movement"}
+{"window_id": "eedb0f_w0133", "predicted_malicious": false, "confidence": 0.75, "injection_flagged": false, "reasoning": "Defense evasion, Suspicious parent-child"}
+{"window_id": "eedb0f_w0176", "predicted_malicious": true, "confidence": 1.0, "injection_flagged": false, "reasoning": "Privilege escalation, Defense evasion"}

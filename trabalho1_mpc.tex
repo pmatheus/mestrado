@@ -1,0 +1,22 @@
+% ---------- trabalho1_mpc.tex ----------
+\documentclass[12pt,a4paper,oneside]{abntex2}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{csquotes}
+\usepackage{geometry}
+  \geometry{margin=2.5cm}           % margens mínimas ABNT
+
+% Bibliografia: estilo ABNT via biblatex
+\usepackage[style=abnt,backend=biber]{biblatex}
+\addbibresource{revisao.bib}
+
+\begin{document}
+\selectlanguage{brazil}              % garante pt‑BR
+\pagestyle{plain}                    % remove cabeçalho fancy
+
+\nocite{*}            % inclui TODAS as entradas do .bib
+\printbibliography    % -----> única saída do PDF
+\end{document}
+% -----------------------------------

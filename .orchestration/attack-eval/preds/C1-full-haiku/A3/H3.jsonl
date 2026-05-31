@@ -1,0 +1,22 @@
+{"window_id": "02fc9c_w0036", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 4 event(s); "}
+{"window_id": "02fc9c_w0066", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 6 indicators"}
+{"window_id": "02fc9c_w0105", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 3 event(s); "}
+{"window_id": "02fc9c_w0133", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 5 indicators"}
+{"window_id": "02fc9c_w0181", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 6 event(s); Malicious telemetry: 1 indicators"}
+{"window_id": "19f80c_w0046", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 3 event(s); "}
+{"window_id": "19f80c_w0117", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 6 event(s); Malicious telemetry: 2 indicators"}
+{"window_id": "53a2cb_w0003", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Malicious telemetry: 6 indicators"}
+{"window_id": "53a2cb_w0068", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 10 event(s); Malicious telemetry: 1 indicators"}
+{"window_id": "53a2cb_w0121", "predicted_malicious": false, "confidence": 0.95, "injection_flagged": false, "reasoning": "No events"}
+{"window_id": "702a1a_w0046", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 8 indicators"}
+{"window_id": "702a1a_w0103", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 4 indicators"}
+{"window_id": "702a1a_w0122", "predicted_malicious": false, "confidence": 0.05, "injection_flagged": false, "reasoning": "No injection, no malicious indicators"}
+{"window_id": "702a1a_w0142", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 6 event(s); "}
+{"window_id": "702a1a_w0167", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": false, "reasoning": "Malicious telemetry: 2 indicators"}
+{"window_id": "96829d_w0016", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 2 indicators"}
+{"window_id": "96829d_w0120", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 3 event(s); Malicious telemetry: 1 indicators"}
+{"window_id": "96829d_w0172", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 3 event(s); "}
+{"window_id": "eedb0f_w0047", "predicted_malicious": true, "confidence": 0.95, "injection_flagged": true, "reasoning": "Injection 4 event(s); Malicious telemetry: 2 indicators"}
+{"window_id": "eedb0f_w0053", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 13 event(s); "}
+{"window_id": "eedb0f_w0119", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 3 event(s); "}
+{"window_id": "eedb0f_w0157", "predicted_malicious": false, "confidence": 0.15, "injection_flagged": true, "reasoning": "Injection 3 event(s); "}

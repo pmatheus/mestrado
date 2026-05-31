@@ -1,0 +1,271 @@
+% =====================================================================
+% Capítulo 7 — Discussão
+% Dissertação MAS-Hunt (ABNT, PT-BR)
+% VEREDITO HONESTO (.orchestration/reports/aggregate-v2.md):
+%   (a) qualquer LLM >> regras SIEM C3 (~4.5x, dirigido por revocação) = forte;
+%   (b) governança NÃO melhora F2 sobre passagem única (CIs sobrepostos) = honesto;
+%   (c) valor distintivo da governança = resistência a injeção/auditabilidade (407 vs 0).
+% Reformular a contribuição. Ameaças à validade.
+% Chaves \cite verificadas: dolan-gavitt2025, zhan2024injecagent,
+% NEURIPS2024_eb113910, zhang2024breaking, huang2024resilience, gu2024agent,
+% ali2023huntgptintegratingmachinelearningbased,
+% mahmud2025distributedmultiagentcoordinationusing, ucci2019.
+% =====================================================================
+
+\chapter{Discussão}
+\label{cap:discussao}
+
+Este capítulo interpreta os resultados do Capítulo~\ref{cap:resultados} à luz da
+hipótese de pesquisa, confrontando as expectativas iniciais com a evidência
+observada. A premissa que governa toda a discussão é a de integridade
+intelectual: dois dos três achados centrais corroboram parcialmente o que se
+esperava, mas um achado --- a ausência de ganho de detecção atribuível à
+governança multiagente --- contraria a hipótese original e exige uma
+\emph{reformulação} da contribuição central do trabalho. Essa reformulação é
+conduzida explicitamente, e não dissimulada.
+
+\section{Interpretação dos Três Achados}
+\label{sec:disc-interpretacao}
+
+\subsection{O analista de modelo de linguagem como ruptura de patamar}
+\label{subsec:disc-llm-siem}
+
+O achado mais forte e robusto do experimento é a superioridade dramática de
+qualquer analista baseado em modelo de linguagem sobre as regras estáticas de
+SIEM, com um ganho de aproximadamente $4{,}5$ vezes em F2 e intervalos de
+confiança amplamente separados. A interpretação correta desse contraste é
+estrutural, e não incremental. As regras padrão do Elastic Security são
+assinaturas determinísticas calibradas para precisão em produção: disparam quando
+um padrão conhecido é satisfeito e silenciam no restante. Diante de um corpus de
+abuso de LOLBins --- no qual o sinal discriminativo reside nos argumentos de
+linha de comando e na linhagem pai--filho de processos, e não na identidade do
+binário legítimo \cite{ucci2019} --- esse comportamento conservador deixa escapar
+cerca de $88\%$ dos ataques (783 falsos negativos em 894 janelas maliciosas). O
+modelo de linguagem, ao raciocinar sobre a telemetria em linguagem natural e
+correlacionar evidências entre eventos, recupera uma fração muito maior desses
+ataques (revocação de $0{,}61$--$0{,}65$) sem sacrificar a precisão.
+
+Esse resultado situa-se em consonância com a literatura que advoga a integração
+de aprendizado de máquina e de raciocínio assistido por modelos à caça a ameaças
+\cite{ali2023huntgptintegratingmachinelearningbased}, e o reforça com uma
+quantificação direta sob telemetria empresarial realista e contaminação
+adversarial. O significado prático é que a contribuição de detecção do MAS-Hunt
+não decorre de sua arquitetura de governança, mas da decisão fundamental de
+\emph{interpor um analista de modelo de linguagem entre a telemetria e a regra
+estática}. As regras de SIEM permanecem indispensáveis --- mas como camada de
+coleta, indexação e alertamento determinístico de alta precisão, e não como
+detector exclusivo para caça proativa.
+
+\subsection{A governança não melhora o F2 de detecção --- relato honesto}
+\label{subsec:disc-governanca-nula}
+
+A hipótese inicial do trabalho previa que a arquitetura de governança multiagente
+de três camadas, com seus cinco mecanismos de proteção, melhoraria o desempenho
+de detecção sobre uma linha de base agêntica não governada. \textbf{Essa hipótese
+não foi corroborada.} C1-full (F2~$=0{,}675$) e C2-naive (F2~$=0{,}672$) são
+estatisticamente indistinguíveis, com intervalos de confiança praticamente
+idênticos; a ablação C1-nohardening (F2~$=0{,}640$) é marginalmente inferior, mas
+com intervalo sobreposto a ambas. No recorte deste corpus e desta telemetria, o
+fator dominante do desempenho de detecção é o uso de um analista de modelo de
+linguagem \emph{em si}, e não a orquestração hierárquica, a especialização de
+caçadores ou a disciplina de validação cruzada que os envolvem.
+
+Esse é um achado negativo --- ou, mais precisamente, um achado nulo --- e seu
+relato franco é uma contribuição em si. Há pelo menos duas explicações plausíveis,
+não mutuamente exclusivas, para a ausência de ganho. A primeira é a já discutida
+\emph{lacuna estrutural de telemetria de EID1} (Seção~\ref{sec:met-limitacoes}):
+quando a evidência discriminativa de um ataque simplesmente não foi gravada pelo
+Sysmon, nenhum volume de orquestração ou de raciocínio adicional a recupera, e o
+teto de revocação imposto pela escassez de sinal é comum a todas as condições
+agênticas, comprimindo as diferenças entre elas. A segunda é que, para a tarefa
+específica de classificar uma única janela de telemetria como maliciosa ou
+benigna, o raciocínio de um único passe de modelo de linguagem já é
+suficientemente competente, de modo que a sobrecarga deliberativa da governança
+multiagente --- concebida para robustez, e não para acurácia marginal --- não
+encontra margem de melhoria de classificação a explorar. Em ambos os casos, a
+conclusão metodológica é a mesma: \emph{avaliar uma arquitetura de governança
+apenas pela acurácia de classificação subestima --- e potencialmente invisibiliza
+--- o seu valor real}, que se manifesta em outro eixo.
+
+\subsection{A resistência à injeção como valor distintivo}
+\label{subsec:disc-resiliencia}
+
+É nesse outro eixo --- a resistência à manipulação adversarial --- que a
+governança revela seu valor mensurável. Apenas C1-full detectou e sinalizou as
+407 janelas portadoras de conteúdo adversarial injetado; C1-nohardening, C2-naive
+e C3-Elastic processaram o mesmo conteúdo sem emitir qualquer sinal de
+contaminação. A diferença é categórica (407 contra 0) e é atribuível, pela
+ablação C1-nohardening, precisamente aos mecanismos de endurecimento M1 e M3.
+
+A interpretação de segurança desse contraste é a peça central da discussão. Em um
+ambiente hostil, no qual o atacante pode contaminar a própria telemetria que o
+detector consome --- via injeção indireta de \textit{prompt}
+\cite{zhan2024injecagent}, envenenamento de memória \cite{NEURIPS2024_eb113910}
+ou amplificação de mau funcionamento \cite{zhang2024breaking} ---, a defesa não
+deve apenas acertar a classe final; ela precisa ser capaz de \emph{declarar
+quando o próprio processo de decisão foi atacado}. Um classificador de passagem
+única que mantém boa acurácia sob injeção, mas é incapaz de perceber que foi alvo
+de manipulação, oferece uma falsa sensação de segurança: ele acerta hoje porque a
+telemetria subjacente era clara, mas falhará silenciosamente assim que a injeção
+for sofisticada o bastante para alterar a evidência efetiva, e o fará sem deixar
+rastro para o operador. C1-full transforma a instrução maliciosa embutida no log
+em \emph{evidência observável de manipulação}, em vez de deixá-la competir
+silenciosamente com a telemetria genuína. Esse é o modo de falha de corrupção de
+raciocínio documentado na literatura de segurança de sistemas multiagente
+\cite{huang2024resilience, gu2024agent}, e a sinalização das 407 janelas é a
+mitigação empírica observável dele.
+
+\section{Confronto com a Hipótese e Reformulação da Contribuição}
+\label{sec:disc-hipotese}
+
+À luz dos três achados, a hipótese de pesquisa pode ser avaliada componente a
+componente, sem indulgência:
+
+\begin{itemize}
+    \item \textbf{Componente ``analista agêntico supera detecção baseada em
+    regras'': fortemente corroborada.} O ganho de $\approx 4{,}5\times$ em F2 com
+    intervalos separados sustenta essa afirmação de modo robusto.
+    \item \textbf{Componente ``a governança multiagente melhora a detecção sobre
+    o agente não governado'': refutada.} Os intervalos de confiança de F2 de
+    C1-full e C2-naive são indistinguíveis. Esta dissertação \emph{não} reivindica
+    superioridade de detecção da governança.
+    \item \textbf{Componente ``a governança confere resiliência à manipulação
+    adversarial'': corroborada no eixo da observabilidade.} Somente C1-full
+    sinaliza a injeção (407 contra 0). A camada de governança torna a manipulação
+    \emph{auditável}, ainda que, nestas execuções, ela não tenha sido necessária
+    para evitar o erro de classificação.
+\end{itemize}
+
+Esse veredito impõe uma \textbf{reformulação da contribuição central do
+trabalho}. A tese não é --- e os dados não permitem que seja --- a de que a
+orquestração multiagente detecta melhor. A contribuição reformulada, sustentada
+pela evidência, é dupla: \emph{(i)} demonstrar, com quantificação direta sob
+telemetria realista, que um analista multiagente baseado em modelo de linguagem
+supera dramaticamente a detecção baseada em assinaturas/regras de SIEM para caça a
+abuso de LOLBins; e \emph{(ii)} demonstrar que uma arquitetura de governança em
+três camadas, com os mecanismos M1--M5, acrescenta resistência à injeção
+adversarial e auditabilidade que os modelos de linguagem de passagem única não
+possuem --- e o faz \emph{sem custo de qualidade de detecção}. A governança não
+se justifica como aprimorador de acurácia; justifica-se como camada de segurança e
+de auditabilidade, e é esse o enquadramento honesto de seu valor.
+
+\section{Implicações Práticas e de Pesquisa}
+\label{sec:disc-implicacoes}
+
+\subsection{Para operações de SOC}
+
+A consequência operacional mais imediata é que a adoção de agentes em um centro de
+operações de segurança não precisa --- e não deve --- ser justificada pela
+promessa de maior acurácia de classificação em relação a um único passe de modelo
+bem instruído. O argumento defensável de adoção é outro: o salto de cobertura
+sobre as regras estáticas (que sozinhas perdem $\approx 88\%$ do corpus) e, sobre
+um agente isolado, a \emph{resistência observável à manipulação}. A recomendação
+de desenho que decorre dos dados é empregar o agente como camada de caça e
+correlação sobre uma fonte de verdade auditável (o próprio Elastic), preservando a
+validação determinística e a revisão humana para ações de contenção, e exigindo
+do sistema a capacidade de sinalizar quando seu contexto foi contaminado --- uma
+propriedade que, conforme demonstrado, somente a configuração governada oferece.
+
+\subsection{Para a avaliação de agentes de segurança}
+
+A contribuição metodológica é, talvez, a mais transferível. Avaliar uma
+arquitetura de governança multiagente \emph{apenas} pela acurácia de classificação
+teria levado, neste trabalho, à conclusão equivocada de que a governança ``não
+agrega valor'' --- quando, na verdade, ela agrega um valor de segurança que a
+métrica de acurácia é estruturalmente incapaz de capturar. A lição é que a
+avaliação de agentes de segurança deve ser \emph{bidimensional}: pontuar tanto o
+acerto da classe final quanto a capacidade do sistema de detectar que foi atacado.
+A telemetria de avaliação deve conter conteúdo adversarial que tenta manipular o
+próprio processo de raciocínio --- e não apenas amostras benignas ---, sob pena de
+superestimar a utilidade dos agentes e de subestimar o valor das defesas. Esse
+princípio dialoga diretamente com a literatura de coordenação multiagente
+\cite{mahmud2025distributedmultiagentcoordinationusing} e de modos de falha
+infecciosa em sistemas de agentes \cite{huang2024resilience}.
+
+\section{Limitações}
+\label{sec:disc-limitacoes}
+
+\paragraph{A lacuna estrutural de telemetria de EID1.} A limitação mais
+consequente, já antecipada na Seção~\ref{sec:met-limitacoes}, é a captura esparsa
+de eventos de criação de processo (EID1) na configuração de Sysmon empregada.
+Ainda que o gatilho de saúde e a extração \texttt{prepare-v2} tenham sanado a
+parcela \emph{instrumental} dessa lacuna, a parcela \emph{estrutural} --- eventos
+que o Sysmon nunca chegou a gravar --- impõe um teto de revocação comum a todas as
+condições agênticas e é uma das explicações plausíveis para a compressão das
+diferenças de F2 entre elas. Esse fator deve ser sopesado ao interpretar o achado
+nulo da Seção~\ref{subsec:disc-governanca-nula}: a ausência de ganho de F2 da
+governança pode refletir, em parte, um teto de detecção imposto pela telemetria, e
+não exclusivamente a irrelevância da governança para a detecção.
+
+\paragraph{Granularidade da matriz.} A matriz inferencial repousa sobre seis
+execuções adversariais ricas em sinal, com 1.092 janelas por condição. Trata-se de
+um desenho suficiente para contrastar as condições sob um corpus controlado e
+totalmente reprodutível, mas não substitui uma validação longitudinal em ambiente
+corporativo real, de maior escala e diversidade de \textit{background}. As quatro
+execuções pobres em sinal foram excluídas de forma transparente, e os escores por
+nível (\textit{tier}) devem ser lidos como indicativos, não como comparações de
+poder estatístico equivalente ao da matriz agregada.
+
+\paragraph{Taxa de falsos positivos por janela benigna.} As condições agênticas
+operam em um ponto de revocação alta com FPR por janela benigna elevada
+($\approx 0{,}68$), de modo que a operação prática em SOC exigirá camadas
+adicionais de priorização, agrupamento de alertas e validação determinística para
+conter a fadiga do analista. O MAS-Hunt, conforme avaliado, otimiza F2, e não FPR;
+a transposição direta para produção demanda calibração desse ponto de operação.
+
+\paragraph{Vazamento de rótulo na telemetria do laboratório v2.} Uma reavaliação
+adversarial complementar (Seção~\ref{sec:res-resiliencia-reforcada}) revelou uma
+ameaça à validade não antecipada: a telemetria do laboratório v2 embute o comando
+do arcabouço \texttt{execute\_playbook.ps1 -PlaybookPath ...<família>-mal-NN.json},
+cujo nome de arquivo \emph{vaza o rótulo} de verdade de referência, presente em
+$53$ das $68$ janelas examinadas. As condições baseadas em modelo de linguagem
+podiam, em princípio, explorar esse nome de arquivo, ao passo que a linha de base
+de regras C3-Elastic não o fazia; o oráculo provavelmente \emph{infla um pouco} a
+diferença observada entre modelo de linguagem e SIEM. A avaliação reforçada
+controlou esse confundimento removendo o oráculo (e o \textit{scaffolding} de
+semeadura do corpus): a taxa de erro de base subiu de $0{,}20$ para $0{,}28$, mas
+o efeito do ataque permaneceu $\approx 0$ ($+0{,}04$), de modo que a conclusão de
+resiliência da Seção~\ref{sec:res-resiliencia-reforcada} é robusta à remoção do
+vazamento. Uma reavaliação sem vazamento da matriz completa das quatro condições
+fica como trabalho futuro.
+
+\section{Ameaças à Validade}
+\label{sec:disc-validade}
+
+\paragraph{Validade interna.} A principal ameaça interna é confundir a robustez do
+\emph{modelo} subjacente com a robustez da \emph{orquestração}. O desenho mitigou
+esse risco ao pontuar C1-full, C1-nohardening e C2-naive sobre as mesmas janelas,
+com o mesmo rótulo oculto e o mesmo \textit{script} de pontuação não baseado em
+inteligência artificial; a própria igualdade estatística de F2 entre C1-full e
+C2-naive é, paradoxalmente, evidência de que essa separação foi bem-sucedida ---
+nenhuma vantagem espúria de implementação inflou a condição governada.
+Diferenças de \textit{prompt} e de especialização dos caçadores podem, ainda
+assim, interagir com a arquitetura, de modo que os resultados devem ser lidos como
+desempenho do sistema MAS-Hunt tal como instanciado, e não como lei geral sobre
+qualquer conjunto de agentes.
+
+\paragraph{Validade de construto.} A linha de base C2-naive foi definida como um
+classificador genuíno de passagem única de modelo de linguagem, e não como uma
+heurística determinística --- cuidado registrado na metodologia e auditado nos
+artefatos. As métricas de resistência à injeção operam no nível da
+\emph{tentativa}: a contagem de 407 janelas sinalizadas mede que a condição
+\emph{detectou} contaminação, não que cada evento individual contaminado foi
+identificado, dado que o corpus não dispõe de rótulos de contaminação por evento.
+
+\paragraph{Validade externa.} O ambiente avaliado é um domínio \textit{Active
+Directory} de pequena escala, com Windows e Elastic, e o corpus concentra-se em
+nove famílias de LOLBin. Esse recorte é deliberado e relevante para a evasão por
+abuso de ferramentas nativas, mas a generalização para Linux, macOS, cargas em
+nuvem pública, telemetrias de rede e outras fontes de evidência exige novos
+experimentos. Os resultados de detecção, em particular, dependem da disponibilidade
+de telemetria de criação de processo de qualidade, e podem não se transferir para
+fontes de telemetria com perfil de sinal distinto.
+
+\bigskip
+\noindent
+Em síntese, a discussão sustenta um enquadramento honesto e nuançado: o MAS-Hunt
+contribui ao demonstrar a superioridade do analista agêntico sobre as regras
+estáticas e ao acrescentar resistência observável à injeção adversarial, mas não
+ao melhorar a acurácia de detecção por meio da governança --- achado que se relata
+integralmente e que reorienta a contribuição central do trabalho do plano da
+acurácia para o plano da segurança e da auditabilidade.

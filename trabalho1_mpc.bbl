@@ -1,0 +1,251 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{ali2023huntgptintegratingmachinelearningbased}{misc}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=3a8c4d41879889054c091d9d8dc98f73}{%
+           family={Ali},
+           familyi={A\bibinitperiod},
+           given={Tarek},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d3cc61e4cdf3c64180d09e00205c620e}{%
+           family={Kostakos},
+           familyi={K\bibinitperiod},
+           given={Panos},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \strng{fullhash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \strng{bibnamehash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \strng{authorbibnamehash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \strng{authornamehash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \strng{authorfullhash}{806ad0c46eddc6bd2d88a4558e202b37}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{HuntGPT: Integrating Machine Learning-Based Anomaly Detection and Explainable AI with Large Language Models (LLMs)}
+      \field{year}{2023}
+      \true{nocite}
+      \verb{eprint}
+      \verb 2309.16021
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2309.16021
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2309.16021
+      \endverb
+    \endentry
+    \entry{10616474}{inproceedings}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=756dbe0f1e5d5a47b5267cec7405093f}{%
+           family={Jyothi\bibnamedelima A},
+           familyi={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+           given={P},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=aa8f16b560cb32d239fe43ed940b23fe}{%
+           family={Chaithanya},
+           familyi={C\bibinitperiod}}}%
+        {{un=0,uniquepart=base,hash=501199340eaeee6afa60dca8dc0748fa}{%
+           family={Shankar},
+           familyi={S\bibinitperiod},
+           given={Anirudh},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ea58622856c74c1a060c6fe7edd5e2fa}{%
+           family={Ashwath\bibnamedelima Narayan},
+           familyi={A\bibinitperiod\bibinitdelim N\bibinitperiod},
+           given={Jr},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5c1c8ae34758ff28da78f896300f92d6}{%
+           family={Anurag},
+           familyi={A\bibinitperiod},
+           given={Aishwary},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b76c20bb81c016b8ca9b36b60e1bca47}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={Skanda\bibnamedelima S},
+           giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a059d798b679048b3d222b0dbd55be56}
+      \strng{fullhash}{2ba8c088d500a00f2b049a54c885dabc}
+      \strng{bibnamehash}{a059d798b679048b3d222b0dbd55be56}
+      \strng{authorbibnamehash}{a059d798b679048b3d222b0dbd55be56}
+      \strng{authornamehash}{a059d798b679048b3d222b0dbd55be56}
+      \strng{authorfullhash}{2ba8c088d500a00f2b049a54c885dabc}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2024 International Conference on Knowledge Engineering and Communication Systems (ICKECS)}
+      \field{title}{Threat Hunting in System Using Log Analysis}
+      \field{volume}{1}
+      \field{year}{2024}
+      \true{nocite}
+      \field{pages}{1\bibrangedash 6}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1109/ICKECS61492.2024.10616474
+      \endverb
+      \keyw{System performance;Universal Serial Bus;Vectors;Threat assessment;Malware;Computer security;Task analysis;Security;Threat Hunting;System Logs;Malicious. Proactive defense;Cybersecurity;Hidden Files;Python Scripting}
+    \endentry
+    \entry{mahmud2025distributedmultiagentcoordinationusing}{misc}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=d11bd8fe9fec5ef3e841987be92d2190}{%
+           family={Mahmud},
+           familyi={M\bibinitperiod},
+           given={Saaduddin},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2cc8be292901891d58ec6baca3fc555c}{%
+           family={Goldfajn},
+           familyi={G\bibinitperiod},
+           given={Dorian\bibnamedelima Benhamou},
+           giveni={D\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a59b49a6e7b6a6776b1e5728dd527f83}{%
+           family={Zilberstein},
+           familyi={Z\bibinitperiod},
+           given={Shlomo},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \strng{fullhash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \strng{bibnamehash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \strng{authorbibnamehash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \strng{authornamehash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \strng{authorfullhash}{069d11adbfe79c6d50317c5d7fb64df1}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.AI}
+      \field{eprinttype}{arXiv}
+      \field{title}{Distributed Multi-Agent Coordination Using Multi-Modal Foundation Models}
+      \field{year}{2025}
+      \true{nocite}
+      \verb{eprint}
+      \verb 2501.14189
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2501.14189
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2501.14189
+      \endverb
+    \endentry
+    \entry{sindiramutty2023autonomousthreathuntingfuture}{misc}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b2c20d44919df5cbd612e5407a08aa03}{%
+           family={Sindiramutty},
+           familyi={S\bibinitperiod},
+           given={Siva\bibnamedelima Raja},
+           giveni={S\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b2c20d44919df5cbd612e5407a08aa03}
+      \strng{fullhash}{b2c20d44919df5cbd612e5407a08aa03}
+      \strng{bibnamehash}{b2c20d44919df5cbd612e5407a08aa03}
+      \strng{authorbibnamehash}{b2c20d44919df5cbd612e5407a08aa03}
+      \strng{authornamehash}{b2c20d44919df5cbd612e5407a08aa03}
+      \strng{authorfullhash}{b2c20d44919df5cbd612e5407a08aa03}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{Autonomous Threat Hunting: A Future Paradigm for AI-Driven Threat Intelligence}
+      \field{year}{2023}
+      \true{nocite}
+      \verb{eprint}
+      \verb 2401.00286
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2401.00286
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2401.00286
+      \endverb
+    \endentry
+    \entry{10713082}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=74dff42483079c6b5461c8035db17bd2}{%
+           family={Yi},
+           familyi={Y\bibinitperiod},
+           given={Cheol-Gyu},
+           giveni={C\bibinithyphendelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4c4b83547d5ba753dde32eaeb858cbd7}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Young-Gab},
+           giveni={Y\bibinithyphendelim G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{d027e03b7d427672acdebe9810058284}
+      \strng{fullhash}{d027e03b7d427672acdebe9810058284}
+      \strng{bibnamehash}{d027e03b7d427672acdebe9810058284}
+      \strng{authorbibnamehash}{d027e03b7d427672acdebe9810058284}
+      \strng{authornamehash}{d027e03b7d427672acdebe9810058284}
+      \strng{authorfullhash}{d027e03b7d427672acdebe9810058284}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Communications Magazine}
+      \field{number}{10}
+      \field{title}{Hypothesis Generation Model for Cyber Threat Hunting}
+      \field{volume}{62}
+      \field{year}{2024}
+      \true{nocite}
+      \field{pages}{110\bibrangedash 116}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1109/MCOM.001.2300224
+      \endverb
+      \keyw{Systematics;Network security;Cyber threat intelligence;Information technology;Cyberattack;Threat modeling;Threat assessment}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
