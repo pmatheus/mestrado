@@ -25,3 +25,13 @@ inteligencia-cibernetica/
 # --- OS noise ---
 .DS_Store
 **/.DS_Store
+
+# Agent instruction files and harness directories stay local
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.gemini/
+.agents/
+.codex/
+.opencode/
